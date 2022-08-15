@@ -81,7 +81,7 @@ void Drivetrain::setTargetPose(Pose targetPose)
 
 }
 
-Pose Drivetrain::slewPose(Pose requires)
+Pose Drivetrain::slewPose(Pose required)
 {
 
 }
