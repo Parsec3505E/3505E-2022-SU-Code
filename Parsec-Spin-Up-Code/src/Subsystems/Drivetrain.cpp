@@ -101,19 +101,20 @@ void Drivetrain::setTargetPose(Pose targetPose)
 }
 
 
-double Drivetrain::getAcceleration(double prevRPM, double requestedRPM)
+double * Drivetrain::getAcceleration(double prevRPM, double requestedRPM)
 {
 
-    this->curTime = time(NULL);
+    static double returnVals[2];
 
     double deltaRPM = requestedRPM - prevRPM;
     double deltaTime = this->curTime - this->prevTime;
 
-    double rate = fabs(deltaRPM) / deltaTime;
+    double rate = deltaRPM / deltaTime;
 
-    this->prevTime = this->curTime;
+    returnVals[0] = rate;
+    returnVals[1] = deltaTime;
 
-    return rate;
+    return returnVals;
 
 }
 
@@ -125,6 +126,8 @@ Pose Drivetrain::slewPose(Pose request)
 
     double greatestMotorAcc = 0;
     double motorAccRatio = 0;
+
+    double deltaTime = 0.0;
 
 
     this->velocityPose->setXComponent((request.getXComponent() * sin(M_PI_4)) + (request.getYComponent() * cos(M_PI_4)));
@@ -158,11 +161,17 @@ Pose Drivetrain::slewPose(Pose request)
 
     // Acceleration Slew
 
-    this->accReq["rightFront"] = getAcceleration(rightFront->get_actual_velocity(), this->speedSlew["rightFront"]);
-    this->accReq["leftFront"] = getAcceleration(leftFront->get_actual_velocity(), this->speedSlew["leftFront"]);
-    this->accReq["rightBack"] = getAcceleration(rightBack->get_actual_velocity(), this->speedSlew["rightBack"]);
-    this->accReq["leftBack"] = getAcceleration(leftBack->get_actual_velocity(), this->speedSlew["leftBack"]);
 
+    this->curTime = time(NULL);
+
+    this->accReq["rightFront"] = getAcceleration(rightFront->get_actual_velocity(), this->speedSlew["rightFront"])[0];
+    this->accReq["leftFront"] = getAcceleration(leftFront->get_actual_velocity(), this->speedSlew["leftFront"])[0];
+    this->accReq["rightBack"] = getAcceleration(rightBack->get_actual_velocity(), this->speedSlew["rightBack"])[0];
+    this->accReq["leftBack"] = getAcceleration(leftBack->get_actual_velocity(), this->speedSlew["leftBack"])[0];
+
+    deltaTime = getAcceleration(rightFront->get_actual_velocity(), this->speedSlew["rightFront"])[1];
+
+    this->prevTime = this->curTime;
 
     for(const auto &value : accReq)
     {
@@ -182,7 +191,10 @@ Pose Drivetrain::slewPose(Pose request)
 
     // Set the motors
 
-
+    rightFront->move_velocity((this->accSlew["rightFront"] * deltaTime) + rightFront->get_actual_velocity());
+    leftFront->move_velocity((this->accSlew["leftFront"] * deltaTime) + leftFront->get_actual_velocity());
+    rightBack->move_velocity((this->accSlew["rightBack"] * deltaTime) + rightBack->get_actual_velocity());
+    leftBack->move_velocity((this->accSlew["leftBack"] * deltaTime) + leftBack->get_actual_velocity());
 
 
 }

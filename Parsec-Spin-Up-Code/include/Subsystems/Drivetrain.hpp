@@ -86,7 +86,7 @@ class Drivetrain
 
         void setTargetPose(Pose targetPose);
 
-        double getAcceleration(double prevRPM, double requestedRPM);
+        double * getAcceleration(double prevRPM, double requestedRPM);
 
         Pose slewPose(Pose request);
 
