@@ -1,6 +1,4 @@
 #include "Subsystems/Drivetrain.hpp"
-#include "pros/adi.hpp"
-#include "pros/motors.hpp"
 
 
 Drivetrain::Drivetrain()
@@ -32,10 +30,31 @@ Drivetrain::Drivetrain()
     gyro = new pros::Imu(10);
 
     // Initialize all last motor vels to 0
-    lastMotorVels.insert({"rightFront", 0});
-    lastMotorVels.insert({"rightBack", 0});
-    lastMotorVels.insert({"leftFront", 0});
-    lastMotorVels.insert({"leftBack", 0});
+    currentMotorRPM.insert({"rightFront", 0});
+    currentMotorRPM.insert({"rightBack", 0});
+    currentMotorRPM.insert({"leftFront", 0});
+    currentMotorRPM.insert({"leftBack", 0});
+
+    motorReq.insert({"rightFront", 0});
+    motorReq.insert({"rightBack", 0});
+    motorReq.insert({"leftFront", 0});
+    motorReq.insert({"leftBack", 0});
+
+    speedSlew.insert({"rightFront", 0});
+    speedSlew.insert({"rightBack", 0});
+    speedSlew.insert({"leftFront", 0});
+    speedSlew.insert({"leftBack", 0});
+
+    accReq.insert({"rightFront", 0});
+    accReq.insert({"rightBack", 0});
+    accReq.insert({"leftFront", 0});
+    accReq.insert({"leftBack", 0});
+
+    accSlew.insert({"rightFront", 0});
+    accSlew.insert({"rightBack", 0});
+    accSlew.insert({"leftFront", 0});
+    accSlew.insert({"leftBack", 0});
+
 
 }
 
@@ -81,10 +100,93 @@ void Drivetrain::setTargetPose(Pose targetPose)
 
 }
 
-Pose Drivetrain::slewPose(Pose requires)
+double Drivetrain::getAcceleration(double prevRPM, double requestedRPM)
 {
 
+    this->curTime = time(NULL);
+
+    double deltaRPM = requestedRPM - prevRPM;
+    double deltaTime = this->curTime - this->prevTime;
+
+    double rate = fabs(deltaRPM) / deltaTime;
+
+    this->prevTime = this->curTime;
+
+    return rate;
+
 }
+
+Pose Drivetrain::slewPose(Pose request)
+{
+
+    double greatestMotorRPM = 0;
+    double motorRPMRatio = 0;
+
+    double greatestMotorAcc = 0;
+    double motorAccRatio = 0;
+
+
+    this->velocityPose->setXComponent((request.getXComponent() * sin(M_PI_4)) + (request.getYComponent() * cos(M_PI_4)));
+    this->velocityPose->setYComponent(((-request.getXComponent()) * cos(M_PI_4)) + (request.getYComponent() * sin(M_PI_4)));
+    this->velocityPose->setThetaComponent(Drivetrain::DRIVE_RADIUS * request.getThetaComponent());
+
+    // Speed Slew
+
+    // Append the requested RPM to the map
+
+    this->motorReq["rightFront"] = (this->velocityPose->getXComponent() - this->velocityPose->getThetaComponent()) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2.0 * M_PI);
+    this->motorReq["leftFront"] = (this->velocityPose->getYComponent() + this->velocityPose->getThetaComponent()) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
+    this->motorReq["rightBack"] = (this->velocityPose->getYComponent() - this->velocityPose->getThetaComponent()) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
+    this->motorReq["leftBack"] = (this->velocityPose->getXComponent() + this->velocityPose->getThetaComponent()) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
+
+
+    for(const auto &value : motorReq)
+    {
+        if(fabs(value.second) > greatestMotorRPM)
+        {
+            greatestMotorRPM = fabs(value.second);
+        }
+    }
+
+    motorRPMRatio =  Drivetrain::MOTOR_MAX_RPM / greatestMotorRPM;
+
+    this->speedSlew["rightFront"] = this->motorReq["rightFront"] * motorRPMRatio;
+    this->speedSlew["leftFront"] = this->motorReq["leftFront"] * motorRPMRatio;
+    this->speedSlew["rightBack"] = this->motorReq["rightBack"] * motorRPMRatio;
+    this->speedSlew["leftBack"] = this->motorReq["leftBack"] * motorRPMRatio;
+
+    // Acceleration Slew
+
+    this->accReq["rightFront"] = getAcceleration(rightFront->get_actual_velocity(), this->speedSlew["rightFront"]);
+    this->accReq["leftFront"] = getAcceleration(leftFront->get_actual_velocity(), this->speedSlew["leftFront"]);
+    this->accReq["rightBack"] = getAcceleration(rightBack->get_actual_velocity(), this->speedSlew["rightBack"]);
+    this->accReq["leftBack"] = getAcceleration(leftBack->get_actual_velocity(), this->speedSlew["leftBack"]);
+
+
+    for(const auto &value : accReq)
+    {
+        if(fabs(value.second) > greatestMotorAcc)
+        {
+            greatestMotorAcc = fabs(value.second);
+        }
+    }
+
+    motorAccRatio =  Drivetrain::MOTOR_MAX_ACC / greatestMotorAcc;
+
+    this->accSlew["rightFront"] = this->accReq["rightFront"] * motorAccRatio;
+    this->accSlew["leftFront"] = this->accReq["leftFront"] * motorAccRatio;
+    this->accSlew["rightBack"] = this->accReq["rightBack"] * motorAccRatio;
+    this->accSlew["leftBack"] = this->accReq["leftBack"] * motorAccRatio;
+
+
+    // Set the motors
+
+
+
+
+}
+
+
 
 void Drivetrain::odometryStep()
 {
@@ -100,6 +202,10 @@ Pose Drivetrain::calcPoseToGoal()
 {
 
 }
+
+
+
+
 
 
 

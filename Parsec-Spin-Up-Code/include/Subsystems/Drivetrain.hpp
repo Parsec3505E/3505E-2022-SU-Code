@@ -1,20 +1,25 @@
 #ifndef DRIVETRAIN_HPP
 #define DRIVETRAIN_HPP
 
-#include "pros/motors.hpp"
-#include "pros/adi.hpp"
-#include "pros/imu.hpp"
+#include "api.h"
 
 #include <map>
 #include "iostream"
 
+#include <ctime>
+
 #include "utility/Pose.hpp"
 #include "utility/PosePID.hpp"
 
+    
 class Drivetrain
 {
 
     private:
+
+        const double DRIVE_RADIUS = 6.453;
+        const double WHEEL_RADIUS = 2.0;
+
 
         Pose* robotPose;
         Pose* velocityPose;
@@ -44,7 +49,18 @@ class Drivetrain
         // Drivetrain Gyro Declaration
         pros::IMU* gyro;
 
-        std::map<std::string, double> lastMotorVels;
+        std::map<std::string, double> currentMotorRPM;
+        std::map<std::string, double> motorReq;
+        std::map<std::string, double> speedSlew;;
+        std::map<std::string, double> accReq;;
+        std::map<std::string, double> accSlew;;
+
+        const double MOTOR_MAX_RPM = 280.0;
+
+        const double MOTOR_MAX_ACC = 10.0;
+
+        time_t curTime;
+        time_t prevTime = time(NULL);
 
     public:
 
@@ -69,6 +85,8 @@ class Drivetrain
         void moveRobot(Pose velocityPose);
 
         void setTargetPose(Pose targetPose);
+
+        double getAcceleration(double prevRPM, double requestedRPM);
 
         Pose slewPose(Pose request);
 

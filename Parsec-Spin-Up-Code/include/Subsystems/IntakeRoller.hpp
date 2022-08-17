@@ -2,9 +2,7 @@
 #define DRIVETRAIN_HPP
 
 
-#include "pros/motors.hpp"
-
-#include "pros/optical.hpp"
+#include "api.h"
 #include "Utility/PIDController.hpp"
 
 

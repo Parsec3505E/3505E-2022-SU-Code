@@ -2,7 +2,7 @@
 #define DRIVETRAIN_HPP
 
 
-#include "pros/adi.hpp"
+#include "api.h"
 
 
 
