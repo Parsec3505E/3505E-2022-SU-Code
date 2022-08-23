@@ -49,18 +49,20 @@ class Drivetrain
         // Drivetrain Gyro Declaration
         pros::IMU* gyro;
 
-        std::map<std::string, double> currentMotorRPM;
-        std::map<std::string, double> motorReq;
-        std::map<std::string, double> speedSlew;;
-        std::map<std::string, double> accReq;;
-        std::map<std::string, double> accSlew;;
+        std::map<std::string, double> requestedAcc;
+        std::map<std::string, double> proposedMotorVelocities;
+        std::map<std::string, double> proposedDeltaVelocities;
+        std::map<std::string, double> finalVelocities;
+        std::map<std::string, double> rotationVels;
+        std::map<std::string, double> lastVels;
 
-        const double MOTOR_MAX_RPM = 280.0;
+
+        const double MOTOR_MAX_RPM = 200.0;
 
         const double MOTOR_MAX_ACC = 10.0;
 
-        time_t curTime;
-        time_t prevTime = time(NULL);
+        std::uint64_t currTime;
+        std::uint64_t prevTime;
 
     public:
 
@@ -82,13 +84,13 @@ class Drivetrain
 
         void setRobotPose(Pose pose);
 
-        void moveRobot(Pose velocityPose);
+        void moveRobot(Pose* velocityPose);
 
         void setTargetPose(Pose targetPose);
 
-        double * getAcceleration(double prevRPM, double requestedRPM);
+        double getAcceleration(double prevRPM, double requestedRPM);
 
-        Pose slewPose(Pose request);
+        std::map<std::string, double> slewPose(std::map<std::string, double> requestedRPM);
 
         void odometryStep();
 
