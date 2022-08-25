@@ -11,21 +11,24 @@
 #include "utility/Pose.hpp"
 #include "utility/PosePID.hpp"
 
+#include <chrono>
+
     
 class Drivetrain
 {
+
+    public:
+        //Drivetrain States
+        enum DrivetrainStates{OPERATOR_CONTROL};
 
     private:
 
         const double DRIVE_RADIUS = 6.453;
         const double WHEEL_RADIUS = 2.0;
 
-
         Pose* robotPose;
         Pose* velocityPose;
-
-        //Drivetrain States
-        enum DrivetrainStates{};
+        Pose* targetPose;
 
         DrivetrainStates mDriveState;
 
@@ -49,6 +52,8 @@ class Drivetrain
         // Drivetrain Gyro Declaration
         pros::IMU* gyro;
 
+        pros::Controller* driver;
+
         std::map<std::string, double> requestedAcc;
         std::map<std::string, double> proposedMotorVelocities;
         std::map<std::string, double> proposedDeltaVelocities;
@@ -56,13 +61,12 @@ class Drivetrain
         std::map<std::string, double> rotationVels;
         std::map<std::string, double> lastVels;
 
-
         const double MOTOR_MAX_RPM = 200.0;
 
-        const double MOTOR_MAX_ACC = 10.0;
+        const double MOTOR_MAX_ACC = 200.0;
 
-        std::uint64_t currTime;
-        std::uint64_t prevTime;
+        std::uint32_t currTime;
+        std::uint32_t prevTime;
 
     public:
 
@@ -72,13 +76,13 @@ class Drivetrain
         // Update the state of the Drivetrain
         void updateDrivetrain();
 
+        // Set the state of the Drivetrain
+        void setState(enum DrivetrainStates);
+
         // Get the state of the Drivetrain
         enum DrivetrainStates getState();
 
     private:
-
-        // Set the state of the Drivetrain
-        void setState(enum DrivetrainStates);
 
         Pose getRobotPose();
 
