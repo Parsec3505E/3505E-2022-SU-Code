@@ -48,10 +48,5 @@ class IntakeRoller
         void setRollerState(enum RollerStates);
 
         bool isSettled(double epsilon);
-
-
-
-
 };
-
 #endif

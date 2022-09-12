@@ -2,11 +2,9 @@
 
 Pose::Pose(Vector vector, double posTheta)
 {
-
     this->x = vector.getXComponent();
     this->y = vector.getYcomponent();
     this->theta = posTheta;
-
 }
 
 void Pose::setXComponent(double x)

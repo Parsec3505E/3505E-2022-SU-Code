@@ -54,8 +54,6 @@ class Shooter
         bool isSettled(double epsilon);
 
         double calcShotRPM(double distance);
-
-
 };
 
 #endif

@@ -29,11 +29,13 @@ Drivetrain::Drivetrain()
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
-    forwardEncoder = new pros::ADIEncoder('a', 'b');
-    sideEncoder = new pros::ADIEncoder('C', 'D');
+    forwardEncoder = new pros::ADIEncoder('A', 'B');
+    sideEncoder = new pros::ADIEncoder('C', 'D', true);
 
     // Construct Gyro object
     gyro = new pros::Imu(10);
+
+    gyro->reset();
 
     driver = new pros::Controller(pros::E_CONTROLLER_MASTER);
 
@@ -78,6 +80,8 @@ void Drivetrain::updateDrivetrain()
 
     // Finite State Machine (FSM)
 
+    odometryStep();
+
     switch(mDriveState)
     {
         // The Operator Control state that allows the driver to have open loop control over the drivetrain
@@ -86,15 +90,17 @@ void Drivetrain::updateDrivetrain()
 
             // Setting the x, y and theta components to the joystick values
 
-            this->targetPose->setXComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
-            this->targetPose->setYComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
-            this->targetPose->setThetaComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) * -1);
+            this->targetPose->setXComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+            this->targetPose->setYComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+            this->targetPose->setThetaComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
 
             this->currTime = pros::millis();
 
             moveRobot(this->targetPose);
 
             this->prevTime = this->currTime;
+
+
 
     }
 
@@ -141,8 +147,7 @@ void Drivetrain::moveRobot(Pose* velocityPose)
 
     double a = ((velocityPose->getXComponent() * cos(M_PI_4)) + (velocityPose->getYComponent() * sin(M_PI_4))) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
     double b = ((-velocityPose->getXComponent() * sin(M_PI_4)) + (velocityPose->getYComponent() * cos(M_PI_4))) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
-    double c = (Drivetrain::DRIVE_RADIUS * velocityPose->getThetaComponent()) * 60.0 / (Drivetrain::WHEEL_RADIUS * 2 * M_PI);
-
+    double c = (DRIVE_RADIUS * velocityPose->getThetaComponent()) * 60.0 / (WHEEL_RADIUS * 2 * M_PI);
 
     this->rotationVels["rightFront"] = b + c;
     this->rotationVels["leftFront"] = a - c;
@@ -176,8 +181,8 @@ double Drivetrain::getAcceleration(double prevRPM, double requestedRPM)
     double rate = deltaRPM / deltaTime;
 
     return rate;
-
 }
+
 
 std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double> requestedRPM)
 {
@@ -203,7 +208,7 @@ std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double>
 
     // Finding the greatest allowable delta velocity
 
-    greatestDeltaVelocity = this->MOTOR_MAX_ACC * deltaSec;
+    greatestDeltaVelocity = MOTOR_MAX_ACC * deltaSec;
 
     // Calculating the proposed delta velocities for each motor based on the requested acceleration and elapsed time
 
@@ -240,7 +245,7 @@ std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double>
 
     // Get the velCap value used in the ratio
 
-    velCap = std::min(greatestVelocityMagnitude, this->MOTOR_MAX_RPM);
+    velCap = std::min(greatestVelocityMagnitude, MOTOR_MAX_RPM);
 
 
     // Find the greatest requested motor RPM
@@ -273,16 +278,68 @@ std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double>
 
     return finalVelocities;
 
-
-
 }
 
+void Drivetrain::resetGyro()
+{
+    while (this->gyro->is_calibrating())
+    {
+        pros::delay(2000);
+    }
+}
 
 
 void Drivetrain::odometryStep()
 {
 
+
+    // ------------------------------- CALCULATIONS ------------------------------- 
+
+    forwardEncoderRaw = (double)this->forwardEncoder->get_value();
+    sideEncoderRaw = (double)this->sideEncoder->get_value();
+
+    pros::screen::print(pros::E_TEXT_MEDIUM, 3, "forwardEEncoderRaw: : %f", forwardEncoderRaw);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 2, "sideEncoderRaw: : %f", sideEncoderRaw);
+
+    deltaDistForward = ((forwardEncoderRaw - forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
+    deltaDistSide = ((sideEncoderRaw - sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
+
+    headingRaw = (this->gyro->get_heading() * M_PI) / 180.0;
+    deltaHeading = headingRaw - prevHeadingRaw;
+
+    if(deltaHeading == 0.0 ){
+        deltaXLocal = deltaDistSide;
+        deltaYLocal = deltaDistForward;
+    }else{
+        deltaYLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistForward / deltaHeading) + FORWARD_ENCODER_TRACK_RADIUS);
+        deltaXLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistSide / deltaHeading) + SIDE_ENCODER_TRACK_RADIUS);
+    }
+
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 1, "deltaXLocal : %f", deltaXLocal);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 3, "deltaYLocal : %f", deltaYLocal);
+    //When encoder moves left it should be negative
+
+    deltaXGlobal = (deltaXLocal * cos(headingRaw + (deltaHeading/2.0))) + (deltaYLocal * sin(headingRaw + (deltaHeading/2.0)));
+    deltaYGlobal = (-deltaXLocal * sin(headingRaw + (deltaHeading/2.0))) + (deltaYLocal * cos(headingRaw + (deltaHeading/2.0)));
+
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 5, "deltaXGlobal  : %f", deltaXGlobal);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 7, "deltaYGlobal  : %f", deltaYGlobal);
+
+
+    //Update global positions
+    xPoseGlobal += deltaXGlobal;
+    yPoseGlobal += deltaYGlobal;
+
+    forwardEncoderPrevRaw = forwardEncoderRaw;
+    sideEncoderPrevRaw = sideEncoderRaw;
+
+    prevHeadingRaw = headingRaw;
+
+    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", xPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Heading: %f", headingRaw);
 }
+
 
 bool Drivetrain::isSettled(double epsilon)
 {
