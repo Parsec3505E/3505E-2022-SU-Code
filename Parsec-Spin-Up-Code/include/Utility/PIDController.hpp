@@ -1,6 +1,9 @@
 #ifndef PIDCONTROLLER_HPP
 #define PIDCONTROLLER_HPP
 
+#include "iostream"
+#include "api.h"
+
 
 class PIDController
 {
@@ -20,6 +23,12 @@ class PIDController
         double maxOutput;
         double minOutput;
         
+        double prevError;
+        double integral;
+        double integralWindUp;;
+        double deriative;
+
+        double epsilon;
 
     public:
 
@@ -31,9 +40,15 @@ class PIDController
         
         // Set the target value to the PID to reach
         void setTarget(double target);
+
+        // Sets the tolerance of the PID
+        void setEpsilon(double epsilon);
         
         // Step the PID every iteration of the loop
-        double stepPID(double input);
+        double stepPID(double input, double deltaTime);
+
+        // Determines if the PID is settled
+        bool isSettled();
     
 
 };

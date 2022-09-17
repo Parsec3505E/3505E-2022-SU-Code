@@ -15,6 +15,7 @@ class PosePID
         PIDController* thetaPID;
 
         Pose* targetPose;
+        Pose* outputPose;
 
     public:
 
@@ -22,10 +23,10 @@ class PosePID
         PosePID();
         
         // Set the target value to the PID to reach
-        void setTarget(Pose target);
+        void setTarget(Pose* target);
         
         // Step the PID every iteration of the loop
-        void stepPID(Pose input);
+        Pose* stepPID(Pose* input, double deltaTime);
     
 
 };

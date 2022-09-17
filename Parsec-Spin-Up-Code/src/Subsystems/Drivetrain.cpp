@@ -100,6 +100,16 @@ void Drivetrain::updateDrivetrain()
 
             this->prevTime = this->currTime;
 
+        case PID:
+
+
+            posePID->setTarget(this->targetPose);
+            
+            this->currTime = pros::millis();
+
+            moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
+
+            this->prevTime = this->currTime;
 
 
     }
@@ -292,7 +302,6 @@ void Drivetrain::resetGyro()
 void Drivetrain::odometryStep()
 {
 
-
     // ------------------------------- CALCULATIONS ------------------------------- 
 
     forwardEncoderRaw = (double)this->forwardEncoder->get_value();
@@ -329,6 +338,10 @@ void Drivetrain::odometryStep()
     //Update global positions
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;
+
+    robotPose->setXComponent(xPoseGlobal);
+    robotPose->setYComponent(yPoseGlobal);
+    robotPose->setThetaComponent(headingRaw);
 
     forwardEncoderPrevRaw = forwardEncoderRaw;
     sideEncoderPrevRaw = sideEncoderRaw;
