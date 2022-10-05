@@ -10,12 +10,16 @@
 class Shooter
 {
 
-    private:
-
-        double RPM;
+    public:
 
         // Shooter States
-        enum ShooterStates{};
+        enum ShooterStates{CLOSED_LOOP, DISABLED};
+
+    private:
+
+        ShooterStates mShooterState;
+
+        double RPM;
 
         PIDController* rpmPID;
 

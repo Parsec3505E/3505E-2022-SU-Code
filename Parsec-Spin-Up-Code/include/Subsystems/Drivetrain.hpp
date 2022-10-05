@@ -128,6 +128,10 @@ class Drivetrain
 
         void resetGyro();
 
+        void driveToPoint(double x, double y, double heading);
+        
+        void turnToPoint(double x, double y);
+
     private:
 
         Pose getRobotPose();

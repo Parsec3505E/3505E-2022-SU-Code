@@ -9,23 +9,26 @@
 Drivetrain::Drivetrain()
 {
     // Construct the Pose/PosePID objects
-    robotPose = new Pose(Vector(0, 0), 0);
-    velocityPose = new Pose(Vector(0, 0), 0);
-    targetPose = new Pose(Vector(0, 0), 0);
+    robotPose = new Pose(Vector(0.0, 0.0), 0.0);
+    velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
+    targetPose = new Pose(Vector(this->robotPose->getXComponent(), this->robotPose->getYComponent()), 90);
 
+    
     posePID = new PosePID();
+
+    posePID->setTarget(this->targetPose);
 
     // Construct the Motor objects
     rightFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightBack = new pros::Motor(1, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftFront = new pros::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
@@ -33,7 +36,7 @@ Drivetrain::Drivetrain()
     sideEncoder = new pros::ADIEncoder('C', 'D', true);
 
     // Construct Gyro object
-    gyro = new pros::Imu(10);
+    gyro = new pros::Imu(1);
 
     gyro->reset();
 
@@ -90,6 +93,7 @@ void Drivetrain::updateDrivetrain()
 
             // Setting the x, y and theta components to the joystick values
 
+             pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
             this->targetPose->setXComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
             this->targetPose->setYComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
             this->targetPose->setThetaComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
@@ -100,16 +104,27 @@ void Drivetrain::updateDrivetrain()
 
             this->prevTime = this->currTime;
 
+            break;
+
         case PID:
 
+            this->targetPose->setXComponent(this->robotPose->getXComponent());
+            this->targetPose->setXComponent(this->robotPose->getYComponent());
+            this->targetPose->setThetaComponent(1.571);
 
-            posePID->setTarget(this->targetPose);
-            
+
+
+             pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
+            // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
+                
             this->currTime = pros::millis();
 
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
+
             this->prevTime = this->currTime;
+
+            break;
 
 
     }
@@ -137,7 +152,9 @@ Drivetrain::DrivetrainStates Drivetrain::getState()
 
 void Drivetrain::setState(DrivetrainStates state)
 {
+
     mDriveState = state;
+
 }
 
 Pose Drivetrain::getRobotPose()
@@ -294,7 +311,7 @@ void Drivetrain::resetGyro()
 {
     while (this->gyro->is_calibrating())
     {
-        pros::delay(2000);
+        pros::delay(4000);
     }
 }
 
@@ -313,7 +330,7 @@ void Drivetrain::odometryStep()
     deltaDistForward = ((forwardEncoderRaw - forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
     deltaDistSide = ((sideEncoderRaw - sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
 
-    headingRaw = (this->gyro->get_heading() * M_PI) / 180.0;
+    headingRaw = headingRaw + 1;
     deltaHeading = headingRaw - prevHeadingRaw;
 
     if(deltaHeading == 0.0 ){
@@ -339,8 +356,8 @@ void Drivetrain::odometryStep()
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;
 
-    robotPose->setXComponent(xPoseGlobal);
-    robotPose->setYComponent(yPoseGlobal);
+    robotPose->setXComponent(fabs(xPoseGlobal));
+    robotPose->setYComponent(fabs(yPoseGlobal));
     robotPose->setThetaComponent(headingRaw);
 
     forwardEncoderPrevRaw = forwardEncoderRaw;
@@ -349,13 +366,31 @@ void Drivetrain::odometryStep()
     prevHeadingRaw = headingRaw;
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", xPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
     pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Heading: %f", headingRaw);
 }
 
 
 bool Drivetrain::isSettled(double epsilon)
 {
+
+}
+
+void Drivetrain::driveToPoint(double x, double y, double heading)
+{
+    this->targetPose->setXComponent(x);
+    this->targetPose->setYComponent(y);
+    this->targetPose->setThetaComponent(heading);
+
+}
+
+void Drivetrain::turnToPoint(double x, double y)
+{
+    double heading = atan2(y - this->robotPose->getYComponent(), x - this->robotPose->getXComponent());
+
+    this->targetPose->setXComponent(this->robotPose->getXComponent());
+    this->targetPose->setYComponent(this->robotPose->getYComponent());
+    this->targetPose->setThetaComponent(heading);
 
 }
 

@@ -2,35 +2,59 @@
 
 PosePID::PosePID()
 {
-    xPID = new PIDController(0, 0, 0);
-    yPID = new PIDController(0, 0, 0);
-    thetaPID = new PIDController(0, 0, 0);
+    this->xPID = new PIDController(0.1, 0.0, 0.0);
+    this->yPID = new PIDController(0.1, 0.0, 0.0);
+    this->thetaPID = new PIDController(0.05, 0.0, 0.0);
 
-    targetPose = new Pose(Vector(0, 0), 0);
-    outputPose = new Pose(Vector(0, 0), 0);
+    xPID->setEpsilon(2.0);
+    yPID->setEpsilon(2.0);
+    thetaPID->setEpsilon(5);
+
+    targetPose = new Pose(Vector(0.0, 0.0), 0.0);
+    outputPose = new Pose(Vector(0.0, 0.0), 0.0);
+
 }
 
 
 void PosePID::setTarget(Pose* target)
 {
 
-    this->targetPose->setXComponent(target->getXComponent());
-    this->targetPose->setYComponent(target->getYComponent());
-    this->targetPose->setThetaComponent(target->getThetaComponent());
+    targetPose->setXComponent(target->getXComponent());
+    targetPose->setYComponent(target->getYComponent());
+    targetPose->setThetaComponent(target->getThetaComponent());
 
 }
 
+double PosePID::getTarget()
+{
+
+    return this->targetPose->getThetaComponent();
+
+}
+
+
 Pose* PosePID::stepPID(Pose* input, double deltaTime)
 {
-    xPID->setTarget(this->targetPose->getXComponent());
-    double xOutput = xPID->stepPID(input->getXComponent(), deltaTime);
-    yPID->setTarget(this->targetPose->getYComponent());
-    double yOutput = yPID->stepPID(input->getYComponent(), deltaTime);
-    thetaPID->setTarget(this->targetPose->getThetaComponent());
-    double thetaOutput = thetaPID->stepPID(input->getThetaComponent(), deltaTime);
 
-    outputPose->setXComponent(xOutput);
-    outputPose->setYComponent(yOutput);
+    // xPID->setTarget(this->targetPose->getXComponent());
+    // double xOutput = xPID->stepPID(input->getXComponent(), deltaTime) * 2;
+    // outputPose->setXComponent(xOutput);
+    // xPID->isSettled();
+
+    // yPID->setTarget(this->targetPose->getYComponent());
+    // double yOutput = yPID->stepPID(input->getYComponent(), deltaTime) * 2;
+    // outputPose->setYComponent(yOutput);
+    // yPID->isSettled();
+
+    thetaPID->setTarget(targetPose->getThetaComponent());
+    double thetaOutput = thetaPID->stepPID(input->getThetaComponent(), deltaTime);
     outputPose->setThetaComponent(thetaOutput);
+    thetaPID->isSettled();
+
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "x: %f", xOutput);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 6, "y: %f", yOutput);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "theta: %f", thetaOutput);
+
+    return outputPose;
     
 }

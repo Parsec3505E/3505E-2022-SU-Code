@@ -7,15 +7,15 @@ PIDController::PIDController(double kP, double kI, double kD)
     this->kI = kI;
     this->kD = kD;
 
-    this->target = 0;
-    this->error = 0;
-    this->errorSum = 0;
-    this->lastError = 0;
+    this->target = 0.0;
+    this->error = 0.0;
+    this->errorSum = 0.0;
+    this->lastError = 0.0;
 
-    this->integralWindUp = 10;
+    this->integralWindUp = 10.0;
 
-    this->maxOutput = 0;
-    this->minOutput = 0;
+    this->maxOutput = 0.0;
+    this->minOutput = 0.0;
 }
 
 void PIDController::setConstants(double kP, double kI, double kD)
@@ -40,18 +40,22 @@ double PIDController::stepPID(double input, double deltaTime)
 {
     this->error = this->target - input;
 
-    if (fabs(error) > this->integralWindUp)
-    {
-        this->integral = 0;
-    }
-    else
-    {
-        this->integral = (this->integral + this->error) * deltaTime;
-    }
+    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "theta error: %f", input);
 
-    this->deriative = (this->error - this->prevError) / deltaTime;
+    // if (fabs(error) > this->integralWindUp)
+    // {
+    //     this->integral = 0.0;
+    // }
+    // else
+    // {
+    //     this->integral = (this->integral + this->error) * deltaTime;
+    // }
 
-    double output = (this->kP * this->error) + (this->kI * this->integral) + (this->kD * this->deriative);
+    // this->deriative = (this->error - this->prevError) / deltaTime;
+
+    double output = (this->kP * this->error);
+
+    //+ (this->kI * this->integral) + (this->kD * this->deriative);
 
     return output;
 }
@@ -60,9 +64,10 @@ bool PIDController::isSettled()
 {
     bool isSettled;
 
-    if (this->error > -this->epsilon && this->error < this->epsilon)
+    if (this->error > this->target-this->epsilon && this->error < this->target + this->epsilon)
     {
         isSettled = true;
+        //this->error = 0;
     }
     else
     {

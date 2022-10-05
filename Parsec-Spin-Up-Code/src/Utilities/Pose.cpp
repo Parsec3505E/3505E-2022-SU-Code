@@ -1,4 +1,9 @@
 #include "utility/Pose.hpp"
+#include "Subsystems/Drivetrain.hpp"
+#include "Utility/Pose.hpp"
+#include "pros/misc.h"
+#include "pros/screen.h"
+#include <iostream>
 
 Pose::Pose(Vector vector, double posTheta)
 {
@@ -19,7 +24,9 @@ void Pose::setYComponent(double y)
 
 void Pose::setThetaComponent(double theta)
 {
+
     this->theta = theta;
+
 }
 
 double Pose::getXComponent()
@@ -34,5 +41,6 @@ double Pose::getYComponent()
 
 double Pose::getThetaComponent()
 {
+
     return this->theta;
 }

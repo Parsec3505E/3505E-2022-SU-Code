@@ -1,5 +1,8 @@
 #include "main.h"
 #include "Subsystems/Drivetrain.hpp"
+#include "pros/rtos.h"
+#include "pros/rtos.hpp"
+
 
 
 /**
@@ -60,6 +63,20 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
+
+// void controlFunction(void* param)
+// {
+
+// 	while(true)
+// 	{
+// 		drive.updateDrivetrain();
+// 	}
+
+// }
+
+// pros::Task controlTask(controlFunction, (void*)"CONTROL TASK", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "My Task");
+
 void autonomous() {}
 
 /**
@@ -75,16 +92,21 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+
+
 void opcontrol() {
+
 	Drivetrain drive;
+	
 	drive.resetGyro();
+
+	drive.setState(Drivetrain::DrivetrainStates::PID);
 
 	while (true) {
 
-		drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
-
 		drive.updateDrivetrain();
 
-		pros::delay(5);
+		pros::delay(10);
 	}
 }
