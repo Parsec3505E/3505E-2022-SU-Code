@@ -29,6 +29,8 @@ class PosePID
         
         // Step the PID every iteration of the loop
         Pose* stepPID(Pose* input, double deltaTime);
+
+        bool isSettled();
     
 
 };

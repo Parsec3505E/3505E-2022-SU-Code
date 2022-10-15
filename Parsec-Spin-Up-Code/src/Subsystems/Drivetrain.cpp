@@ -11,7 +11,7 @@ Drivetrain::Drivetrain()
     // Construct the Pose/PosePID objects
     robotPose = new Pose(Vector(0.0, 0.0), 0.0);
     velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
-    targetPose = new Pose(Vector(this->robotPose->getXComponent(), this->robotPose->getYComponent()), 90);
+    targetPose = new Pose(Vector(this->robotPose->getXComponent(), this->robotPose->getYComponent()), 0);
 
     
     posePID = new PosePID();
@@ -76,6 +76,9 @@ Drivetrain::Drivetrain()
 
     prevTime = pros::millis();
     
+    this->targetPose->setXComponent(24);
+    this->targetPose->setYComponent(48);
+    this->targetPose->setThetaComponent(1.571);
 }
 
 void Drivetrain::updateDrivetrain()
@@ -107,20 +110,20 @@ void Drivetrain::updateDrivetrain()
             break;
 
         case PID:
+            posePID->setTarget(targetPose);
 
-            this->targetPose->setXComponent(this->robotPose->getXComponent());
-            this->targetPose->setXComponent(this->robotPose->getYComponent());
-            this->targetPose->setThetaComponent(1.571);
-
-
-
-             pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
+             //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
             // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
                 
             this->currTime = pros::millis();
 
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
+            if (posePID->isSettled())
+            {
+                this->targetPose->setThetaComponent(this->robotPose->getThetaComponent());
+                //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "done");   
+            }
 
             this->prevTime = this->currTime;
 
@@ -330,7 +333,7 @@ void Drivetrain::odometryStep()
     deltaDistForward = ((forwardEncoderRaw - forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
     deltaDistSide = ((sideEncoderRaw - sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
 
-    headingRaw = headingRaw + 1;
+    headingRaw = (gyro->get_heading() * M_PI) / 180;
     deltaHeading = headingRaw - prevHeadingRaw;
 
     if(deltaHeading == 0.0 ){
@@ -356,8 +359,8 @@ void Drivetrain::odometryStep()
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;
 
-    robotPose->setXComponent(fabs(xPoseGlobal));
-    robotPose->setYComponent(fabs(yPoseGlobal));
+    robotPose->setXComponent(xPoseGlobal);
+    robotPose->setYComponent(yPoseGlobal);
     robotPose->setThetaComponent(headingRaw);
 
     forwardEncoderPrevRaw = forwardEncoderRaw;
@@ -366,8 +369,8 @@ void Drivetrain::odometryStep()
     prevHeadingRaw = headingRaw;
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", xPoseGlobal);
-    //pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Heading: %f", headingRaw);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", headingRaw);
 }
 
 
