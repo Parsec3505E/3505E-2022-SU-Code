@@ -77,8 +77,8 @@ Drivetrain::Drivetrain()
     prevTime = pros::millis();
     
     this->targetPose->setXComponent(24);
-    this->targetPose->setYComponent(48);
-    this->targetPose->setThetaComponent(1.571);
+    this->targetPose->setYComponent(0);
+    this->targetPose->setThetaComponent(0);
 }
 
 void Drivetrain::updateDrivetrain()
@@ -116,6 +116,10 @@ void Drivetrain::updateDrivetrain()
             // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
                 
             this->currTime = pros::millis();
+
+            pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
+            pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
@@ -330,11 +334,11 @@ void Drivetrain::odometryStep()
     pros::screen::print(pros::E_TEXT_MEDIUM, 3, "forwardEEncoderRaw: : %f", forwardEncoderRaw);
     pros::screen::print(pros::E_TEXT_MEDIUM, 2, "sideEncoderRaw: : %f", sideEncoderRaw);
 
-    deltaDistForward = ((forwardEncoderRaw - forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
-    deltaDistSide = ((sideEncoderRaw - sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
+    deltaDistForward = ((forwardEncoderRaw - this->forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
+    deltaDistSide = ((sideEncoderRaw - this->sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
 
     headingRaw = (gyro->get_heading() * M_PI) / 180;
-    deltaHeading = headingRaw - prevHeadingRaw;
+    deltaHeading = headingRaw - this->prevHeadingRaw;
 
     if(deltaHeading == 0.0 ){
         deltaXLocal = deltaDistSide;
@@ -359,18 +363,16 @@ void Drivetrain::odometryStep()
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;
 
-    robotPose->setXComponent(xPoseGlobal);
-    robotPose->setYComponent(yPoseGlobal);
-    robotPose->setThetaComponent(headingRaw);
+    this->robotPose->setXComponent(xPoseGlobal);
+    this->robotPose->setYComponent(yPoseGlobal);
+    this->robotPose->setThetaComponent(headingRaw);
 
-    forwardEncoderPrevRaw = forwardEncoderRaw;
-    sideEncoderPrevRaw = sideEncoderRaw;
+    this->forwardEncoderPrevRaw = forwardEncoderRaw;
+    this->sideEncoderPrevRaw = sideEncoderRaw;
 
-    prevHeadingRaw = headingRaw;
+    this->prevHeadingRaw = headingRaw;
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", xPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", yPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", headingRaw);
+    
 }
 
 
