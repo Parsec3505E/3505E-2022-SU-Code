@@ -37,12 +37,12 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
 {
 
     xPID->setTarget(this->targetPose->getXComponent());
-    double xOutput = xPID->stepPID(input->getXComponent(), deltaTime) * 2;
+    double xOutput = xPID->stepPID(input->getXComponent(), deltaTime);
     outputPose->setXComponent(xOutput);
     xPID->isSettled();
 
     yPID->setTarget(this->targetPose->getYComponent());
-    double yOutput = yPID->stepPID(input->getYComponent(), deltaTime) * 2;
+    double yOutput = yPID->stepPID(input->getYComponent(), deltaTime);
     outputPose->setYComponent(yOutput);
     yPID->isSettled();
 
