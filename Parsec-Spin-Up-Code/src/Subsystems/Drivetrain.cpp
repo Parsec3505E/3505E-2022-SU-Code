@@ -40,7 +40,6 @@ Drivetrain::Drivetrain()
 
     gyro->reset();
 
-    driver = new pros::Controller(pros::E_CONTROLLER_MASTER);
 
     // Initialize all last motor vels to 0
 
@@ -81,7 +80,7 @@ Drivetrain::Drivetrain()
     this->targetPose->setThetaComponent(1.571);
 }
 
-void Drivetrain::updateDrivetrain()
+void Drivetrain::updateDrivetrain(pros::Controller* driver;)
 {
 
     // Finite State Machine (FSM)

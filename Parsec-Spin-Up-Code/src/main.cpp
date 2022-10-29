@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Subsystems/Drivetrain.hpp"
+#include "Subsystems/IntakeRoller.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
@@ -97,15 +98,19 @@ void autonomous() {}
 
 void opcontrol() {
 
+	
 	Drivetrain drive;
+	IntakeRoller intake;
 	
 	drive.resetGyro();
 
-	drive.setState(Drivetrain::DrivetrainStates::PID);
+	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
+	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 
 	while (true) {
 
-		drive.updateDrivetrain();
+		drive.updateDrivetrain(new pros::Controller(pros::E_CONTROLLER_MASTER));
+		intake.updateIntake(new pros::Controller(pros::E_CONTROLLER_MASTER));
 
 		pros::delay(10);
 	}

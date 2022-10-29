@@ -1,5 +1,5 @@
-#ifndef DRIVETRAIN_HPP
-#define DRIVETRAIN_HPP
+#ifndef INTAKE_HPP
+#define INTAKE_HPP
 
 
 #include "api.h"
@@ -9,10 +9,10 @@
 class IntakeRoller
 {
 
-    private:
+    public:
 
         // IntakeRoller States
-        enum IntakeStates{};
+        enum IntakeStates{OPERATOR_CONTROL};
         enum RollerStates{};
 
         PIDController* rollerPID;
@@ -25,21 +25,22 @@ class IntakeRoller
         // Roller Colour Sensor Declarations
         pros::Optical* colourSensor;
 
-    public:
+        bool intake_state;
+
+        IntakeStates mIntakeState;
+
 
         // IntakeRoller Constructor
         IntakeRoller();
 
         // Update the state of the Intake
-        void updateIntake();
+        void updateIntake(pros::Controller* driver);
 
         // Update the state of the Roller
         void updateRoller();
 
         enum IntakeStates getIntakeState();
         enum RollerStates getRollerState();
-
-    private:
 
         // Set the state of the intake
         void setIntakeState(enum IntakeStates);

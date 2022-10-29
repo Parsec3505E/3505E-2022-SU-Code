@@ -52,8 +52,6 @@ class Drivetrain
         // Drivetrain Gyro Declaration
         pros::IMU* gyro;
 
-        pros::Controller* driver;
-
         std::map<std::string, double> requestedAcc;
         std::map<std::string, double> proposedMotorVelocities;
         std::map<std::string, double> proposedDeltaVelocities;
@@ -118,7 +116,7 @@ class Drivetrain
         Drivetrain();
 
         // Update the state of the Drivetrain
-        void updateDrivetrain();
+        void updateDrivetrain(pros::Controller* driver);
 
         // Set the state of the Drivetrain
         void setState(enum DrivetrainStates);

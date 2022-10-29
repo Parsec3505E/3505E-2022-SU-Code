@@ -1,4 +1,5 @@
 #include "Subsystems/IntakeRoller.hpp"
+#include "pros/misc.h"
 
 
 IntakeRoller::IntakeRoller()
@@ -8,6 +9,8 @@ IntakeRoller::IntakeRoller()
     colourSensor = new pros::Optical(12);
 
     rollerPID = new PIDController(0, 0, 0);
+
+    this->intake_state = false;
 
 }
 
@@ -21,8 +24,33 @@ enum RollerStates
 
 };
 
-void IntakeRoller::updateIntake()
+void IntakeRoller::updateIntake(pros::Controller* driver)
 {
+
+    switch(mIntakeState)
+    {
+        // The Operator Control state that allows the driver to have open loop control over the drivetrain
+
+        case OPERATOR_CONTROL:
+
+            if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN) && this->intake_state)
+            {
+                intakeRollerMotor->move_voltage(90);
+                this->intake_state = true;
+            }
+            else if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP) && this->intake_state)
+            {
+                intakeRollerMotor->move_voltage(127);
+                this->intake_state = true;
+            }
+            else if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))
+            {
+                intakeRollerMotor->move_voltage(0);
+                this->intake_state = true;
+            }
+
+            break;
+    }
 
 }
 
