@@ -5,8 +5,8 @@
 IntakeRoller::IntakeRoller()
 {
 
-    intakeRollerMotor = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    colourSensor = new pros::Optical(12);
+    intakeRollerMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    //colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
 
@@ -33,20 +33,17 @@ void IntakeRoller::updateIntake(pros::Controller* driver)
 
         case OPERATOR_CONTROL:
 
-            if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN) && this->intake_state)
+            if(driver->get_digital(pros::E_CONTROLLER_DIGITAL_L1))
             {
-                intakeRollerMotor->move_voltage(90);
-                this->intake_state = true;
+                intakeRollerMotor->move_velocity(600);
             }
-            else if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP) && this->intake_state)
+            else if(driver->get_digital(pros::E_CONTROLLER_DIGITAL_L2))
             {
-                intakeRollerMotor->move_voltage(127);
-                this->intake_state = true;
+                intakeRollerMotor->move_velocity(-600);
             }
-            else if(driver->get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))
+            else
             {
                 intakeRollerMotor->move_voltage(0);
-                this->intake_state = true;
             }
 
             break;

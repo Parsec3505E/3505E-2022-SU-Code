@@ -19,16 +19,16 @@ Drivetrain::Drivetrain()
     posePID->setTarget(this->targetPose);
 
     // Construct the Motor objects
-    rightFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightFront = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     rightBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftFront = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
@@ -36,7 +36,7 @@ Drivetrain::Drivetrain()
     sideEncoder = new pros::ADIEncoder('C', 'D', true);
 
     // Construct Gyro object
-    gyro = new pros::Imu(1);
+    gyro = new pros::Imu(12);
 
     gyro->reset();
 
@@ -80,7 +80,7 @@ Drivetrain::Drivetrain()
     this->targetPose->setThetaComponent(0);
 }
 
-void Drivetrain::updateDrivetrain(pros::Controller* driver;)
+void Drivetrain::updateDrivetrain(pros::Controller* driver)
 {
 
     // Finite State Machine (FSM)

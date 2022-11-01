@@ -1,5 +1,5 @@
-#ifndef DRIVETRAIN_HPP
-#define DRIVETRAIN_HPP
+#ifndef SHOOTER_HPP
+#define SHOOTER_HPP
 
 
 #include "api.h"
@@ -13,7 +13,7 @@ class Shooter
     public:
 
         // Shooter States
-        enum ShooterStates{CLOSED_LOOP, DISABLED};
+        enum ShooterStates{CLOSED_LOOP, OPERATOR_CONTROL, DISABLED};
 
     private:
 
@@ -42,11 +42,11 @@ class Shooter
         Shooter();
 
         // Update the state of the Shooter
-        void updateShooter();
+        void updateShooter(pros::Controller* driver);
 
         enum ShooterStates getState();
 
-    private:
+    //private:
 
         // Set the state of the Shooter
         void setState(enum ShooterStates);

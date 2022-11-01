@@ -3,8 +3,8 @@
 Shooter::Shooter()
 {
 
-    shooterPwr1 = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterPwr2 = new pros::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr1 = new pros::Motor(1, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr2 = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     shooterInd = new pros::Motor(8, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
@@ -16,7 +16,7 @@ Shooter::Shooter()
 
 }
 
-void Shooter::updateShooter()
+void Shooter::updateShooter(pros::Controller* driver)
 {
 
     switch (mShooterState)
@@ -26,6 +26,21 @@ void Shooter::updateShooter()
 
         // Put closed loop code for the shooter here
         
+        break;
+
+    case OPERATOR_CONTROL:
+        if(driver->get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        {
+            shooterPwr1->move_velocity(1000);
+            shooterPwr2->move_velocity(1000);
+
+        }
+        else
+        {
+            shooterPwr1->move_velocity(0);
+            shooterPwr2->move_velocity(0);
+        }
+
         break;
     
     case DISABLED:

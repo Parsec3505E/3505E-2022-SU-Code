@@ -1,6 +1,7 @@
 #include "main.h"
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
+#include "Subsystems/Shooter.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
@@ -101,16 +102,23 @@ void opcontrol() {
 	
 	Drivetrain drive;
 	IntakeRoller intake;
+	Shooter shooter;
+
+	pros::Controller* driver;
+	driver = new pros::Controller(pros::E_CONTROLLER_MASTER);
+
 	
 	drive.resetGyro();
 
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 
 	while (true) {
 
-		drive.updateDrivetrain(new pros::Controller(pros::E_CONTROLLER_MASTER));
-		intake.updateIntake(new pros::Controller(pros::E_CONTROLLER_MASTER));
+		drive.updateDrivetrain(driver);
+		intake.updateIntake(driver);
+		shooter.updateShooter(driver);
 
 		pros::delay(10);
 	}
