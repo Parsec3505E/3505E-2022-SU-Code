@@ -2,6 +2,7 @@
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
+#include "Subsystems/Expansion.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
@@ -104,6 +105,7 @@ void opcontrol() {
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
+	Expansion expansion;
 
 
 
@@ -113,6 +115,7 @@ void opcontrol() {
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	expansion.setExpansion(Expansion::ExpansionStates::OPERATOR_CONTROL);
 
 	while (true) {
 

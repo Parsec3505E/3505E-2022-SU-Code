@@ -35,7 +35,7 @@ void Shooter::updateShooter(pros::Controller driver)
             shooterPwr2->move_velocity(1000);
 
         }
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A))
         {
             shooterInd->move_velocity(70);
 

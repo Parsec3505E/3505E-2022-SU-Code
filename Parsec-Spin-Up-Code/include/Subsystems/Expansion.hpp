@@ -1,5 +1,5 @@
-#ifndef DRIVETRAIN_HPP
-#define DRIVETRAIN_HPP
+#ifndef EXPANSION_HPP
+#define EXPANSION_HPP
 
 
 #include "api.h"
@@ -8,11 +8,12 @@
 
 class Expansion
 {
-
+    public:
+        enum ExpansionStates{CLOSED_LOOP, OPERATOR_CONTROL, DISABLED};
     private:
 
         // Expansion States
-        enum ExpansionStates{};
+        
 
         ExpansionStates mExpansionState;
 
@@ -24,13 +25,13 @@ class Expansion
         Expansion();
 
         // Update the state of the Expansion
-        void updateExpansion();
+        void updateExpansion(pros::Controller driver);
 
         enum ExpansionStates getState();
 
-    private:
+    //private:
 
-        void setState(enum ExpansionStates);
+        void setExpansion(enum ExpansionStates);
 
 
 
