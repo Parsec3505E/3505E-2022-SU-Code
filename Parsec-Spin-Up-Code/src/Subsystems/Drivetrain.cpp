@@ -366,6 +366,8 @@ void Drivetrain::odometryStep()
     this->robotPose->setYComponent(yPoseGlobal);
     this->robotPose->setThetaComponent(headingRaw);
 
+    
+
     this->forwardEncoderPrevRaw = forwardEncoderRaw;
     this->sideEncoderPrevRaw = sideEncoderRaw;
 
