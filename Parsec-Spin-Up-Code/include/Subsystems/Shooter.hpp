@@ -42,7 +42,7 @@ class Shooter
         Shooter();
 
         // Update the state of the Shooter
-        void updateShooter(pros::Controller* driver);
+        void updateShooter(pros::Controller driver);
 
         enum ShooterStates getState();
 

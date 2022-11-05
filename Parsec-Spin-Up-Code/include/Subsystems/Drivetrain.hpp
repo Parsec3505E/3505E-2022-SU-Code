@@ -116,7 +116,7 @@ class Drivetrain
         Drivetrain();
 
         // Update the state of the Drivetrain
-        void updateDrivetrain(pros::Controller* driver);
+        void updateDrivetrain(pros::Controller driver);
 
         // Set the state of the Drivetrain
         void setState(enum DrivetrainStates);

@@ -5,77 +5,71 @@
 IntakeRoller::IntakeRoller()
 {
 
-    intakeRollerMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     //colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
 
-    this->intake_state = false;
-
 }
 
-enum IntakeStates
+
+void IntakeRoller::updateIntake(pros::Controller driver)
 {
 
-};
-
-enum RollerStates
+switch (mIntakeState)
 {
 
-};
 
-void IntakeRoller::updateIntake(pros::Controller* driver)
-{
+    case OPERATOR_CONTROL:
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        {
+            intakeMotor->move_velocity(600);
+            intakeMotor->move_velocity(600);
 
-    switch(mIntakeState)
-    {
-        // The Operator Control state that allows the driver to have open loop control over the drivetrain
+        }
+        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        {
+            intakeMotor->move_velocity(-600);
+            intakeMotor->move_velocity(-600);
+        }
+        else
+        {
+            intakeMotor->move_velocity(0);
+            intakeMotor->move_velocity(0);
+        }
 
-        case OPERATOR_CONTROL:
+        break;
+    
 
-            if(driver->get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-            {
-                intakeRollerMotor->move_velocity(600);
-            }
-            else if(driver->get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-            {
-                intakeRollerMotor->move_velocity(-600);
-            }
-            else
-            {
-                intakeRollerMotor->move_voltage(0);
-            }
-
-            break;
     }
 
 }
 
-void IntakeRoller::updateRoller()
+// void IntakeRoller::updateRoller()
+// {
+
+// }
+
+
+// void IntakeRoller::setRollerState(enum RollerStates)
+// {
+
+// }
+
+void IntakeRoller::setIntakeState(IntakeStates intakeState)
 {
-
-}
-
-
-void IntakeRoller::setIntakeState(enum IntakeStates)
-{
-
-}
-
-void IntakeRoller::setRollerState(enum RollerStates)
-{
-
+    mIntakeState = intakeState;
 }
 
 enum IntakeRoller::IntakeStates IntakeRoller::getIntakeState()
 {
-
+    return mIntakeState;
 }
 
-enum IntakeRoller::RollerStates IntakeRoller::getRollerState()
-{
+// enum IntakeRoller::RollerStates IntakeRoller::getRollerState()
+// {
 
-}
+// }
 
 bool IntakeRoller::isSettled(double epsilon)
 {

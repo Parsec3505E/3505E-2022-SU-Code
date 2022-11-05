@@ -22,7 +22,7 @@ Drivetrain::Drivetrain()
     rightFront = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(2, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	leftFront = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
@@ -80,7 +80,7 @@ Drivetrain::Drivetrain()
     this->targetPose->setThetaComponent(0);
 }
 
-void Drivetrain::updateDrivetrain(pros::Controller* driver)
+void Drivetrain::updateDrivetrain(pros::Controller driver)
 {
 
     // Finite State Machine (FSM)
@@ -96,9 +96,9 @@ void Drivetrain::updateDrivetrain(pros::Controller* driver)
             // Setting the x, y and theta components to the joystick values
 
              pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
-            this->targetPose->setXComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-            this->targetPose->setYComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
-            this->targetPose->setThetaComponent(driver->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
+            this->targetPose->setXComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
+            this->targetPose->setYComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+            this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
 
             this->currTime = pros::millis();
 

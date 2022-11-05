@@ -24,6 +24,8 @@
  * E_CONTROLLER_MASTER is pedantically correct within the PROS styleguide, but
  * not convienent for most student programmers.
  */
+#include "pros/misc.h"
+#include "pros/misc.hpp"
 #define PROS_USE_SIMPLE_NAMES
 
 /**
@@ -67,6 +69,9 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+
+extern pros::Controller driver(pros::E_CONTROLLER_MASTER);
+
 #ifdef __cplusplus
 }
 #endif

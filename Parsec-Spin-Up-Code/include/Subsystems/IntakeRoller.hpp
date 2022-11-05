@@ -13,19 +13,18 @@ class IntakeRoller
 
         // IntakeRoller States
         enum IntakeStates{OPERATOR_CONTROL};
-        enum RollerStates{};
+        // enum RollerStates{};
 
         PIDController* rollerPID;
 
         // IntakeRoller Motor Declarations
-        pros::Motor* intakeRollerMotor;
+        pros::Motor* intakeMotor;
+
 
         // Roller Sensors
 
         // Roller Colour Sensor Declarations
-        pros::Optical* colourSensor;
-
-        bool intake_state;
+        // pros::Optical* colourSensor;
 
         IntakeStates mIntakeState;
 
@@ -34,19 +33,19 @@ class IntakeRoller
         IntakeRoller();
 
         // Update the state of the Intake
-        void updateIntake(pros::Controller* driver);
+        void updateIntake(pros::Controller driver);
 
         // Update the state of the Roller
-        void updateRoller();
+        // void updateRoller();
 
         enum IntakeStates getIntakeState();
-        enum RollerStates getRollerState();
+        // enum RollerStates getRollerState();
 
         // Set the state of the intake
-        void setIntakeState(enum IntakeStates);
+        void setIntakeState(enum IntakeStates intakeState);
 
         // Set the state of the roller
-        void setRollerState(enum RollerStates);
+        // void setRollerState(enum RollerStates);
 
         bool isSettled(double epsilon);
 };

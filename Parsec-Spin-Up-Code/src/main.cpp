@@ -7,6 +7,7 @@
 
 
 
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -104,11 +105,10 @@ void opcontrol() {
 	IntakeRoller intake;
 	Shooter shooter;
 
-	pros::Controller* driver;
-	driver = new pros::Controller(pros::E_CONTROLLER_MASTER);
+
 
 	
-	drive.resetGyro();
+	//drive.resetGyro();
 
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
