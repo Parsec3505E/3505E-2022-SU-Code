@@ -11,7 +11,7 @@ Drivetrain::Drivetrain()
     // Construct the Pose/PosePID objects
     robotPose = new Pose(Vector(0.0, 0.0), 0.0);
     velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
-    targetPose = new Pose(Vector(this->robotPose->getXComponent(), this->robotPose->getYComponent()), 0);
+    targetPose = new Pose(Vector(0, 0), 90.0);
 
     
     posePID = new PosePID();
@@ -22,7 +22,7 @@ Drivetrain::Drivetrain()
     rightFront = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightBack = new pros::Motor(2, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	leftFront = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
@@ -85,7 +85,7 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
 
     // Finite State Machine (FSM)
 
-    odometryStep();
+    odometryStep(driver);
 
     switch(mDriveState)
     {
@@ -189,7 +189,8 @@ void Drivetrain::moveRobot(Pose* velocityPose)
 
     // Slewing the rotationVels
 
-    std::map<std::string, double> motorVels = slewPose(this->rotationVels);
+    //std::map<std::string, double> motorVels = slewPose(this->rotationVels);
+    std::map<std::string, double> motorVels = this->rotationVels;
 
     // Setting the motor slewed values to the physical motors
 
@@ -315,16 +316,14 @@ std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double>
 
 void Drivetrain::resetGyro()
 {
-    while (this->gyro->is_calibrating())
-    {
-        pros::delay(4000);
-    }
+    this->gyro->tare_heading();
+    pros::delay(50);
 }
 
 
-void Drivetrain::odometryStep()
+void Drivetrain::odometryStep(pros::Controller driver)
 {
-
+    
     // ------------------------------- CALCULATIONS ------------------------------- 
 
     forwardEncoderRaw = (double)this->forwardEncoder->get_value();
@@ -335,10 +334,8 @@ void Drivetrain::odometryStep()
 
     deltaDistForward = ((forwardEncoderRaw - this->forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
     deltaDistSide = ((sideEncoderRaw - this->sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
-
-    headingRaw = (gyro->get_heading() * M_PI) / 180;
+    headingRaw = (gyro->get_heading() * M_PI) / 180.0;
     deltaHeading = headingRaw - this->prevHeadingRaw;
-
     if(deltaHeading == 0.0 ){
         deltaXLocal = deltaDistSide;
         deltaYLocal = deltaDistForward;
@@ -366,12 +363,12 @@ void Drivetrain::odometryStep()
     this->robotPose->setYComponent(yPoseGlobal);
     this->robotPose->setThetaComponent(headingRaw);
 
+    driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
+
     this->forwardEncoderPrevRaw = forwardEncoderRaw;
     this->sideEncoderPrevRaw = sideEncoderRaw;
 
     this->prevHeadingRaw = headingRaw;
-
-    
 }
 
 

@@ -36,6 +36,8 @@ class Shooter
         // Shooter Encoder Declarations
         pros::ADIEncoder* flywheelEncoder;
 
+        bool indexerTrigger = false;
+
     public:
 
         // Shooter Constructor
@@ -59,5 +61,12 @@ class Shooter
 
         double calcShotRPM(double distance);
 };
+
+
+
+typedef struct{
+Shooter shooter;
+} shooter_arg;
+
 
 #endif

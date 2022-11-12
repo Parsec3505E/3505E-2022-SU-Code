@@ -68,19 +68,48 @@ void competition_initialize() {}
  */
 
 
-// void controlFunction(void* param)
-// {
+void controlFunction(void* controlArg)
+{
+    Drivetrain* drive = ((control_arg*)controlArg)->drive;
+    IntakeRoller* intake = ((control_arg*)controlArg)->intake;
+    Shooter* shooter  = ((control_arg*)controlArg)->shooter;
 
-// 	while(true)
-// 	{
-// 		drive.updateDrivetrain();
-// 	}
+	while(true)
+	{
+		drive->updateDrivetrain(driver);
+		intake->updateIntake(driver);
+		shooter->updateShooter(driver);
+	}
 
-// }
+}
 
-// pros::Task controlTask(controlFunction, (void*)"CONTROL TASK", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "My Task");
 
-void autonomous() {}
+
+void autonomous() {
+
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+
+
+
+
+
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -105,21 +134,21 @@ void opcontrol() {
 	IntakeRoller intake;
 	Shooter shooter;
 
-
-
 	
-	//drive.resetGyro();
-
-	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
-	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	drive.resetGyro();
+	//driver.rumble("...");
+	drive.setState(Drivetrain::DrivetrainStates::PID);
+	pros::delay(3000);
+	//driver.rumble("...");
+	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 
 	while (true) {
 
 		drive.updateDrivetrain(driver);
-		intake.updateIntake(driver);
-		shooter.updateShooter(driver);
-
-		pros::delay(10);
+		// intake.updateIntake(driver);
+		// shooter.updateShooter(driver);
+		
+		pros::delay(50);
 	}
 }

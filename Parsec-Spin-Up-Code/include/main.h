@@ -38,6 +38,10 @@
 
 #include "api.h"
 
+#include "Subsystems/Drivetrain.hpp"
+#include "Subsystems/IntakeRoller.hpp"
+#include "Subsystems/Shooter.hpp"
+
 /**
  * You should add more #includes here
  */
@@ -64,6 +68,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct{
+Drivetrain* drive;
+IntakeRoller* intake;
+Shooter* shooter;
+} control_arg;
+
 void autonomous(void);
 void initialize(void);
 void disabled(void);
@@ -71,6 +82,7 @@ void competition_initialize(void);
 void opcontrol(void);
 
 extern pros::Controller driver(pros::E_CONTROLLER_MASTER);
+
 
 #ifdef __cplusplus
 }

@@ -144,7 +144,7 @@ class Drivetrain
 
         std::map<std::string, double> slewPose(std::map<std::string, double> requestedRPM);
 
-        void odometryStep();
+        void odometryStep(pros::Controller driver);
 
         bool isSettled(double epsilon);
 
@@ -152,5 +152,9 @@ class Drivetrain
 
 
 };
+
+typedef struct{
+Drivetrain drive;
+} drive_arg;
 
 #endif

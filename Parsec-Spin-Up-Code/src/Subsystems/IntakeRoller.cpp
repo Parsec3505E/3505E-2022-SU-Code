@@ -21,16 +21,14 @@ switch (mIntakeState)
 
 
     case OPERATOR_CONTROL:
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
-            intakeMotor->move_velocity(600);
-            intakeMotor->move_velocity(600);
+            intakeMotor->move_velocity(680);
 
         }
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
-            intakeMotor->move_velocity(-600);
-            intakeMotor->move_velocity(-600);
+            intakeMotor->move_velocity(-680);
         }
         else
         {

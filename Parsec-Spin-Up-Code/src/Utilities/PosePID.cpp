@@ -4,7 +4,7 @@ PosePID::PosePID()
 {
     this->xPID = new PIDController(0.1, 0.0, 0.0);
     this->yPID = new PIDController(0.1, 0.0, 0.0);
-    this->thetaPID = new PIDController(-0.2, 0.0, -0.1);
+    this->thetaPID = new PIDController(0.8, 0.0, 0.0);
 
     xPID->setEpsilon(2.0);
     yPID->setEpsilon(2.0);
@@ -35,7 +35,7 @@ double PosePID::getTarget()
 
 Pose* PosePID::stepPID(Pose* input, double deltaTime)
 {
-
+/*
     xPID->setTarget(this->targetPose->getXComponent());
     double xOutput = xPID->stepPID(input->getXComponent(), deltaTime);
     outputPose->setXComponent(xOutput);
@@ -45,6 +45,7 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
     double yOutput = yPID->stepPID(input->getYComponent(), deltaTime);
     outputPose->setYComponent(yOutput);
     yPID->isSettled();
+    */
 
     thetaPID->setTarget(targetPose->getThetaComponent());
     double thetaOutput = thetaPID->stepPID(input->getThetaComponent(), deltaTime);

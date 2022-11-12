@@ -49,4 +49,9 @@ class IntakeRoller
 
         bool isSettled(double epsilon);
 };
+
+typedef struct{
+IntakeRoller intake;
+} intake_arg;
+
 #endif
