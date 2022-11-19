@@ -39,9 +39,12 @@
 #include "api.h"
 
 #include "Subsystems/Drivetrain.hpp"
+#include "Subsystems/Expansion.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
 
+
+#include "autonomous.hpp"
 /**
  * You should add more #includes here
  */
@@ -69,11 +72,7 @@
 extern "C" {
 #endif
 
-typedef struct{
-Drivetrain* drive;
-IntakeRoller* intake;
-Shooter* shooter;
-} control_arg;
+
 
 void autonomous(void);
 void initialize(void);

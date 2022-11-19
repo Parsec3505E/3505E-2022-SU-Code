@@ -44,6 +44,9 @@ class IntakeRoller
         // Set the state of the intake
         void setIntakeState(enum IntakeStates intakeState);
 
+        //ENCODER METHODS
+        void resetEncoder();
+
         // Set the state of the roller
         // void setRollerState(enum RollerStates);
 

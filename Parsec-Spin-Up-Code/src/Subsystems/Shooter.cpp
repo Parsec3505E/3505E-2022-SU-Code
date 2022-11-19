@@ -23,10 +23,14 @@ void Shooter::updateShooter(pros::Controller driver)
     {
 
     case CLOSED_LOOP:
+        rpmPID->setTarget(RPM);
 
+        shooterPwr1->move_velocity(shooterPID(RPM));
+        shooterPwr2->move_velocity(shooterPID(RPM));
         // Put closed loop code for the shooter here
         
         break;
+
 
     case OPERATOR_CONTROL:
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
@@ -88,7 +92,15 @@ enum Shooter::ShooterStates Shooter::getState()
 
 void Shooter::setTargetRPM(double RPM)
 {
+    
+}
 
+double Shooter::shooterPID(double targetRPM)
+{
+ 
+    double currentRPM = rpmPID->stepPID(targetRPM, 0.0);
+    rpmPID->isSettled();
+    return currentRPM;
 }
 
 double Shooter::slewRPM(double request)

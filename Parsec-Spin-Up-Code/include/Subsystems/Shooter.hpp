@@ -54,6 +54,8 @@ class Shooter
         void setState(enum ShooterStates);
 
         void setTargetRPM(double RPM);
+        
+        double shooterPID(double RPM);
 
         double slewRPM(double request);
 

@@ -73,6 +73,10 @@ bool IntakeRoller::isSettled(double epsilon)
 {
 
 }
+void IntakeRoller::resetEncoder()
+{
+    intakeMotor->tare_position();
+}
 
 
 
