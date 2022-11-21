@@ -21,6 +21,10 @@ class PosePID
 
         // PosePID constructor
         PosePID();
+
+        void setXConstants(double kP, double kI, double kD);
+        void setYConstants(double kP, double kI, double kD);
+        void setThetaConstants(double kP, double kI, double kD);
         
         // Set the target value to the PID to reach
         void setTarget(Pose* target);

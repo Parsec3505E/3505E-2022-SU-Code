@@ -23,7 +23,6 @@ void on_center_button() {
 		pros::lcd::clear_line(2);
 	}
 }
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -53,7 +52,8 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -79,14 +79,18 @@ void controlFunction(void* controlArg)
 		drive->updateDrivetrain(driver);
 		intake->updateIntake(driver);
 		shooter->updateShooter(driver);
+
+		pros::delay(50);
 	}
 
 }
 
-
+Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
 
+	std::uint32_t autoStartTime = pros::millis();
+	
 	control_arg* control_task_arg = new control_arg;
 
 
@@ -100,15 +104,31 @@ void autonomous() {
 	control_task_arg->shooter = shooterObj;
 
 
+	drivetrainObj->resetGyro();
+	pros::delay(3000);
+
 	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 
+	// DRIVE COMMANDS
+
+	drivetrainObj->driveToPoint(40.0, 50.0, 0.0);
+	while(drivetrainObj->isSettled()){}
+	pros::delay(1000);
+	drivetrainObj->turnToPoint(5.0, 90.0);
 
 
+	while(pros::millis() - autoStartTime < 14500)
+	{}
 
-
-
+	//wait till timer hits 14.9 seconds
+	//do end of auton stuff
+	persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
+	drivetrainObj->~Drivetrain();
+	controlTask.remove();
 }
 
 /**
@@ -129,20 +149,21 @@ void autonomous() {
 
 void opcontrol() {
 
-	
+	pros::delay(100);
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
 
+	drive.setRobotPose(persistPose);
+
+    //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
 	
-	drive.resetGyro();
+	//drive.resetGyro();
 	//driver.rumble("...");
-	drive.setState(Drivetrain::DrivetrainStates::PID);
-	pros::delay(3000);
+	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	//driver.rumble("...");
 	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
-
 	while (true) {
 
 		drive.updateDrivetrain(driver);

@@ -130,11 +130,15 @@ class Drivetrain
         
         void turnToPoint(double x, double y);
 
-    private:
-
-        Pose getRobotPose();
+        Pose* getRobotPose();
 
         void setRobotPose(Pose pose);
+
+        bool isSettled();
+
+        ~Drivetrain();
+
+    private:
 
         void moveRobot(Pose* velocityPose);
 
@@ -146,9 +150,10 @@ class Drivetrain
 
         void odometryStep(pros::Controller driver);
 
-        bool isSettled(double epsilon);
 
         Pose calcPoseToGoal();
+
+        void stop();
 
 
 };
