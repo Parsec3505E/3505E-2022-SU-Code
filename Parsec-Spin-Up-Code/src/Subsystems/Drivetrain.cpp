@@ -78,7 +78,13 @@ Drivetrain::Drivetrain()
     this->targetPose->setYComponent(0);
     this->targetPose->setThetaComponent(0);
 }
-
+void Drivetrain::stop()
+{
+    rightFront->move(0);
+    rightBack->move(0);
+    leftFront->move(0);
+    leftBack->move(0);
+}
 void Drivetrain::updateDrivetrain(pros::Controller driver)
 {
 
@@ -318,6 +324,26 @@ void Drivetrain::resetGyro()
     this->gyro->tare_heading();
     pros::delay(50);
 }
+double Drivetrain::getGyro()
+{
+    return this->gyro->get_heading();
+    
+}
+void Drivetrain::resetEncoders()
+{
+    this->forwardEncoder->reset();
+    this->sideEncoder->reset();
+
+}
+double Drivetrain::ticksToInches(int ticks)
+{
+    return (((double)ticks) * (2.75*PI)/360.0);
+}
+double Drivetrain::getForwardEncoderInches()
+{
+    return ticksToInches(this->forwardEncoder->get_value());
+    
+}
 
 
 void Drivetrain::odometryStep(pros::Controller driver)
@@ -397,4 +423,68 @@ void Drivetrain::turnToPoint(double x, double y)
 Pose Drivetrain::calcPoseToGoal()
 {
 
+}
+
+void Drivetrain::driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack)
+{
+    rightFront->move_velocity(rFront);
+    leftFront->move_velocity(lFront);
+    rightBack->move_velocity(rBack);
+    leftBack->move_velocity(lBack);
+    pros::delay(ms);
+
+  //drivetrain.stop();
+}
+double curEncoderValue = 0.0;
+
+void Drivetrain::driveForwardEncoder(int vel, int dist)
+{
+    while(getForwardEncoderInches() < curEncoderValue + dist)
+    {
+        rightFront->move_velocity(vel);
+        leftFront->move_velocity(vel);
+        rightBack->move_velocity(vel);
+        leftBack->move_velocity(vel);
+    }
+    stop();
+}
+void Drivetrain::driveBackwardEncoder(int vel, int dist)
+{
+    while(getForwardEncoderInches() > curEncoderValue - dist)
+    {
+        rightFront->move_velocity(-vel);
+        leftFront->move_velocity(-vel);
+        rightBack->move_velocity(-vel);
+        leftBack->move_velocity(-vel);
+    }
+    stop();
+}
+
+double curGyroValue = 0.0;
+void Drivetrain::gyroTurn(double deg, bool right, int vel)
+{
+    curGyroValue = getGyro();
+    //get current gyro value to compare to later
+    if(right == true){
+        //turn right until gyro clocks in deg
+        while(abs(getGyro()) < curGyroValue + deg)
+        {
+            rightFront->move_velocity(vel);
+            leftFront->move_velocity(-vel);
+            rightBack->move_velocity(-vel);
+            leftBack->move_velocity(vel);
+        }
+        stop();
+    }
+    else{
+        //turn left
+        while(abs(getGyro()) < curGyroValue + deg)
+        {
+            rightFront->move_velocity(vel*-1);
+            leftFront->move_velocity(vel);
+            rightBack->move_velocity(vel*-1);
+            leftBack->move_velocity(vel);
+        }
+        stop();
+    }
 }

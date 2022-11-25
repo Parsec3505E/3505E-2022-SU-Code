@@ -114,6 +114,7 @@ class Drivetrain
 
         // Drivetrain Constructor
         Drivetrain();
+        void stop();
 
         // Update the state of the Drivetrain
         void updateDrivetrain(pros::Controller driver);
@@ -125,10 +126,19 @@ class Drivetrain
         enum DrivetrainStates getState();
 
         void resetGyro();
+        double getGyro();
+        void resetEncoders();
+        double ticksToInches(int ticks);
+        double getForwardEncoderInches();
 
         void driveToPoint(double x, double y, double heading);
         
         void turnToPoint(double x, double y);
+
+        void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
+        void driveForwardEncoder(int vel, int dist);
+        void driveBackwardEncoder(int vel, int dist);
+        void gyroTurn(double deg, bool right, int vel);
 
     private:
 
