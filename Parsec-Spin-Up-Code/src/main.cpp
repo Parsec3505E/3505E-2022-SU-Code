@@ -1,10 +1,12 @@
 #include "main.h"
-#include "Subsystems/Drivetrain.hpp"
-#include "Subsystems/IntakeRoller.hpp"
-#include "Subsystems/Shooter.hpp"
-#include "autonomous.cpp"
-#include "pros/rtos.h"
-#include "pros/rtos.hpp"
+// #include "Subsystems/Drivetrain.hpp"
+// #include "Subsystems/IntakeRoller.hpp"
+// #include "Subsystems/Shooter.hpp"
+
+// #include "autonomous.cpp"
+
+// #include "pros/rtos.h"
+// #include "pros/rtos.hpp"
 
 
 
@@ -75,7 +77,7 @@ void competition_initialize() {}
 
 void autonomous() {
 	//auton1();
-	skills();
+	//skills();
 
 
 

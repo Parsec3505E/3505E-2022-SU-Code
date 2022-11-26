@@ -2,6 +2,10 @@
 #define AUTONOMOUS_HPP
 
 #include "main.h"
+// #include "Subsystems/Drivetrain.hpp"
+// #include "Subsystems/Expansion.hpp"
+// #include "Subsystems/IntakeRoller.hpp"
+// #include "Subsystems/Shooter.hpp"
 
 
 typedef struct{

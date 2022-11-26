@@ -337,7 +337,7 @@ void Drivetrain::resetEncoders()
 }
 double Drivetrain::ticksToInches(int ticks)
 {
-    return (((double)ticks) * (2.75*PI)/360.0);
+    return (((double)ticks) * (2.75*M_PI)/360.0);
 }
 double Drivetrain::getForwardEncoderInches()
 {
