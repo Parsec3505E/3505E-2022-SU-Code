@@ -339,7 +339,8 @@ double Drivetrain::ticksToInches(int ticks)
 {
     return (((double)ticks) * (2.75*M_PI)/360.0);
 }
-double Drivetrain::getForwardEncoderInches()
+double Drivetrain::
+getForwardEncoderInches()
 {
     return ticksToInches(this->forwardEncoder->get_value());
     
@@ -445,7 +446,7 @@ void Drivetrain::driveForwardEncoder(int vel, int dist)
         leftFront->move_velocity(vel);
         rightBack->move_velocity(vel);
         leftBack->move_velocity(vel);
-    }
+    } 
     stop();
 }
 void Drivetrain::driveBackwardEncoder(int vel, int dist)

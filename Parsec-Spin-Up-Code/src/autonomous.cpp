@@ -14,6 +14,7 @@ drive_arg* track_task_arg = new drive_arg;
 
 void controlFunction(void* controlArg)
 {
+    pros::Controller driver(pros::E_CONTROLLER_MASTER);
     Drivetrain* drive = ((control_arg*)controlArg)->drive;
     IntakeRoller* intake = ((control_arg*)controlArg)->intake;
     Shooter* shooter  = ((control_arg*)controlArg)->shooter;
@@ -31,20 +32,49 @@ void auton1(){
     control_arg* control_task_arg = new control_arg;
 
 	
-	
-	Drivetrain* drivetrainObj = new Drivetrain();
-	control_task_arg->drive = drivetrainObj;
+	Drivetrain drive = Drivetrain();
+    IntakeRoller intake = IntakeRoller();
+    Shooter shooter  = Shooter();
 
-	IntakeRoller* intakeObj = new IntakeRoller();
-	control_task_arg->intake = intakeObj;
+    drive.resetEncoders();
 
-	Shooter* shooterObj = new Shooter();
-	control_task_arg->shooter = shooterObj;
+    pros::delay(1000);
+
+    drive.driveSeconds(3000, 100, 100, 100, 100);
+
+    pros::delay(1000);
+
+    drive.gyroTurn(90.0, true, 100);
+
+    pros::delay(1000);
+
+    drive.driveForwardEncoder(100, 5);
+
+    pros::delay(1000);
+
+    drive.driveBackwardEncoder(100, 5);
+
+    pros::delay(1000);
+
+    shooter.shoot(700);
 
 
-	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
 
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+
+    // TASK STUFF
+	// Drivetrain* drivetrainObj = new Drivetrain();
+	// control_task_arg->drive = drivetrainObj;
+
+	// IntakeRoller* intakeObj = new IntakeRoller();
+	// control_task_arg->intake = intakeObj;
+
+	// Shooter* shooterObj = new Shooter();
+	// control_task_arg->shooter = shooterObj;
+
+
+	// pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
+
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 }
 
 void skills()

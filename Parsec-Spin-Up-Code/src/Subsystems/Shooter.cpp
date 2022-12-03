@@ -94,6 +94,19 @@ void Shooter::setTargetRPM(double RPM)
 {
     
 }
+void Shooter::shoot(double RPM)
+{
+    shooterPwr1->move_velocity(RPM);
+    shooterPwr2->move_velocity(RPM);
+    pros::delay(5000);
+    shooterInd->move_absolute(-200, 60);
+    shooterInd->move_absolute(0, 60);
+
+    shooterPwr1->move_velocity(0);
+    shooterPwr2->move_velocity(0);
+
+
+}
 
 double Shooter::shooterPID(double targetRPM)
 {

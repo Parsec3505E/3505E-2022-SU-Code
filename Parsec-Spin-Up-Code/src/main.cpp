@@ -1,9 +1,9 @@
-#include "main.h"
+// #include "main.h"
 // #include "Subsystems/Drivetrain.hpp"
 // #include "Subsystems/IntakeRoller.hpp"
 // #include "Subsystems/Shooter.hpp"
 
-// #include "autonomous.cpp"
+#include "autonomous.hpp"
 
 // #include "pros/rtos.h"
 // #include "pros/rtos.hpp"
@@ -76,7 +76,7 @@ void competition_initialize() {}
 
 
 void autonomous() {
-	//auton1();
+	auton1();
 	//skills();
 
 
@@ -104,7 +104,7 @@ void autonomous() {
 
 void opcontrol() {
 
-	
+	pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;

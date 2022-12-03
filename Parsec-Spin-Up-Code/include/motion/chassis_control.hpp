@@ -1,6 +1,6 @@
 #ifndef CHASSIS_CONTROL_HPP
 #define CHASSIS_CONTROL_HPP
-
+/*
 #include "main.h"
 
 extern bool runChassisControl;
@@ -37,5 +37,5 @@ void driveSeconds(Drivetrain drivetrain, int ms, int vel);
 typedef struct{
 	Drivetrain drivetrain;
 } drive_arg;
-
+*/
 #endif
