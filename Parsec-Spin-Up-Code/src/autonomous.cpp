@@ -40,23 +40,23 @@ void auton1(){
 
     pros::delay(1000);
 
-    drive.driveSeconds(3000, 100, 100, 100, 100);
+    drive.driveSeconds(1000, 100, 100, 100, 100);
 
-    pros::delay(1000);
+    pros::delay(3000);
 
     drive.gyroTurn(90.0, true, 100);
 
-    pros::delay(1000);
+    // pros::delay(1000);
 
-    drive.driveForwardEncoder(100, 5);
+    // drive.driveForwardEncoder(100, 5);
 
-    pros::delay(1000);
+    // pros::delay(1000);
 
-    drive.driveBackwardEncoder(100, 5);
+    // drive.driveBackwardEncoder(100, 5);
 
-    pros::delay(1000);
+    // pros::delay(1000);
 
-    shooter.shoot(700);
+   // shooter.shoot(700);
 
 
 

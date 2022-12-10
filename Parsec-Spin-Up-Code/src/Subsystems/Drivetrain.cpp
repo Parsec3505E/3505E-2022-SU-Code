@@ -18,16 +18,16 @@ Drivetrain::Drivetrain()
     posePID->setTarget(this->targetPose);
 
     // Construct the Motor objects
-    rightFront = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightBack = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftFront = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
@@ -433,6 +433,10 @@ void Drivetrain::driveSeconds(int ms, int rFront, int lFront, int rBack, int lBa
     rightBack->move_velocity(rBack);
     leftBack->move_velocity(lBack);
     pros::delay(ms);
+    rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
 
   //drivetrain.stop();
 }
@@ -472,8 +476,8 @@ void Drivetrain::gyroTurn(double deg, bool right, int vel)
         {
             rightFront->move_velocity(vel);
             leftFront->move_velocity(-vel);
-            rightBack->move_velocity(-vel);
-            leftBack->move_velocity(vel);
+            rightBack->move_velocity(vel);
+            leftBack->move_velocity(-vel);
         }
         stop();
     }
