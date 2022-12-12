@@ -47,6 +47,9 @@ class IntakeRoller
         //ENCODER METHODS
         void resetEncoder();
 
+        //hardcoded methods
+        void spinSeconds(int vel, int ms);
+
         // Set the state of the roller
         // void setRollerState(enum RollerStates);
 

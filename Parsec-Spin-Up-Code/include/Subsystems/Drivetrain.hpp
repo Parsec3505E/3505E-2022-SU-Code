@@ -136,8 +136,8 @@ class Drivetrain
         void turnToPoint(double x, double y);
 
         void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
-        void driveForwardEncoder(int vel, int dist);
-        void driveBackwardEncoder(int vel, int dist);
+        void driveForwardEncoder(int vel, int distInch);
+        void driveBackwardEncoder(int vel, int distInch);
         void gyroTurn(double deg, bool right, int vel);
 
     private:

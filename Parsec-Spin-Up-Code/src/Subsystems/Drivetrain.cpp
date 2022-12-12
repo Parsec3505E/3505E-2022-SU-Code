@@ -442,9 +442,9 @@ void Drivetrain::driveSeconds(int ms, int rFront, int lFront, int rBack, int lBa
 }
 double curEncoderValue = 0.0;
 
-void Drivetrain::driveForwardEncoder(int vel, int dist)
+void Drivetrain::driveForwardEncoder(int vel, int distInch)
 {
-    while(getForwardEncoderInches() < curEncoderValue + dist)
+    while(getForwardEncoderInches() < curEncoderValue + distInch)
     {
         rightFront->move_velocity(vel);
         leftFront->move_velocity(vel);
@@ -453,9 +453,9 @@ void Drivetrain::driveForwardEncoder(int vel, int dist)
     } 
     stop();
 }
-void Drivetrain::driveBackwardEncoder(int vel, int dist)
+void Drivetrain::driveBackwardEncoder(int vel, int distInch)
 {
-    while(getForwardEncoderInches() > curEncoderValue - dist)
+    while(getForwardEncoderInches() > curEncoderValue - distInch)
     {
         rightFront->move_velocity(-vel);
         leftFront->move_velocity(-vel);

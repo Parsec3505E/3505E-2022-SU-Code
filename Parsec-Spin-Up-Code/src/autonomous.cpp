@@ -46,9 +46,10 @@ void auton1(){
 
     drive.gyroTurn(90.0, true, 100);
 
-    // pros::delay(1000);
+    pros::delay(1000);
 
-    // drive.driveForwardEncoder(100, 5);
+    drive.driveForwardEncoder(100, 5);
+    intake.spinSeconds(600, 3000);
 
     // pros::delay(1000);
 

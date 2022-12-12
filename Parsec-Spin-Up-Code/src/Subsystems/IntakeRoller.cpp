@@ -78,6 +78,13 @@ void IntakeRoller::resetEncoder()
     intakeMotor->tare_position();
 }
 
+void IntakeRoller::spinSeconds(int vel, int ms)
+{
+    intakeMotor->move_velocity(vel);
+    pros::delay(ms);
+    intakeMotor->move_velocity(0);
+}
+
 
 
 
