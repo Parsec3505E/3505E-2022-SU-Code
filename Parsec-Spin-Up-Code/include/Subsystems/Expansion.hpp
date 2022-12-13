@@ -12,19 +12,21 @@ class Expansion
     private:
 
         // Expansion States
-        enum ExpansionStates{};
+        enum ExpansionStates{OPERATOR_CONTROL};
 
         ExpansionStates mExpansionState;
 
-        // Expansion Motor Declarations
-        pros::ADIDigitalOut* expansionPiston;
+        // Expansion Piston Declarations
+        pros::ADIDigitalOut* expansionPistonR;
+        pros::ADIDigitalOut* expansionPistonL;
 
     public:
+    
         // Expansion Constructor
         Expansion();
 
         // Update the state of the Expansion
-        void updateExpansion();
+        void updateExpansion(pros::Controller driver);
 
         enum ExpansionStates getState();
 
