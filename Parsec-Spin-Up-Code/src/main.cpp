@@ -150,6 +150,7 @@ void autonomous() {
 void opcontrol() {
 
 	pros::delay(100);
+	
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
