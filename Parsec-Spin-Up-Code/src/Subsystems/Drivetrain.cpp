@@ -452,6 +452,10 @@ void Drivetrain::driveForwardEncoder(int vel, int distInch)
         leftBack->move_velocity(vel);
     } 
     stop();
+    rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
 }
 void Drivetrain::driveBackwardEncoder(int vel, int distInch)
 {
@@ -463,6 +467,10 @@ void Drivetrain::driveBackwardEncoder(int vel, int distInch)
         leftBack->move_velocity(-vel);
     }
     stop();
+    rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
 }
 
 double curGyroValue = 0.0;
@@ -480,6 +488,10 @@ void Drivetrain::gyroTurn(double deg, bool right, int vel)
             leftBack->move_velocity(-vel);
         }
         stop();
+        rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
     }
     else{
         //turn left
@@ -491,5 +503,9 @@ void Drivetrain::gyroTurn(double deg, bool right, int vel)
             leftBack->move_velocity(vel);
         }
         stop();
+            rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
     }
 }

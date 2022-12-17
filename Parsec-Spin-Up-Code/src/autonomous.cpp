@@ -28,7 +28,7 @@ void controlFunction(void* controlArg)
 
 }
 
-void auton1(){
+void autonwithSec(){
     control_arg* control_task_arg = new control_arg;
 
 	
@@ -38,18 +38,22 @@ void auton1(){
 
     drive.resetEncoders();
 
-    pros::delay(1000);
-
-    drive.driveSeconds(1000, 100, 100, 100, 100);
-
-    pros::delay(3000);
-
-    drive.gyroTurn(90.0, true, 100);
-
-    pros::delay(1000);
-
-    drive.driveForwardEncoder(100, 5);
+    pros::delay(500);
     intake.spinSeconds(600, 3000);
+
+    drive.gyroTurn(45.0, true, 100);
+
+    drive.driveSeconds(1000, -100, -100, -100, -100);
+
+    // pros::delay(3000);
+
+    drive.gyroTurn(45.0, true, 100);
+    shooter.shoot(700);
+
+    // pros::delay(1000);
+
+    // drive.driveForwardEncoder(100, 5);
+    // intake.spinSeconds(600, 3000);
 
     // pros::delay(1000);
 
@@ -57,7 +61,7 @@ void auton1(){
 
     // pros::delay(1000);
 
-   // shooter.shoot(700);
+  
 
 
 
@@ -77,6 +81,22 @@ void auton1(){
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 }
+void autonwithEnc(){
+    Drivetrain drive = Drivetrain();
+    IntakeRoller intake = IntakeRoller();
+    Shooter shooter  = Shooter();
+
+    drive.resetEncoders();
+
+   
+    intake.spinSeconds(600, 3000);
+
+    drive.gyroTurn(45.0, true, 100);
+    
+    drive.driveBackwardEncoder(100, 10);
+
+}
+
 
 void skills()
 {
