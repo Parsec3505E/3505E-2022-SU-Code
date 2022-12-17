@@ -15,7 +15,7 @@ class Shooter
         // Shooter States
         enum ShooterStates{CLOSED_LOOP, OPERATOR_CONTROL, DISABLED};
 
-    private:
+    //private:
 
         ShooterStates mShooterState;
 
@@ -56,6 +56,7 @@ class Shooter
         void setState(enum ShooterStates);
 
         void setTargetRPM(double RPM);
+        void shoot(double RPM);
 
         double slewRPM(double request);
 

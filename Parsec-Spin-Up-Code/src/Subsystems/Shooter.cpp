@@ -4,7 +4,7 @@ Shooter::Shooter()
 {
 
     shooterPwr1 = new pros::Motor(1, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterPwr2 = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr2 = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     shooterInd = new pros::Motor(19, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
@@ -98,6 +98,21 @@ void Shooter::setTargetRPM(double RPM)
     this->RPMTarget = RPM;
 }
 
+void Shooter::shoot(double RPM)
+{
+    // shooterPwr1->move_velocity(RPM);
+    // shooterPwr2->move_velocity(RPM);
+    pros::delay(3000);
+    shooterInd->move_absolute(-100, 100);
+    pros::delay(1000);
+    shooterInd->move_absolute(0, 100);
+    pros::delay(1000);
+
+    // shooterPwr1->move_velocity(0);
+    // shooterPwr2->move_velocity(0);
+
+
+}
 double Shooter::slewRPM(double request)
 {
 

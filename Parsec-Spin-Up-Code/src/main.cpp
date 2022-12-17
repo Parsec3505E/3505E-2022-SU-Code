@@ -90,8 +90,15 @@ Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
 	
+	Shooter shooter = Shooter();
 	IntakeRoller intake = IntakeRoller();
-	intake.spinSeconds(-150, 1500);
+	shooter.shooterPwr1->move_voltage(11000);
+    shooter.shooterPwr2->move_voltage(11000);
+	intake.spinSeconds(-150, 950);
+	pros::delay(500);
+	shooter.shoot(600); 
+	pros::delay(3000);
+	shooter.shoot(600);
 	// std::uint32_t autoStartTime = pros::millis();
 	
 	// control_arg* control_task_arg = new control_arg;
