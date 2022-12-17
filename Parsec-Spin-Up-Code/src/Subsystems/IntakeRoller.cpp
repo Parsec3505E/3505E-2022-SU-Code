@@ -59,6 +59,13 @@ void IntakeRoller::setIntakeState(IntakeStates intakeState)
     mIntakeState = intakeState;
 }
 
+void IntakeRoller::spinSeconds(int vel, int ms)
+{
+    intakeMotor->move_velocity(vel);
+    pros::delay(ms);
+    intakeMotor->move_velocity(0);
+}
+
 enum IntakeRoller::IntakeStates IntakeRoller::getIntakeState()
 {
     return mIntakeState;

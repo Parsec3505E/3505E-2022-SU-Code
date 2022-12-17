@@ -89,49 +89,51 @@ void controlFunction(void* controlArg)
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
-
-	std::uint32_t autoStartTime = pros::millis();
 	
-	control_arg* control_task_arg = new control_arg;
+	IntakeRoller intake = IntakeRoller();
+	intake.spinSeconds(-150, 1500);
+	// std::uint32_t autoStartTime = pros::millis();
+	
+	// control_arg* control_task_arg = new control_arg;
 
 
-	Drivetrain* drivetrainObj = new Drivetrain();
-	control_task_arg->drive = drivetrainObj;
+	// Drivetrain* drivetrainObj = new Drivetrain();
+	// control_task_arg->drive = drivetrainObj;
 
-	IntakeRoller* intakeObj = new IntakeRoller();
-	control_task_arg->intake = intakeObj;
+	// IntakeRoller* intakeObj = new IntakeRoller();
+	// control_task_arg->intake = intakeObj;
 
-	Shooter* shooterObj = new Shooter();
-	control_task_arg->shooter = shooterObj;
+	// Shooter* shooterObj = new Shooter();
+	// control_task_arg->shooter = shooterObj;
 
 
-	drivetrainObj->resetGyro();
-	pros::delay(3000);
+	// drivetrainObj->resetGyro();
+	// pros::delay(3000);
 
-	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
+	// pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
 
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 
 	
 
-	// DRIVE COMMANDS
+	// // DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(65.0, 40.0, 90);
-	while(drivetrainObj->isSettled()){}
-	pros::delay(1000);
+	// drivetrainObj->driveToPoint(65.0, 40.0, 90);
+	// while(drivetrainObj->isSettled()){}
+	// pros::delay(1000);
 
 
 
-	while(pros::millis() - autoStartTime < 14500)
-	{}
+	// while(pros::millis() - autoStartTime < 14500)
+	// {}
 
-	//wait till timer hits 14.9 seconds
-	//do end of auton stuff
-	persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
-	persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
-	persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
-	drivetrainObj->~Drivetrain();
-	controlTask.remove();
+	// //wait till timer hits 14.9 seconds
+	// //do end of auton stuff
+	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
+	// drivetrainObj->~Drivetrain();
+	// controlTask.remove();
 }
 
 /**
