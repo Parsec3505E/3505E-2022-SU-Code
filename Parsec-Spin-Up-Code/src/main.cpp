@@ -94,10 +94,10 @@ void autonomous() {
 	IntakeRoller intake = IntakeRoller();
 	shooter.shooterPwr1->move_voltage(11000);
     shooter.shooterPwr2->move_voltage(11000);
-	intake.spinSeconds(-150, 950);
+	intake.spinSeconds(-150, 700);
 	pros::delay(500);
 	shooter.shoot(600); 
-	pros::delay(3000);
+	pros::delay(2000);
 	shooter.shoot(600);
 	// std::uint32_t autoStartTime = pros::millis();
 	
