@@ -26,6 +26,8 @@ class Shooter
         double motorVelLimit;
         double motorAccLimit;
 
+        double RPMTarget;
+
         // Shooter Motor Declarations
         pros::Motor* shooterPwr1;
         pros::Motor* shooterPwr2;

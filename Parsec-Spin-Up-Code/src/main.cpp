@@ -2,6 +2,7 @@
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
+#include "Subsystems/Expansion.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
@@ -111,12 +112,14 @@ void autonomous() {
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 
+	
+
 	// DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(40.0, 50.0, 0.0);
+	drivetrainObj->driveToPoint(65.0, 40.0, 90);
 	while(drivetrainObj->isSettled()){}
 	pros::delay(1000);
-	drivetrainObj->turnToPoint(5.0, 90.0);
+
 
 
 	while(pros::millis() - autoStartTime < 14500)
@@ -148,12 +151,11 @@ void autonomous() {
 
 
 void opcontrol() {
-
-	pros::delay(100);
 	
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
+	Expansion expansion;
 
 	drive.setRobotPose(persistPose);
 
@@ -163,15 +165,17 @@ void opcontrol() {
 	//driver.rumble("...");
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	
 	//driver.rumble("...");
 	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 	while (true) {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
-		// shooter.updateShooter(driver);
+		shooter.updateShooter(driver);
+		expansion.updateExpansion(driver);
 		
 		pros::delay(50);
 	}

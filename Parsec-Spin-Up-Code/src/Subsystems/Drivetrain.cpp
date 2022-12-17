@@ -96,7 +96,7 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
             pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
             this->targetPose->setXComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
             this->targetPose->setYComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
-            this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
+            this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -0.75);
 
             this->currTime = pros::millis();
 

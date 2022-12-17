@@ -3,12 +3,14 @@
 Shooter::Shooter()
 {
 
-    shooterPwr1 = new pros::Motor(1, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterPwr2 = new pros::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterInd = new pros::Motor(10, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr1 = new pros::Motor(1, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr2 = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterInd = new pros::Motor(19, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
     motorAccLimit = 0;
+
+    RPMTarget = 0;
 
     flywheelEncoder = new pros::ADIEncoder('G', 'H');
 
@@ -25,20 +27,25 @@ void Shooter::updateShooter(pros::Controller driver)
     case CLOSED_LOOP:
 
         // Put closed loop code for the shooter here
+
+        shooterPwr1->move_velocity(this->RPMTarget);
+        shooterPwr2->move_velocity(this->RPMTarget);
         
         break;
 
     case OPERATOR_CONTROL:
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
         {
-            shooterPwr1->move_velocity(1000);
-            shooterPwr2->move_velocity(1000);
+            shooterPwr1->move_velocity(600);
+            shooterPwr2->move_velocity(600);
 
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
-            shooterPwr1->move_velocity(700);
-            shooterPwr2->move_velocity(700);
+            // shooterPwr1->move_velocity(122);
+            // shooterPwr2->move_velocity(122);
+            shooterPwr1->move_voltage(9000);
+            shooterPwr2->move_voltage(9000);
 
         }
         else
@@ -59,7 +66,7 @@ void Shooter::updateShooter(pros::Controller driver)
         }
         else
         {
-            shooterInd->move_absolute(0, 60);
+            shooterInd->move_absolute(0, 85);
             indexerTrigger = false;
         }
 
@@ -88,7 +95,7 @@ enum Shooter::ShooterStates Shooter::getState()
 
 void Shooter::setTargetRPM(double RPM)
 {
-
+    this->RPMTarget = RPM;
 }
 
 double Shooter::slewRPM(double request)

@@ -1,5 +1,5 @@
-#ifndef DRIVETRAIN_HPP
-#define DRIVETRAIN_HPP
+#ifndef EXPANSION_HPP
+#define EXPANSION_HPP
 
 
 #include "api.h"
@@ -9,7 +9,7 @@
 class Expansion
 {
 
-    private:
+    public:
 
         // Expansion States
         enum ExpansionStates{OPERATOR_CONTROL};
@@ -20,7 +20,7 @@ class Expansion
         pros::ADIDigitalOut* expansionPistonR;
         pros::ADIDigitalOut* expansionPistonL;
 
-    public:
+    
     
         // Expansion Constructor
         Expansion();
@@ -30,7 +30,6 @@ class Expansion
 
         enum ExpansionStates getState();
 
-    private:
 
         void setState(enum ExpansionStates);
 
