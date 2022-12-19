@@ -92,12 +92,33 @@ void autonomous() {
 	
 	Shooter shooter = Shooter();
 	IntakeRoller intake = IntakeRoller();
+	Drivetrain drive = Drivetrain();
+	Expansion expansion = Expansion();
+
+	expansion.expansionPistonR->set_value(false);
+	expansion.expansionPistonL->set_value(false);
+
 	shooter.shooterPwr1->move_voltage(11000);
     shooter.shooterPwr2->move_voltage(11000);
-	intake.spinSeconds(-150, 700);
+
+	drive.driveSeconds(250, 50, 50, 50, 50);
+	
+	//drive.gyroTurn(10, true, 50);
+	intake.spinSeconds(150, 700);
+	drive.driveSeconds(115, 50, -50, 50, -50);
+
 	pros::delay(500);
 	shooter.shoot(600); 
-	pros::delay(2000);
+	shooter.shooterPwr1->move_voltage(11100);
+    shooter.shooterPwr2->move_voltage(11100);
+	drive.driveSeconds(100, 50, -50, 50, -50);
+	// //IF DISK IS STUCK LIL WIGGLE
+	// shooter.shooterInd->move_absolute(-50, 100);
+    // pros::delay(500);
+    // shooter.shooterInd->move_absolute(0, 100);
+
+	// drive.driveSeconds(1000, -100, -100, -100, -100);
+	pros::delay(2900);
 	shooter.shoot(600);
 	// std::uint32_t autoStartTime = pros::millis();
 	
@@ -179,12 +200,18 @@ void opcontrol() {
 	//driver.rumble("...");
 	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+
+	std::uint32_t oppStartTime = pros::millis();
 	while (true) {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
 		shooter.updateShooter(driver);
-		expansion.updateExpansion(driver);
+		
+		if((pros::millis() - oppStartTime) > 95000){
+			expansion.updateExpansion(driver);
+		}
+		
 		
 		pros::delay(50);
 	}

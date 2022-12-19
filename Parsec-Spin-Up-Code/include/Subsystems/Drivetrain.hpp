@@ -125,16 +125,19 @@ class Drivetrain
         enum DrivetrainStates getState();
 
         void resetGyro();
+        double getGyro();
 
         void driveToPoint(double x, double y, double heading);
         
         void turnToPoint(double x, double y);
+        void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
 
         Pose* getRobotPose();
 
         void setRobotPose(Pose pose);
 
         bool isSettled();
+        void gyroTurn(double deg, bool right, int vel);
 
         ~Drivetrain();
 

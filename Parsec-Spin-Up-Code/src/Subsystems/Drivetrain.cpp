@@ -314,6 +314,11 @@ void Drivetrain::resetGyro()
     this->gyro->tare_rotation();
     pros::delay(50);
 }
+double Drivetrain::getGyro()
+{
+    return this->gyro->get_heading();
+    
+}
 
 
 void Drivetrain::odometryStep(pros::Controller driver)
@@ -398,6 +403,20 @@ void Drivetrain::turnToPoint(double x, double y)
     this->targetPose->setYComponent(this->robotPose->getYComponent());
     this->targetPose->setThetaComponent(heading);
 }
+void Drivetrain::driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack)
+{
+    rightFront->move_velocity(rFront);
+    leftFront->move_velocity(lFront);
+    rightBack->move_velocity(rBack);
+    leftBack->move_velocity(lBack);
+    pros::delay(ms);
+    rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
+
+  //drivetrain.stop();
+}
 
 Pose Drivetrain::calcPoseToGoal()
 {
@@ -416,4 +435,42 @@ void Drivetrain::stop()
     this->rightBack->move_velocity(0);
     this->leftFront->move_velocity(0);
     this->leftBack->move_velocity(0);
+}
+
+double curGyroValue = 0.0;
+void Drivetrain::gyroTurn(double deg, bool right, int vel)
+{
+    curGyroValue = getGyro();
+    //get current gyro value to compare to later
+    if(right == true){
+        pros::screen::print(pros::E_TEXT_MEDIUM, 4, "GYRO: %f", getGyro());
+        //turn right until gyro clocks in deg
+        while(abs(getGyro()) < abs(curGyroValue) + deg)
+        {
+            rightFront->move_velocity(vel);
+            leftFront->move_velocity(-vel);
+            rightBack->move_velocity(vel);
+            leftBack->move_velocity(-vel);
+        }
+        stop();
+        rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
+    }
+    else{
+        //turn left
+        while(abs(getGyro()) < abs(curGyroValue) + deg)
+        {
+            rightFront->move_velocity(vel*-1);
+            leftFront->move_velocity(vel);
+            rightBack->move_velocity(vel*-1);
+            leftBack->move_velocity(vel);
+        }
+        stop();
+            rightFront->move_velocity(0);
+    leftFront->move_velocity(0);
+    rightBack->move_velocity(0);
+    leftBack->move_velocity(0);
+    }
 }

@@ -46,6 +46,7 @@ class IntakeRoller
 
 //hardcoded methods
         void spinSeconds(int vel, int ms);
+        void spinTicks(int vel);
         // Set the state of the roller
         // void setRollerState(enum RollerStates);
 

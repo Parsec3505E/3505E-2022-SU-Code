@@ -65,6 +65,12 @@ void IntakeRoller::spinSeconds(int vel, int ms)
     pros::delay(ms);
     intakeMotor->move_velocity(0);
 }
+void IntakeRoller::spinTicks(int vel)
+{
+    intakeMotor->move_relative(300, vel);
+    pros::delay(500);
+    // intakeMotor->move_velocity(0);
+}
 
 enum IntakeRoller::IntakeStates IntakeRoller::getIntakeState()
 {
