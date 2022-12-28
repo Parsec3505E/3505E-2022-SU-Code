@@ -16,16 +16,16 @@ Drivetrain::Drivetrain()
     posePID = new PosePID();
 
     // Construct the Motor objects
-    rightFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightFront = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-
-    rightBack = new pros::Motor(18, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+//20
+    rightBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	leftFront = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(15, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
@@ -90,22 +90,29 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
         // The Operator Control state that allows the driver to have open loop control over the drivetrain
 
         case OPERATOR_CONTROL:
+            {
+                // Setting the x, y and theta components to the joystick values
 
-            // Setting the x, y and theta components to the joystick values
+                //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
+                
 
-            pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
-            this->targetPose->setXComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X));
-            this->targetPose->setYComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
-            this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
+                int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
+                int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+                pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
+                pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
 
-            this->currTime = pros::millis();
+                this->targetPose->setXComponent(x_val);
+                this->targetPose->setYComponent(y_val);
+                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
 
-            moveRobot(this->targetPose);
+                this->currTime = pros::millis();
 
-            this->prevTime = this->currTime;
+                moveRobot(this->targetPose);
 
-            break;
+                this->prevTime = this->currTime;
 
+                break;
+            }
         case PID:
             posePID->setTarget(this->targetPose);
 
