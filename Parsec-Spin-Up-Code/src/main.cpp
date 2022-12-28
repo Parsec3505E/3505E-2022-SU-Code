@@ -164,14 +164,13 @@ void opcontrol() {
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	
-	//driver.rumble("...");
-	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 	while (true) {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
-		// shooter.updateShooter(driver);
+		shooter.updateShooter(driver);
 		
 		pros::delay(50);
 	}
