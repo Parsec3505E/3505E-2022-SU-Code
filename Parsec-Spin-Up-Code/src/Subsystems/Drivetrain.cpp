@@ -16,6 +16,7 @@ Drivetrain::Drivetrain()
     posePID = new PosePID();
 
     // Construct the Motor objects
+    //PORT 17 IS BROKEN FOR SOME REASON!!!
     rightFront = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 //20
@@ -33,7 +34,7 @@ Drivetrain::Drivetrain()
     sideEncoder = new pros::ADIEncoder('C', 'D', true);
 
     // Construct Gyro object
-    gyro = new pros::Imu(12);
+    gyro = new pros::Imu(13);
 
     forwardEncoderPrevRaw = 0.0;
     sideEncoderPrevRaw = 0.0;
@@ -103,7 +104,7 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
 
                 this->targetPose->setXComponent(x_val);
                 this->targetPose->setYComponent(y_val);
-                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -1);
+                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -0.1);
 
                 this->currTime = pros::millis();
 
@@ -128,6 +129,10 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
             this->prevTime = this->currTime;
+
+            break;
+        case DEAD:
+            stop();
 
             break;
     }
@@ -188,8 +193,9 @@ void Drivetrain::moveRobot(Pose* velocityPose)
 
     // Slewing the rotationVels
 
-    //std::map<std::string, double> motorVels = slewPose(this->rotationVels);
-    std::map<std::string, double> motorVels = this->rotationVels;
+    std::map<std::string, double> motorVels = slewPose(this->rotationVels);
+    //std::map<std::string, double> 
+    motorVels = this->rotationVels;
 
     // Setting the motor slewed values to the physical motors
 

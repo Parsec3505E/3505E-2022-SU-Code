@@ -4,8 +4,8 @@
 
 IntakeRoller::IntakeRoller()
 {
-
-    intakeMotor = new pros::Motor(17, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    //PORT 17 IS BROKEN FOR SOME REASON!!!
+    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     //colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
@@ -23,12 +23,12 @@ switch (mIntakeState)
     case OPERATOR_CONTROL:
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
-            intakeMotor->move_velocity(680);
+            intakeMotor->move_velocity(600);
 
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
-            intakeMotor->move_velocity(-680);
+            intakeMotor->move_velocity(-600);
         }
         else
         {

@@ -2,7 +2,7 @@
 
 Shooter::Shooter()
 {
-
+    //PORT 17 IS BROKEN FOR SOME REASON!!!
     shooterPwr1 = new pros::Motor(2, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     shooterPwr2 = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     shooterInd = new pros::Motor(17, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);

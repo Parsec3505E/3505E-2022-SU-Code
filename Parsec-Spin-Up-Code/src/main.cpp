@@ -113,10 +113,14 @@ void autonomous() {
 
 	// DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(40.0, 50.0, 0.0);
+	drivetrainObj->driveToPoint(20.0, 20.0, 0.0);
 	while(!drivetrainObj->isSettled()){}
+	//drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+
 	pros::delay(1000);
-	drivetrainObj->turnToPoint(5.0, 90.0);
+	//drivetrainObj->turnToPoint(5.0, 90.0);
 
 
 	while(pros::millis() - autoStartTime < 14500)
