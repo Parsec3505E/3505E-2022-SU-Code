@@ -27,7 +27,7 @@ class Pose
         double getYComponent();
         double getThetaComponent();
 
-
+        bool comparePoses(Pose* otherPose);
 
 
     

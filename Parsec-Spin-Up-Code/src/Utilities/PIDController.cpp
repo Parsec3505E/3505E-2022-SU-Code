@@ -67,18 +67,5 @@ double PIDController::stepPID(double input, double deltaTime)
 
 bool PIDController::isSettled()
 {
-    bool isSettled;
-
-    //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "epsilon: %f", this->epsilon);
-
-    if (fabs(this->error) < this->epsilon)
-    {
-        isSettled = true;
-    }
-    else
-    {
-        isSettled = false;
-    }
-
-    return isSettled;
+    return (fabs(this->error) < this->epsilon);
 }

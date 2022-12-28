@@ -44,3 +44,8 @@ double Pose::getThetaComponent()
 
     return this->theta;
 }
+
+bool Pose::comparePoses(Pose* otherPose)
+{
+    return this->x == otherPose->getXComponent() && this->y == otherPose->getYComponent() && this->theta == otherPose->getThetaComponent();
+}

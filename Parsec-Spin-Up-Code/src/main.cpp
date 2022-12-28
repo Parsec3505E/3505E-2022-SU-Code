@@ -114,7 +114,7 @@ void autonomous() {
 	// DRIVE COMMANDS
 
 	drivetrainObj->driveToPoint(40.0, 50.0, 0.0);
-	while(drivetrainObj->isSettled()){}
+	while(!drivetrainObj->isSettled()){}
 	pros::delay(1000);
 	drivetrainObj->turnToPoint(5.0, 90.0);
 

@@ -29,7 +29,7 @@ class PosePID
         // Set the target value to the PID to reach
         void setTarget(Pose* target);
 
-        double getTarget();
+        Pose* getTarget();
         
         // Step the PID every iteration of the loop
         Pose* stepPID(Pose* input, double deltaTime);

@@ -40,11 +40,9 @@ void PosePID::setTarget(Pose* target)
 
 }
 
-double PosePID::getTarget()
+Pose* PosePID::getTarget()
 {
-
-    return this->targetPose->getThetaComponent();
-
+    return this->targetPose;
 }
 
 
@@ -53,17 +51,14 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
     this->xPID->setTarget(this->targetPose->getXComponent());
     double xOutput = this->xPID->stepPID(input->getXComponent(), deltaTime);
     this->outputPose->setXComponent(xOutput);
-    this->xPID->isSettled();
 
     this->yPID->setTarget(this->targetPose->getYComponent());
     double yOutput = this->yPID->stepPID(input->getYComponent(), deltaTime);
     this->outputPose->setYComponent(yOutput);
-    this->yPID->isSettled();
 
     this->thetaPID->setTarget(this->targetPose->getThetaComponent());
     double thetaOutput = this->thetaPID->stepPID(input->getThetaComponent(), deltaTime);
     this->outputPose->setThetaComponent(thetaOutput);
-    this->thetaPID->isSettled();
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "x: %f", xOutput);
     // pros::screen::print(pros::E_TEXT_MEDIUM, 6, "y: %f", yOutput);
@@ -75,16 +70,5 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
 
 bool PosePID::isSettled()
 {
-    bool settled;
-
-    if(this->thetaPID->isSettled() && this->xPID->isSettled() && this->yPID->isSettled())
-    {
-        settled = true;
-    }
-    else
-    {
-        settled = false;
-    }
-
-    return settled;
+    return this->thetaPID->isSettled() && this->xPID->isSettled() && this->yPID->isSettled();
 }

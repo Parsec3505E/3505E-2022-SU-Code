@@ -120,17 +120,14 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
 
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
-            if (posePID->isSettled())
-            {
-                this->targetPose->setThetaComponent(this->robotPose->getThetaComponent());
-                pros::screen::print(pros::E_TEXT_MEDIUM, 7, "done");
-                stop();
-                //setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);   
-            }
             this->prevTime = this->currTime;
 
             break;
     }
+
+    // ADD CODE FOR STOP CASE
+
+
 
     // Pose* pose;
     // pose = new Pose(Vector(50, 30), 0);
@@ -193,11 +190,6 @@ void Drivetrain::moveRobot(Pose* velocityPose)
     leftFront->move_velocity(motorVels["leftFront"]);
     rightBack->move_velocity(motorVels["rightBack"]);
     leftBack->move_velocity(motorVels["leftBack"]);
-}
-
-void Drivetrain::setTargetPose(Pose targetPose)
-{
-
 }
 
 
@@ -384,6 +376,7 @@ void Drivetrain::driveToPoint(double x, double y, double heading)
     this->targetPose->setYComponent(y);
     this->targetPose->setThetaComponent(heading);
 
+    while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
 }
 
 void Drivetrain::turnToPoint(double x, double y)
