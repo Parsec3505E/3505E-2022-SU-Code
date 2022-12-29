@@ -24,7 +24,7 @@ class IntakeRoller
         // Roller Sensors
 
         // Roller Colour Sensor Declarations
-        // pros::Optical* colourSensor;
+        pros::Optical* colourSensor;
 
         IntakeStates mIntakeState;
 
@@ -34,6 +34,11 @@ class IntakeRoller
 
         // Update the state of the Intake
         void updateIntake(pros::Controller driver);
+
+        //Optical Methods
+        void rollToColour(bool colour);
+
+        double readColour();
 
         // Update the state of the Roller
         // void updateRoller();

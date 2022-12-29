@@ -174,6 +174,7 @@ void opcontrol() {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
+		//intake.readColour();
 		shooter.updateShooter(driver);
 		
 		pros::delay(50);
