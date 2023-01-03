@@ -9,32 +9,32 @@
 Drivetrain::Drivetrain()
 {
     // Construct the Pose/PosePID objects
-    robotPose = new Pose(Vector(8.0, 8.0), 0.0);
-    velocityPose = new Pose(Vector(0.95, 0.0), 0.0);
-    targetPose = new Pose(Vector(20.0, 0.0), 0);
+    robotPose = new Pose(Vector(0.0, 0.0), 0.0);
+    velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
+    targetPose = new Pose(Vector(0.0, 0.0), 0.0);
 
     posePID = new PosePID();
 
     // Construct the Motor objects
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    rightFront = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightFront = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 //20
-    rightBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftFront = new pros::Motor(3, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(15, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(15, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
     forwardEncoder = new pros::ADIEncoder('A', 'B', true);
-    sideEncoder = new pros::ADIEncoder('C', 'D', true);
+    sideEncoder = new pros::ADIEncoder('C', 'D', false);
 
     // Construct Gyro object
-    gyro = new pros::Imu(13);
+    gyro = new pros::Imu(10);
 
     forwardEncoderPrevRaw = 0.0;
     sideEncoderPrevRaw = 0.0;
@@ -99,8 +99,8 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
 
                 int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
                 int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-                pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
-                pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
+                //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
+                //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
 
                 this->targetPose->setXComponent(x_val);
                 this->targetPose->setYComponent(y_val);
@@ -121,10 +121,6 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
             // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
                 
             this->currTime = pros::millis();
-
-            pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
-            pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
@@ -331,10 +327,11 @@ void Drivetrain::odometryStep(pros::Controller driver)
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 3, "forwardEEncoderRaw: : %f", forwardEncoderRaw);
     pros::screen::print(pros::E_TEXT_MEDIUM, 2, "sideEncoderRaw: : %f", sideEncoderRaw);
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 2, "gyro : %f", gyro->get_yaw());
 
     deltaDistForward = ((forwardEncoderRaw - this->forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
     deltaDistSide = ((sideEncoderRaw - this->sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
-    headingRaw = (gyro->get_yaw() * M_PI) / 180.0;
+    headingRaw = (gyro->get_rotation() * M_PI) / 180.0;
 
     deltaHeading = headingRaw - this->prevHeadingRaw;
 
@@ -342,10 +339,9 @@ void Drivetrain::odometryStep(pros::Controller driver)
         deltaXLocal = deltaDistSide;
         deltaYLocal = deltaDistForward;
     }else{
-        deltaYLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistForward / deltaHeading) + FORWARD_ENCODER_TRACK_RADIUS);
-        deltaXLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistSide / deltaHeading) + SIDE_ENCODER_TRACK_RADIUS);
+        deltaYLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistForward / deltaHeading) - FORWARD_ENCODER_TRACK_RADIUS);
+        deltaXLocal = 2.0*sin(deltaHeading/2.0) * ((deltaDistSide / deltaHeading) - SIDE_ENCODER_TRACK_RADIUS);
     }
-
     // pros::screen::print(pros::E_TEXT_MEDIUM, 1, "deltaXLocal : %f", deltaXLocal);
     // pros::screen::print(pros::E_TEXT_MEDIUM, 3, "deltaYLocal : %f", deltaYLocal);
     //When encoder moves left it should be negative
@@ -365,7 +361,13 @@ void Drivetrain::odometryStep(pros::Controller driver)
     this->robotPose->setYComponent(yPoseGlobal);
     this->robotPose->setThetaComponent(headingRaw);
 
-    driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
+    //driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
+
+    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->deltaXGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
+
+
     //driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
     //driver.print(2, 2, "%.1f, %.1f", forwardEncoderRaw, sideEncoderRaw);
 

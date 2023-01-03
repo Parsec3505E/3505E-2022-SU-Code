@@ -3,9 +3,9 @@
 Shooter::Shooter()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    shooterPwr1 = new pros::Motor(2, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr1 = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     shooterPwr2 = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterInd = new pros::Motor(17, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterInd = new pros::Motor(17, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
     motorAccLimit = 0;
@@ -37,8 +37,8 @@ void Shooter::updateShooter(pros::Controller driver)
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
-            shooterPwr1->move_velocity(700);
-            shooterPwr2->move_velocity(700);
+            shooterPwr1->move_voltage(3500);
+            shooterPwr2->move_voltage(3500);
 
         }
         else
@@ -52,14 +52,14 @@ void Shooter::updateShooter(pros::Controller driver)
         {
             if(indexerTrigger == false)
             {
-                shooterInd->move_absolute(-200, 60);
+                shooterInd->move_absolute(-200, 95);
             }
             indexerTrigger = true;
 
         }
         else
         {
-            shooterInd->move_absolute(0, 60);
+            shooterInd->move_absolute(0, 85);
             indexerTrigger = false;
         }
 

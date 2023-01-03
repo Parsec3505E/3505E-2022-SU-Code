@@ -56,9 +56,9 @@ double PIDController::stepPID(double input, double deltaTime)
 
     double output = (this->kP * this->error); //+ (this->kI * this->integral) + (this->kD * this->deriative);
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 11, "input: %.4f", input);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 9, "error: %.4f", this->error);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "target: %.4f", this->target);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 11, "input: %.4f", input);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 9, "error: %.4f", this->error);
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 7, "target: %.4f", this->target);
 
     this->prevError = this->error;
 

@@ -2,9 +2,9 @@
 
 PosePID::PosePID()
 {
-    this->xPID = new PIDController(0.9, 0.0, 0.0);
-    this->yPID = new PIDController(0.9, 0.0, 0.0);
-    this->thetaPID = new PIDController(-0.1, 0.0, 0.0);
+    this->xPID = new PIDController(1.0, 0.0, 0.0);
+    this->yPID = new PIDController(1.0, 0.0, 0.0);
+    this->thetaPID = new PIDController(0.3, 0.0, 0.0);
 
     this->xPID->setEpsilon(1.5);
     this->yPID->setEpsilon(1.5);

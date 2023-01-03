@@ -113,13 +113,21 @@ void autonomous() {
 
 	// DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(20.0, 20.0, 0.0);
+	drivetrainObj->driveToPoint(20.0, 20.0, 1.5);
 	while(!drivetrainObj->isSettled()){}
-	//drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-
-
+	driver.print(2, 2, "Hello");
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	pros::delay(1000);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->driveToPoint(40.0, 40.0, 0);
+	while(!drivetrainObj->isSettled()){}
+	driver.print(2, 2, "Hello");
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+
+	//pros::delay(1000);
 	//drivetrainObj->turnToPoint(5.0, 90.0);
 
 
@@ -128,10 +136,10 @@ void autonomous() {
 
 	//wait till timer hits 14.9 seconds
 	//do end of auton stuff
-	persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
-	persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
-	persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
-	drivetrainObj->~Drivetrain();
+	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
+	// drivetrainObj->~Drivetrain();
 	controlTask.remove();
 }
 
@@ -152,14 +160,13 @@ void autonomous() {
 
 
 void opcontrol() {
-
 	pros::delay(100);
 	
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
 
-	drive.setRobotPose(persistPose);
+	// drive.setRobotPose(persistPose);
 
     //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
 	

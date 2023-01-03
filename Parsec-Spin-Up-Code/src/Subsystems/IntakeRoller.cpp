@@ -88,14 +88,14 @@ void IntakeRoller::rollToColour(bool colour){
 }
 double IntakeRoller::readColour()
 {
-    if(colourSensor->get_hue()<10.0){
-        pros::screen::print(pros::E_TEXT_MEDIUM, 5, "RED %f      ", colourSensor->get_hue());
-    }
-    else if(colourSensor->get_hue()>200.0){
-        pros::screen::print(pros::E_TEXT_MEDIUM, 5, "BLUE %f      ", colourSensor->get_hue());
-    }
+    // if(colourSensor->get_hue()<10.0){
+    //     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "RED %f      ", colourSensor->get_hue());
+    // }
+    // else if(colourSensor->get_hue()>200.0){
+    //     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "BLUE %f      ", colourSensor->get_hue());
+    // }
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Hue value: %f      ", colourSensor->get_hue());
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Hue value: %f      ", colourSensor->get_hue());
     colourSensor->set_led_pwm(50);
     return colourSensor->get_hue();
 }
