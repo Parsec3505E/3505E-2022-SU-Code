@@ -113,17 +113,18 @@ void autonomous() {
 
 	// DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(20.0, 20.0, 1.5);
+	drivetrainObj->driveToPoint(40.0, 40.0, 0);
+
 	while(!drivetrainObj->isSettled()){}
 	driver.print(2, 2, "Hello");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	pros::delay(1000);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->driveToPoint(40.0, 40.0, 0);
-	while(!drivetrainObj->isSettled()){}
-	driver.print(2, 2, "Hello");
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// drivetrainObj->driveToPoint(40.0, 40.0, 0);
+	// while(!drivetrainObj->isSettled()){}
+	// driver.print(2, 2, "Hello");
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 
 

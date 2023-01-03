@@ -2,16 +2,21 @@
 
 PosePID::PosePID()
 {
-    this->xPID = new PIDController(1.0, 0.0, 0.0);
-    this->yPID = new PIDController(1.0, 0.0, 0.0);
+    this->xPID = new PIDController(-2.0, 0.0, 0.5);
+    this->yPID = new PIDController(-2.0, 0.0, 0.5);
     this->thetaPID = new PIDController(0.3, 0.0, 0.0);
 
-    this->xPID->setEpsilon(1.5);
-    this->yPID->setEpsilon(1.5);
+    this->xPID->setEpsilon(0.5);
+    this->yPID->setEpsilon(0.5);
     this->thetaPID->setEpsilon(0.14);
 
     this->targetPose = new Pose(Vector(0.0, 0.0), 0.0);
     this->outputPose = new Pose(Vector(0.0, 0.0), 0.0);
+
+    beenSettled = false;
+    timeSettled = pros::millis();
+
+    minSettledTime = 100;
 
 }
 
@@ -70,5 +75,16 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
 
 bool PosePID::isSettled()
 {
-    return this->thetaPID->isSettled() && this->xPID->isSettled() && this->yPID->isSettled();
+    if(this->thetaPID->isSettled() && this->xPID->isSettled() && this->yPID->isSettled()){
+        if(!beenSettled){
+            beenSettled = true;
+            timeSettled = pros::millis();
+        }
+        return (pros::millis()-timeSettled)>minSettledTime;
+    }
+    else{
+        beenSettled = false;
+        return false;
+    }
+    
 }

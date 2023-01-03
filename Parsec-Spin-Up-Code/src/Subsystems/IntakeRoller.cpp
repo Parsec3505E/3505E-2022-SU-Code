@@ -157,7 +157,7 @@ double IntakeRoller::readColour()
     }
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Hue value: %f      ", colourSensor->get_hue());
-    colourSensor->set_led_pwm(50);
+    //colourSensor->set_led_pwm(50);
     return colourSensor->get_hue();
 }
 

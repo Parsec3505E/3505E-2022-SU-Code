@@ -40,21 +40,21 @@ void PIDController::setEpsilon(double epsilon)
 double PIDController::stepPID(double input, double deltaTime)
 {
 
-    this->error = this->target - input;
+    this->error = input - this->target;
 
 
-    // if (fabs(this->error) > this->integralWindUp)
-    // {
-    //     this->integral = 0.0;
-    // }
-    // else
-    // {
-    //     this->integral = (this->integral + this->error); // *
-    // }
+    if (fabs(this->error) > this->integralWindUp)
+    {
+        this->integral = 0.0;
+    }
+    else
+    {
+        this->integral = (this->integral + this->error); // *
+    }
 
-    // this->deriative = (this->error - this->prevError); // / 
-
-    double output = (this->kP * this->error); //+ (this->kI * this->integral) + (this->kD * this->deriative);
+    this->deriative = (this->error - this->prevError); // / 
+    pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Deriv: %f", this->deriative);
+    double output = (this->kP * this->error) + (this->kI * this->integral) + (this->kD * this->deriative);
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 11, "input: %.4f", input);
     // pros::screen::print(pros::E_TEXT_MEDIUM, 9, "error: %.4f", this->error);

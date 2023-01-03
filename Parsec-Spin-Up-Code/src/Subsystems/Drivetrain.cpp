@@ -363,7 +363,7 @@ void Drivetrain::odometryStep(pros::Controller driver)
 
     //driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->deltaXGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
     pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 

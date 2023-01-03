@@ -17,6 +17,10 @@ class PosePID
         Pose* targetPose;
         Pose* outputPose;
 
+        bool beenSettled;
+        int timeSettled;
+        int minSettledTime;
+
     public:
 
         // PosePID constructor
