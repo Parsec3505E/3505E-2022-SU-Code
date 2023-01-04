@@ -26,6 +26,8 @@ class Shooter
         double motorVelLimit;
         double motorAccLimit;
 
+        int targetVel;
+
         // Shooter Motor Declarations
         pros::Motor* shooterPwr1;
         pros::Motor* shooterPwr2;
@@ -45,6 +47,12 @@ class Shooter
 
         // Update the state of the Shooter
         void updateShooter(pros::Controller driver);
+
+        void getRPM();
+
+        void setMotorSpeed(int vel);
+        void indexAll();
+        
 
         enum ShooterStates getState();
 

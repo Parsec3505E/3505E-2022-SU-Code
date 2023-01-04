@@ -9,7 +9,8 @@
 Drivetrain::Drivetrain()
 {
     // Construct the Pose/PosePID objects
-    robotPose = new Pose(Vector(40.0, 40.0), 0.0);
+    // from rollers 30.0, 13.0
+    robotPose = new Pose(Vector(30.0, 13.0), 0.0);
     velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
     targetPose = new Pose(Vector(0.0, 0.0), 0.0);
 
@@ -128,6 +129,9 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
             moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
 
             this->prevTime = this->currTime;
+
+            break;
+        case BLANK:
 
             break;
         case DEAD:
@@ -395,19 +399,24 @@ void Drivetrain::driveToPoint(double x, double y, double heading)
     this->targetPose->setThetaComponent(heading);
 
     while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
+    
 }
 
 void Drivetrain::turnToPoint(double x, double y)
 {
-    posePID->setXConstants(0.1, 0.0, 0.0);
-    posePID->setYConstants(0.1, 0.0, 0.0);
-    posePID->setThetaConstants(-1.5, 0.0, 0.1);
-
+    // posePID->setXConstants(0.1, 0.0, 0.0);
+    // posePID->setYConstants(0.1, 0.0, 0.0);
+    // posePID->setThetaConstants(-1.5, 0.0, 0.1);
+    
     double heading = atan2(x - this->robotPose->getXComponent(), y - this->robotPose->getYComponent());
+    driveToPoint( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);
 
+
+    pros::screen::print(pros::E_TEXT_MEDIUM, 9, "HEADING %f      ", heading);
     this->targetPose->setXComponent(this->robotPose->getXComponent());
     this->targetPose->setYComponent(this->robotPose->getYComponent());
     this->targetPose->setThetaComponent(heading);
+    while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
 }
 
 Pose Drivetrain::calcPoseToGoal()
@@ -419,7 +428,23 @@ Pose* Drivetrain::getRobotPose()
 {
     return this->robotPose;
 }
+void Drivetrain::setPower(int rFront, int lFront, int rBack, int lBack){
+    rightFront->move_velocity(rFront);
+    leftFront->move_velocity(lFront);
+    rightBack->move_velocity(rBack);
+    leftBack->move_velocity(lBack);
+}
+void Drivetrain::driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack)
+{
+    rightFront->move_velocity(rFront);
+    leftFront->move_velocity(lFront);
+    rightBack->move_velocity(rBack);
+    leftBack->move_velocity(lBack);
+    pros::delay(ms);
+    stop();
 
+  //drivetrain.stop();
+}
 
 void Drivetrain::stop()
 {

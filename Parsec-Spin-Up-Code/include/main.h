@@ -69,6 +69,7 @@
 extern "C" {
 #endif
 
+
 typedef struct{
 Drivetrain* drive;
 IntakeRoller* intake;
@@ -81,7 +82,7 @@ void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
 
-extern pros::Controller driver(pros::E_CONTROLLER_MASTER);
+//extern pros::Controller driver(pros::E_CONTROLLER_MASTER);
 
 
 #ifdef __cplusplus

@@ -3,9 +3,9 @@
 Shooter::Shooter()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    shooterPwr1 = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterPwr2 = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterInd = new pros::Motor(17, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr1 = new pros::Motor(5, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr2 = new pros::Motor(14, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterInd = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
     motorAccLimit = 0;
@@ -13,6 +13,8 @@ Shooter::Shooter()
     flywheelEncoder = new pros::ADIEncoder('G', 'H');
 
     rpmPID = new PIDController(0, 0, 0);
+
+    targetVel = 0;
 
 }
 
@@ -31,37 +33,51 @@ void Shooter::updateShooter(pros::Controller driver)
     case OPERATOR_CONTROL:
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
         {
-            shooterPwr1->move_velocity(1000);
-            shooterPwr2->move_velocity(1000);
+            targetVel += 10;
+            
 
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
-            shooterPwr1->move_voltage(3500);
-            shooterPwr2->move_voltage(3500);
-
+            //targetVel = 300;
+            targetVel -= 10;
         }
-        else
-        {
-            shooterPwr1->move_velocity(0);
-            shooterPwr2->move_velocity(0);
-        }
+        // else
+        // {
+        //     targetVel = 0;
+        // }
 
+        shooterPwr1->move_velocity(targetVel);
+        shooterPwr2->move_velocity(targetVel);
+        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
 
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)  && shooterPwr1->get_actual_velocity() >= targetVel*0.8) 
         {
-            if(indexerTrigger == false)
+
+            if(!indexerTrigger)
             {
-                shooterInd->move_absolute(-200, 95);
+                shooterInd->move_absolute(-165, 95);
+                if(shooterInd->get_position() <= -160){
+                    indexerTrigger = true;
+                }
+                
             }
-            indexerTrigger = true;
+            else{
+                shooterInd->move_absolute(0, 95);
+                if(shooterInd->get_position() >= -5){
+                    indexerTrigger = false;
+                }
+                
+            }
+            
+
 
         }
-        else
-        {
-            shooterInd->move_absolute(0, 85);
-            indexerTrigger = false;
-        }
+        // else
+        // {
+        //     shooterInd->move_absolute(0, 95);
+        //     indexerTrigger = false;
+        // }
 
         break;
     
@@ -88,6 +104,30 @@ enum Shooter::ShooterStates Shooter::getState()
 
 void Shooter::setTargetRPM(double RPM)
 {
+
+}
+
+void Shooter::getRPM()
+{
+
+}
+
+void Shooter::setMotorSpeed(int vel)
+{
+    shooterPwr1->move_velocity(vel);
+    shooterPwr2->move_velocity(vel);
+}
+
+void Shooter::indexAll()
+{
+
+    shooterInd->move_velocity(600);
+    pros::delay(500);
+    shooterInd->move_velocity(-600);
+    pros::delay(500);
+    shooterInd->move_velocity(0);
+
+
 
 }
 

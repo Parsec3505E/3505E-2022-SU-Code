@@ -5,7 +5,7 @@
 IntakeRoller::IntakeRoller()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
     colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
@@ -70,7 +70,7 @@ void IntakeRoller::setIntakeState(IntakeStates intakeState)
 }
 void IntakeRoller::rollToColourAUTO(){
    
-
+    colourSensor->set_led_pwm(50);
     //IF STARTING COLOUR IS RED
     if(colourSensor->get_hue()<10.0){
         //MOVE UNTIL SEE BLUE
@@ -157,7 +157,7 @@ double IntakeRoller::readColour()
     }
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "Hue value: %f      ", colourSensor->get_hue());
-    //colourSensor->set_led_pwm(50);
+    //
     return colourSensor->get_hue();
 }
 

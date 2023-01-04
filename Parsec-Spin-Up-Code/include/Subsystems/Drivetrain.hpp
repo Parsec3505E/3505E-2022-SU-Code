@@ -19,7 +19,7 @@ class Drivetrain
 
     public:
         //Drivetrain States
-        enum DrivetrainStates{OPERATOR_CONTROL, PID, DEAD};
+        enum DrivetrainStates{OPERATOR_CONTROL, PID, BLANK, DEAD};
 
     private:
 
@@ -130,6 +130,10 @@ class Drivetrain
         
         void turnToPoint(double x, double y);
 
+        void setPower(int rFront, int lFront, int rBack, int lBack);
+
+        void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
+
         Pose* getRobotPose();
 
         void setRobotPose(Pose pose);
@@ -152,6 +156,8 @@ class Drivetrain
 
 
         Pose calcPoseToGoal();
+
+       
 
         void stop();
 

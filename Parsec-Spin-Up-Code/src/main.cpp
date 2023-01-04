@@ -2,8 +2,10 @@
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
+#include "autonomous.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
+
 
 
 
@@ -68,81 +70,12 @@ void competition_initialize() {
  */
 
 
-void controlFunction(void* controlArg)
-{
-    Drivetrain* drive = ((control_arg*)controlArg)->drive;
-    IntakeRoller* intake = ((control_arg*)controlArg)->intake;
-    Shooter* shooter  = ((control_arg*)controlArg)->shooter;
 
-	while(true)
-	{
-		drive->updateDrivetrain(driver);
-		intake->updateIntake(driver);
-		shooter->updateShooter(driver);
-
-		pros::delay(50);
-	}
-
-}
 
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
-
-	std::uint32_t autoStartTime = pros::millis();
-	
-	control_arg* control_task_arg = new control_arg;
-
-
-	Drivetrain* drivetrainObj = new Drivetrain();
-	control_task_arg->drive = drivetrainObj;
-
-	IntakeRoller* intakeObj = new IntakeRoller();
-	control_task_arg->intake = intakeObj;
-
-	Shooter* shooterObj = new Shooter();
-	control_task_arg->shooter = shooterObj;
-
-
-	drivetrainObj->resetGyro();
-	pros::delay(3000);
-
-	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
-
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-
-	// DRIVE COMMANDS
-
-	//drivetrainObj->driveToPoint(0.0, 0.0, M_PI/2);
-	drivetrainObj->turnToPoint(17.78, 122.63);
-
-	while(!drivetrainObj->isSettled()){}
-	driver.print(2, 2, "Hello");
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	pros::delay(1000);
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	// drivetrainObj->driveToPoint(40.0, 40.0, 0);
-	// while(!drivetrainObj->isSettled()){}
-	// driver.print(2, 2, "Hello");
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-
-
-	//pros::delay(1000);
-	//drivetrainObj->turnToPoint(5.0, 90.0);
-
-
-	while(pros::millis() - autoStartTime < 14500)
-	{}
-
-	//wait till timer hits 14.9 seconds
-	//do end of auton stuff
-	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
-	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
-	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
-	// drivetrainObj->~Drivetrain();
-	controlTask.remove();
+	auton1();
 }
 
 /**
@@ -162,8 +95,10 @@ void autonomous() {
 
 
 void opcontrol() {
-	pros::delay(100);
+
 	
+
+	pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
@@ -183,7 +118,6 @@ void opcontrol() {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
-		//intake.readColour();
 		shooter.updateShooter(driver);
 		
 		pros::delay(50);
