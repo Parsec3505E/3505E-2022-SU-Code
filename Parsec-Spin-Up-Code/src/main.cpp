@@ -113,7 +113,8 @@ void autonomous() {
 
 	// DRIVE COMMANDS
 
-	drivetrainObj->driveToPoint(40.0, 40.0, 0);
+	//drivetrainObj->driveToPoint(0.0, 0.0, M_PI/2);
+	drivetrainObj->turnToPoint(17.78, 122.63);
 
 	while(!drivetrainObj->isSettled()){}
 	driver.print(2, 2, "Hello");

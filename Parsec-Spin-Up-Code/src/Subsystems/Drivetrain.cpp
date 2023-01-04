@@ -9,9 +9,12 @@
 Drivetrain::Drivetrain()
 {
     // Construct the Pose/PosePID objects
-    robotPose = new Pose(Vector(0.0, 0.0), 0.0);
+    robotPose = new Pose(Vector(40.0, 40.0), 0.0);
     velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
     targetPose = new Pose(Vector(0.0, 0.0), 0.0);
+
+    xPoseGlobal = robotPose->getXComponent();
+    yPoseGlobal = robotPose->getYComponent();
 
     posePID = new PosePID();
 
@@ -398,9 +401,9 @@ void Drivetrain::turnToPoint(double x, double y)
 {
     posePID->setXConstants(0.1, 0.0, 0.0);
     posePID->setYConstants(0.1, 0.0, 0.0);
-    posePID->setThetaConstants(1.5, 0.0, 0.0);
+    posePID->setThetaConstants(-1.5, 0.0, 0.1);
 
-    double heading = atan2(y - this->robotPose->getYComponent(), x - this->robotPose->getXComponent());
+    double heading = atan2(x - this->robotPose->getXComponent(), y - this->robotPose->getYComponent());
 
     this->targetPose->setXComponent(this->robotPose->getXComponent());
     this->targetPose->setYComponent(this->robotPose->getYComponent());

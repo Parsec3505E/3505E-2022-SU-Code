@@ -52,7 +52,7 @@ double PIDController::stepPID(double input, double deltaTime)
         this->integral = (this->integral + this->error); // *
     }
 
-    this->deriative = (this->error - this->prevError); // / 
+    this->deriative = ((this->error - this->prevError)/deltaTime); // / 
     pros::screen::print(pros::E_TEXT_MEDIUM, 8, "Deriv: %f", this->deriative);
     double output = (this->kP * this->error) + (this->kI * this->integral) + (this->kD * this->deriative);
 

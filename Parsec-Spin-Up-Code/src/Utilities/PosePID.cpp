@@ -2,13 +2,13 @@
 
 PosePID::PosePID()
 {
-    this->xPID = new PIDController(-2.0, 0.0, 0.5);
-    this->yPID = new PIDController(-2.0, 0.0, 0.5);
-    this->thetaPID = new PIDController(0.3, 0.0, 0.0);
+    this->xPID = new PIDController(-2.25, 0.0, 0.0);
+    this->yPID = new PIDController(-2.25, 0.0, 0.0);
+    this->thetaPID = new PIDController(-1.5, 0.0, 0.1);
 
-    this->xPID->setEpsilon(0.5);
-    this->yPID->setEpsilon(0.5);
-    this->thetaPID->setEpsilon(0.14);
+    this->xPID->setEpsilon(0.75);
+    this->yPID->setEpsilon(0.75);
+    this->thetaPID->setEpsilon(0.04);
 
     this->targetPose = new Pose(Vector(0.0, 0.0), 0.0);
     this->outputPose = new Pose(Vector(0.0, 0.0), 0.0);
@@ -62,7 +62,7 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
     this->outputPose->setYComponent(yOutput);
 
     this->thetaPID->setTarget(this->targetPose->getThetaComponent());
-    double thetaOutput = this->thetaPID->stepPID(input->getThetaComponent(), deltaTime);
+    double thetaOutput = this->thetaPID->stepPID(fmod(input->getThetaComponent(), M_PI*2), deltaTime);
     this->outputPose->setThetaComponent(thetaOutput);
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "x: %f", xOutput);
