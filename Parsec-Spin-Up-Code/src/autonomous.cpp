@@ -54,34 +54,84 @@ void auton1(){
 
 //====== START =========
 	// ROLLERS
-    // drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    // drivetrainObj->setPower(-50,-50, -50, -50);
-    // pros::delay(500);
-    // drivetrainObj->setPower(0,0, 0,0);
-    // intakeObj->rollToColourAUTO();
-    // driver.print(2, 2, "Hello");
+	shooterObj->setMotorSpeed(600);
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50, -50, -50);
+    pros::delay(400);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourAUTO();
 
+	//MOVE FORWARD 
 
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+	
+	//TURN TO GOAL
 
-    //Go to middle & turn towards goal
-
-	drivetrainObj->driveToPoint(40.0, 40.0, 0);
-    while(!drivetrainObj->isSettled()){}
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-    //driver.print(2, 2, "Hello1");
-
-drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 	drivetrainObj->turnToPoint(17.78, 122.63);
     while(!drivetrainObj->isSettled()){}
+	driver.print(2, 2, "Hello222222");
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-    driver.print(2, 2, "Hello222222");
+	
+	//SHOOTING
+	
+    shooterObj->indexAll();
+	shooterObj->setMotorSpeed(0);
+	
+	
+
+
+    
+    //TOWARDS SECOND ROLLER
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(50, 50, -50, -50);
+    pros::delay(900);
+	 driver.print(2, 2, "Hello");
+    drivetrainObj->setPower(0,0, 0,0);
+
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// drivetrainObj->driveToPoint(40.0, 16.0, 0);
+    // while(!drivetrainObj->isSettled()){}
+    // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->driveToPoint(117.0, 105.35, -(M_PI/2.0));
+    while(!drivetrainObj->isSettled()){}
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // drivetrainObj->setPower(50, 50, 50, 50);
+    // pros::delay(500);
+    // drivetrainObj->setPower(0,0, 0,0);
+
+
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// drivetrainObj->turnToPoint(0.0, 105.35);
+    // while(!drivetrainObj->isSettled()){}
+	// driver.print(2, 2, "%f     ", drivetrainObj->getRobotPose()->getThetaComponent() );
+    // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// ROLLERS
+	 drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(100,100, -100, -100);
+    pros::delay(500);
+    drivetrainObj->setPower(0,0, 0,0);
+
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50, -50, -50);
+    pros::delay(500);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourAUTO();
+
+
+   
     
 
-    //Shooting
-    // shooterObj->setMotorSpeed(500);
-    // pros::delay(800);
-    // shooterObj->indexAll();
+    
 	
 	
 	

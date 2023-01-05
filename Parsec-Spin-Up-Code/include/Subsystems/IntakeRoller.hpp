@@ -12,7 +12,7 @@ class IntakeRoller
     public:
 
         // IntakeRoller States
-        enum IntakeStates{OPERATOR_CONTROL};
+        enum IntakeStates{OPERATOR_CONTROL, COLOUR_AUTO, COLOUR_MANUAL, BLANK};
         // enum RollerStates{};
 
         PIDController* rollerPID;
@@ -26,6 +26,8 @@ class IntakeRoller
         // Roller Colour Sensor Declarations
         pros::Optical* colourSensor;
 
+        int colourFlag;
+
         IntakeStates mIntakeState;
 
 
@@ -37,7 +39,7 @@ class IntakeRoller
 
         //Optical Methods
         void rollToColourAUTO();
-
+        void rollToColourDRIVE(bool alliance);
         void rollToColourMANUAL(bool colour);
 
         double readColour();

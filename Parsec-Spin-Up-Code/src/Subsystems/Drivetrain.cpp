@@ -106,9 +106,9 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
                 //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
                 //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
 
-                this->targetPose->setXComponent(x_val);
-                this->targetPose->setYComponent(y_val);
-                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * -0.1);
+                this->targetPose->setXComponent(-x_val);
+                this->targetPose->setYComponent(-y_val);
+                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1);
 
                 this->currTime = pros::millis();
 
@@ -392,33 +392,51 @@ bool Drivetrain::isSettled()
     return this->posePID->isSettled();
 }
 
-void Drivetrain::driveToPoint(double x, double y, double heading)
-{
+void Drivetrain::drivePID(double x, double y, double heading){
     this->targetPose->setXComponent(x);
     this->targetPose->setYComponent(y);
     this->targetPose->setThetaComponent(heading);
 
     while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
-    
+}
+
+void Drivetrain::driveToPoint(double x, double y, double heading)
+{
+    posePID->setXConstants(-2.25, 0.0, 0.0);
+    posePID->setYConstants(-2.25, 0.0, 0.0);
+    posePID->setThetaConstants(-0.25, 0.0, 0.1);
+
+    drivePID(x, y, heading);
 }
 
 void Drivetrain::turnToPoint(double x, double y)
 {
-    // posePID->setXConstants(0.1, 0.0, 0.0);
-    // posePID->setYConstants(0.1, 0.0, 0.0);
-    // posePID->setThetaConstants(-1.5, 0.0, 0.1);
+    posePID->setXConstants(0.0, 0.0, 0.0);
+    posePID->setYConstants(0.0, 0.0, 0.0);
+    posePID->setThetaConstants(-5.0, 0.0, 0.1);
+
+
     
     double heading = atan2(x - this->robotPose->getXComponent(), y - this->robotPose->getYComponent());
-    driveToPoint( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);
+    drivePID( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);
 
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 9, "HEADING %f      ", heading);
-    this->targetPose->setXComponent(this->robotPose->getXComponent());
-    this->targetPose->setYComponent(this->robotPose->getYComponent());
-    this->targetPose->setThetaComponent(heading);
-    while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
+   
 }
+void Drivetrain::turnToHeading(double heading)
+{
+    posePID->setXConstants(0.0, 0.0, 0.0);
+    posePID->setYConstants(0.0, 0.0, 0.0);
+    posePID->setThetaConstants(-5.0, 0.0, 0.1);
+    
+    
+    drivePID( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);
 
+
+   
+    
+}
 Pose Drivetrain::calcPoseToGoal()
 {
 

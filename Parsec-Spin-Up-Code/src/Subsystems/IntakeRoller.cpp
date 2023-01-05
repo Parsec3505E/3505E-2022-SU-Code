@@ -10,6 +10,8 @@ IntakeRoller::IntakeRoller()
 
     rollerPID = new PIDController(0, 0, 0);
 
+    colourFlag = 0;
+
 }
 
 
@@ -35,10 +37,14 @@ switch (mIntakeState)
         {
             //TRUE IS RED ALLIANCE
             // FALSE IS BLUE
-            rollToColourMANUAL(true);
+            //setIntakeState(COLOUR_MANUAL);
+            colourSensor->set_led_pwm(50);
+            rollToColourDRIVE(true);
         }
         else
         {
+            colourFlag = 0;
+
             intakeMotor->move_velocity(0);
             intakeMotor->move_velocity(0);
         }
@@ -47,8 +53,59 @@ switch (mIntakeState)
         readColour();
 
         break;
-    
 
+        case COLOUR_AUTO:
+
+        colourSensor->set_led_pwm(50);
+
+        if(colourFlag == 0){
+            if(colourSensor->get_hue()<10.0){colourFlag=1;}
+            else{colourFlag=2;}
+        }
+
+        if(colourFlag==1){
+            intakeMotor->move_velocity(-400);
+            //MOVE UNTIL SEE BLUE
+            if(colourSensor->get_hue()>200.0){
+            //CORRCTION
+            intakeMotor->tare_position();
+            intakeMotor->move_absolute(100, 400);
+            if(intakeMotor->get_position() >= 100){
+                    intakeMotor->move_velocity(0);
+                    colourFlag=0;
+                    setIntakeState(BLANK);
+                }
+
+            }
+        }
+
+        if(colourFlag==2){
+            intakeMotor->move_velocity(-400);
+            //MOVE UNTIL SEE RED
+            if(colourSensor->get_hue()<10.0){
+            //CORRCTION
+            intakeMotor->tare_position();
+            intakeMotor->move_absolute(100, 400);
+            if(intakeMotor->get_position() >= 100){
+                    intakeMotor->move_velocity(0);
+                    colourFlag=0;
+                    setIntakeState(BLANK);
+                }
+           
+
+            }
+        }
+        
+        break;
+
+        case COLOUR_MANUAL:
+
+    
+        break;
+
+        case BLANK:
+    
+        break;
     }
 
 }
@@ -76,17 +133,7 @@ void IntakeRoller::rollToColourAUTO(){
         //MOVE UNTIL SEE BLUE
         intakeMotor->move_velocity(-400);
         while(colourSensor->get_hue()<10.0){}
-
         
-
-        //CORRECTION FOR GOING OVER
-        intakeMotor->move_velocity(400);
-        pros::delay(500);
-        
-        intakeMotor->move_velocity(0);
-        
-        
-
     }
     //IF STARTING COLOUR IS BLUE
     else{
@@ -95,16 +142,56 @@ void IntakeRoller::rollToColourAUTO(){
         while(colourSensor->get_hue()>200.0){
         }
         
-        
-        //CORRECTION FOR GOING OVER
+    }
+    //CORRECTION FOR GOING OVER
         intakeMotor->move_velocity(400);
         pros::delay(500);
 
         intakeMotor->move_velocity(0);
-        
-    }
     
 
+}
+void IntakeRoller::rollToColourDRIVE(bool alliance){
+    switch (colourFlag){
+        case 0:
+            intakeMotor->move_velocity(-400);
+            //RED
+            if(alliance){
+                if(colourSensor->get_hue()<10.0){colourFlag = 1;}
+
+            }
+            //BLUE
+            else{
+                if(colourSensor->get_hue()>200.0){colourFlag = 1;}
+            }
+        break;
+
+        case 1:
+            //RED
+            if(alliance){
+                if(colourSensor->get_hue()>200.0){intakeMotor->tare_position();colourFlag = 2;}
+
+            }
+            //BLUE
+            else{
+                if(colourSensor->get_hue()<10.0){intakeMotor->tare_position();colourFlag = 2;}
+                
+            }
+
+        break;
+
+        case 2:
+            
+            intakeMotor->move_absolute(800, 400);
+            if(intakeMotor->get_position() >= 100){
+                    intakeMotor->move_velocity(0);
+                }
+
+        break;
+
+
+
+}
 }
 void IntakeRoller::rollToColourMANUAL(bool colour){
     //TRUE IS RED

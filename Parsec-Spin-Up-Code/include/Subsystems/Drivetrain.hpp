@@ -126,9 +126,13 @@ class Drivetrain
 
         void resetGyro();
 
+        void drivePID(double x, double y, double heading);
+
         void driveToPoint(double x, double y, double heading);
         
         void turnToPoint(double x, double y);
+
+        void turnToHeading(double heading);
 
         void setPower(int rFront, int lFront, int rBack, int lBack);
 

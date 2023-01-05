@@ -27,6 +27,7 @@ void Shooter::updateShooter(pros::Controller driver)
     case CLOSED_LOOP:
 
         // Put closed loop code for the shooter here
+        driver.print(2, 2, "Hello2");
         
         break;
 
@@ -121,9 +122,9 @@ void Shooter::setMotorSpeed(int vel)
 void Shooter::indexAll()
 {
 
-    shooterInd->move_velocity(600);
-    pros::delay(500);
-    shooterInd->move_velocity(-600);
+    shooterInd->move_absolute(-165, 95);
+    pros::delay(800);
+    shooterInd->move_absolute(0, -95);
     pros::delay(500);
     shooterInd->move_velocity(0);
 
