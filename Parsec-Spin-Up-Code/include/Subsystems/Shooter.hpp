@@ -27,6 +27,10 @@ class Shooter
         double motorAccLimit;
 
         int targetVel;
+        bool beenSettled;
+        int timeSettled;
+        int minSettledTime;
+        int epsilon;
 
         // Shooter Motor Declarations
         pros::Motor* shooterPwr1;
@@ -65,7 +69,7 @@ class Shooter
 
         double slewRPM(double request);
 
-        bool isSettled(double epsilon);
+        bool isSettled();
 
         double calcShotRPM(double distance);
 };
