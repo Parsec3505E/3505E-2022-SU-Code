@@ -116,7 +116,7 @@ class Drivetrain
         Drivetrain();
 
         // Update the state of the Drivetrain
-        void updateDrivetrain(pros::Controller driver);
+        void updateDrivetrain(pros::Controller &driver);
 
         // Set the state of the Drivetrain
         void setState(enum DrivetrainStates);
@@ -128,11 +128,11 @@ class Drivetrain
 
         void drivePID(double x, double y, double heading);
 
-        void driveToPoint(double x, double y, double heading);
+        void driveToPoint(double x, double y, double heading, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
         
-        void turnToPoint(double x, double y);
+        void turnToPoint(double x, double y, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
 
-        void turnToHeading(double heading);
+        void turnToHeading(double heading, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
 
         void setPower(int rFront, int lFront, int rBack, int lBack);
 
@@ -146,9 +146,11 @@ class Drivetrain
 
         ~Drivetrain();
 
+        void moveRobot(Pose* velocityPose);
+
     private:
 
-        void moveRobot(Pose* velocityPose);
+        
 
         void setTargetPose(Pose targetPose);
 

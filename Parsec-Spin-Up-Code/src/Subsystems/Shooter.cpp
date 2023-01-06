@@ -27,7 +27,7 @@ void Shooter::updateShooter(pros::Controller driver)
     case CLOSED_LOOP:
 
         // Put closed loop code for the shooter here
-        driver.print(2, 2, "Hello2");
+        //driver.print(2, 2, "Hello2");
         
         break;
 

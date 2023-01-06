@@ -83,7 +83,7 @@ Drivetrain::Drivetrain()
 Drivetrain::~Drivetrain()
 {}
 
-void Drivetrain::updateDrivetrain(pros::Controller driver)
+void Drivetrain::updateDrivetrain(pros::Controller &driver)
 {
 
     // Finite State Machine (FSM)
@@ -96,6 +96,7 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
 
         case OPERATOR_CONTROL:
             {
+                //driver.print(2, 2, "in OP%d    ", pros::millis());
                 // Setting the x, y and theta components to the joystick values
 
                 //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
@@ -119,6 +120,7 @@ void Drivetrain::updateDrivetrain(pros::Controller driver)
                 break;
             }
         case PID:
+            //driver.print(2, 2, "in PID%d    ", pros::millis());
             posePID->setTarget(this->targetPose);
 
              //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
@@ -400,20 +402,28 @@ void Drivetrain::drivePID(double x, double y, double heading){
     while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
 }
 
-void Drivetrain::driveToPoint(double x, double y, double heading)
+void Drivetrain::driveToPoint(double x, double y, double heading, double xyepsilon=0.75, double thetaepsilon=0.04, double XP = -2.25, double YP = -2.25, double thetaP = -0.5)
 {
-    posePID->setXConstants(-2.25, 0.0, 0.0);
-    posePID->setYConstants(-2.25, 0.0, 0.0);
-    posePID->setThetaConstants(-0.25, 0.0, 0.1);
+    posePID->setXConstants(XP, 0.0, 0.0);
+    posePID->setYConstants(YP, 0.0, 0.0);
+    posePID->setThetaConstants(thetaP, 0.0, 0.1);
+
+    posePID->setXEpsilon(xyepsilon);
+    posePID->setYEpsilon(xyepsilon);
+    posePID->setThetaEpsilon(thetaepsilon);
 
     drivePID(x, y, heading);
 }
 
-void Drivetrain::turnToPoint(double x, double y)
+void Drivetrain::turnToPoint(double x, double y, double xyepsilon=1.5, double thetaepsilon=0.04, double XP = 0.0, double YP = 0.0, double thetaP = -10.0)
 {
-    posePID->setXConstants(0.0, 0.0, 0.0);
-    posePID->setYConstants(0.0, 0.0, 0.0);
-    posePID->setThetaConstants(-5.0, 0.0, 0.1);
+    posePID->setXConstants(XP, 0.0, 0.0);
+    posePID->setYConstants(YP, 0.0, 0.0);
+    posePID->setThetaConstants(thetaP, 0.0, 0.1);
+
+    posePID->setXEpsilon(xyepsilon);
+    posePID->setYEpsilon(xyepsilon);
+    posePID->setThetaEpsilon(thetaepsilon);
 
 
     
@@ -421,14 +431,18 @@ void Drivetrain::turnToPoint(double x, double y)
     drivePID( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);
 
 
-    pros::screen::print(pros::E_TEXT_MEDIUM, 9, "HEADING %f      ", heading);
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 9, "HEADING %f      ", heading);
    
 }
-void Drivetrain::turnToHeading(double heading)
+void Drivetrain::turnToHeading(double heading, double xyepsilon=10.0, double thetaepsilon=0.04, double XP = 0.0, double YP = 0.0, double thetaP = -4.0)
 {
-    posePID->setXConstants(0.0, 0.0, 0.0);
-    posePID->setYConstants(0.0, 0.0, 0.0);
-    posePID->setThetaConstants(-5.0, 0.0, 0.1);
+    posePID->setXConstants(XP, 0.0, 0.0);
+    posePID->setYConstants(YP, 0.0, 0.0);
+    posePID->setThetaConstants(thetaP, 0.0, 0.1);
+
+    posePID->setXEpsilon(xyepsilon);
+    posePID->setYEpsilon(xyepsilon);
+    posePID->setThetaEpsilon(thetaepsilon);
     
     
     drivePID( this->robotPose->getXComponent(),  this->robotPose->getYComponent(),heading);

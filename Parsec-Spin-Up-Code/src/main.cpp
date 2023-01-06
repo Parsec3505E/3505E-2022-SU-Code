@@ -70,8 +70,6 @@ void competition_initialize() {
  */
 
 
-
-
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
@@ -95,31 +93,31 @@ void autonomous() {
 
 
 void opcontrol() {
+	auton1();
 
+	//Uncomment below
+	// pros::Controller driver(pros::E_CONTROLLER_MASTER);
+	// Drivetrain drive;
+	// IntakeRoller intake;
+	// Shooter shooter;
+
+	// // drive.setRobotPose(persistPose);
+
+    // //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
+	
+	// //drive.resetGyro();
+	// //driver.rumble("...");
+	// drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
+	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	
 
-	pros::Controller driver(pros::E_CONTROLLER_MASTER);
-	Drivetrain drive;
-	IntakeRoller intake;
-	Shooter shooter;
+	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	// while (true) {
 
-	// drive.setRobotPose(persistPose);
-
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
-	
-	//drive.resetGyro();
-	//driver.rumble("...");
-	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
-	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	
-
-	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
-	while (true) {
-
-		drive.updateDrivetrain(driver);
-		intake.updateIntake(driver);
-		shooter.updateShooter(driver);
+	// 	drive.updateDrivetrain(driver);
+	// 	intake.updateIntake(driver);
+	// 	shooter.updateShooter(driver);
 		
-		pros::delay(50);
-	}
+	// 	pros::delay(50);
+	// }
 }

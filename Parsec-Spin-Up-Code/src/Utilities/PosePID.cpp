@@ -35,6 +35,20 @@ void PosePID::setThetaConstants(double kP, double kI, double kD)
     thetaPID->setConstants(kP, kI, kD);
 }
 
+void PosePID::setXEpsilon(double epsilon)
+{
+    this->xPID->setEpsilon(epsilon);
+}
+
+void PosePID::setYEpsilon(double epsilon)
+{
+    this->yPID->setEpsilon(epsilon);
+}
+
+void PosePID::setThetaEpsilon(double epsilon)
+{
+   this->thetaPID->setEpsilon(epsilon); 
+}
 
 void PosePID::setTarget(Pose* target)
 {
@@ -67,7 +81,7 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
 
     // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "x: %f", xOutput);
     // pros::screen::print(pros::E_TEXT_MEDIUM, 6, "y: %f", yOutput);
-    // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "theta: %f", thetaOutput);
+     pros::screen::print(pros::E_TEXT_MEDIUM, 9, "theta: %f", thetaOutput);
 
     return outputPose;
     

@@ -29,6 +29,13 @@ class PosePID
         void setXConstants(double kP, double kI, double kD);
         void setYConstants(double kP, double kI, double kD);
         void setThetaConstants(double kP, double kI, double kD);
+
+        void setXEpsilon(double epsilon);
+        void setYEpsilon(double epsilon);
+        void setThetaEpsilon(double epsilon);
+        
+
+
         
         // Set the target value to the PID to reach
         void setTarget(Pose* target);

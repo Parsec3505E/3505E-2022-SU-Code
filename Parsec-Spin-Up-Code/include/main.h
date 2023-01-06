@@ -76,6 +76,7 @@ IntakeRoller* intake;
 Shooter* shooter;
 } control_arg;
 
+
 void autonomous(void);
 void initialize(void);
 void disabled(void);

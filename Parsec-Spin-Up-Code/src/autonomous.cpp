@@ -2,23 +2,16 @@
 // #include "main.h"
 #include "autonomous.hpp"
 // #include "main.h"
-
-intake_arg* intake_task_arg = new intake_arg;
-//pros::Task intakeTask(moveIntakeFor, intake_task_arg, TASK_PRIORITY_MIN, TASK_STACK_DEPTH_MIN);
-
-
-drive_arg* track_task_arg = new drive_arg;
-//pros::Task odomTracking(poseTracking, track_task_arg, TASK_PRIORITY_MIN, TASK_STACK_DEPTH_MIN);
-//pros::Task chassisControl(odomChassisControl, track_task_arg, TASK_PRIORITY_MIN, TASK_STACK_DEPTH_MIN);
 pros::Controller driver(pros::E_CONTROLLER_MASTER);
+
 void controlFunction(void* controlArg)
 {
     
     Drivetrain* drive = ((control_arg*)controlArg)->drive;
     IntakeRoller* intake = ((control_arg*)controlArg)->intake;
     Shooter* shooter  = ((control_arg*)controlArg)->shooter;
-
-	while(true)
+	int curTime = pros::millis();
+	while(pros::millis() - curTime < 14990 + 1000000)
 	{
 		drive->updateDrivetrain(driver);
 		intake->updateIntake(driver);
@@ -28,6 +21,7 @@ void controlFunction(void* controlArg)
 	}
 
 }
+
 void auton1(){
     //pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	std::uint32_t autoStartTime = pros::millis();
@@ -48,7 +42,7 @@ void auton1(){
 	drivetrainObj->resetGyro();
 	pros::delay(3000);
 
-	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT);
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
 
 	
 
@@ -61,22 +55,22 @@ void auton1(){
     drivetrainObj->setPower(0,0, 0,0);
     intakeObj->rollToColourAUTO();
 
-	//MOVE FORWARD 
+	// //MOVE FORWARD 
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(50,50, 50, 50);
     pros::delay(300);
     drivetrainObj->setPower(0,0, 0,0);
 	
-	//TURN TO GOAL
+	// //TURN TO GOAL
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->turnToPoint(17.78, 122.63);
+	drivetrainObj->turnToPoint(17.78, 122.63, 1.5, 0.04, 0.0, 0.0, -10.0);
     while(!drivetrainObj->isSettled()){}
-	driver.print(2, 2, "Hello222222");
+	
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	
-	//SHOOTING
+	// //SHOOTING
 	
     shooterObj->indexAll();
 	shooterObj->setMotorSpeed(0);
@@ -87,10 +81,19 @@ void auton1(){
     
     //TOWARDS SECOND ROLLER
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    drivetrainObj->setPower(50, 50, -50, -50);
-    pros::delay(900);
-	 driver.print(2, 2, "Hello");
+	Pose tempPose(Vector(50.0, 30.0), 0.0);
+    drivetrainObj->moveRobot(&tempPose);
+    pros::delay(800);
+	 //driver.print(2, 2, "Hello");
     drivetrainObj->setPower(0,0, 0,0);
+
+//TURNING
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.04, 0.0, 0.0, -4.0);
+    while(!drivetrainObj->isSettled()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	driver.print(2, 2, "Hello222222");
+
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 	// drivetrainObj->driveToPoint(40.0, 16.0, 0);
@@ -99,9 +102,11 @@ void auton1(){
 
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->driveToPoint(117.0, 105.35, -(M_PI/2.0));
+	drivetrainObj->driveToPoint(100.0, 82.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -2.25, -0.5);
     while(!drivetrainObj->isSettled()){}
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	pros::delay(10000);
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     // drivetrainObj->setPower(50, 50, 50, 50);
@@ -116,10 +121,16 @@ void auton1(){
     // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	// ROLLERS
-	 drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    drivetrainObj->setPower(100,100, -100, -100);
-    pros::delay(500);
-    drivetrainObj->setPower(0,0, 0,0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	drivetrainObj->driveToPoint(129.0, 105.0, -(M_PI/2.0), 0.75, 0.5, -0.5, -0.5, -0.1);
+    while(!drivetrainObj->isSettled()){}
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	driver.print(2, 2, "Hello222222");
+
+	//  drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // drivetrainObj->moveRobot(&tempPose);
+    // pros::delay(500);
+    // drivetrainObj->setPower(0,0, 0,0);
 
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
@@ -148,7 +159,6 @@ void auton1(){
 	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
 	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
 	// drivetrainObj->~Drivetrain();
-	controlTask.remove();
 }
 void skills()
 {
