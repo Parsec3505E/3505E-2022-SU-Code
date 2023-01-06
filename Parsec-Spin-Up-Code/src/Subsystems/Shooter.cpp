@@ -13,8 +13,14 @@ Shooter::Shooter()
     flywheelEncoder = new pros::ADIEncoder('G', 'H');
 
     rpmPID = new PIDController(0, 0, 0);
-
+    //targetRPM = 0;
+    
     targetVel = 0;
+    beenSettled = false;
+    timeSettled = pros::millis();
+
+    minSettledTime = 100;
+    epsilon = 0;
 
 }
 
@@ -35,6 +41,7 @@ void Shooter::updateShooter(pros::Controller driver)
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
         {
             targetVel += 10;
+            epsilon += 1;
             
 
         }
@@ -42,6 +49,7 @@ void Shooter::updateShooter(pros::Controller driver)
         {
             //targetVel = 300;
             targetVel -= 10;
+            epsilon -= 1;
         }
         // else
         // {
@@ -52,7 +60,7 @@ void Shooter::updateShooter(pros::Controller driver)
         shooterPwr2->move_velocity(targetVel);
         driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
 
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)  && shooterPwr1->get_actual_velocity() >= targetVel*0.8) 
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)  && shooterPwr1->get_actual_velocity() >= targetVel*0.8 && isSettled()) 
         {
 
             if(!indexerTrigger)
@@ -117,16 +125,19 @@ void Shooter::setMotorSpeed(int vel)
 {
     shooterPwr1->move_velocity(vel);
     shooterPwr2->move_velocity(vel);
+    targetVel = vel;
+
 }
 
 void Shooter::indexAll()
 {
 
     shooterInd->move_absolute(-165, 95);
-    pros::delay(800);
+    epsilon = 150;
+    while(!isSettled()){}
     shooterInd->move_absolute(0, -95);
-    pros::delay(500);
-    shooterInd->move_velocity(0);
+    while(shooterInd->get_position() >= -100){}
+    //shooterInd->move_velocity(0);
 
 
 
@@ -137,8 +148,23 @@ double Shooter::slewRPM(double request)
 
 }
 
-bool Shooter::isSettled(double epsilon)
+bool Shooter::isSettled()
 {
+    
+    if((targetVel-epsilon) >= shooterPwr1->get_actual_velocity()){
+        if(!beenSettled){
+            beenSettled = true;
+            timeSettled = pros::millis();
+        }
+        return (pros::millis()-timeSettled)>minSettledTime;
+    }
+    else{
+        beenSettled = false;
+        return false;
+    }
+    
+    
+    
 
 }
 
