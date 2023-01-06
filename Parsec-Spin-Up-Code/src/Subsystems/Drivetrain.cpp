@@ -391,15 +391,13 @@ void Drivetrain::odometryStep(pros::Controller driver)
 
 bool Drivetrain::isSettled()
 {
-    return this->posePID->isSettled();
+    return this->posePID->isSettled() && this->targetPose->comparePoses(this->posePID->getTarget());
 }
 
 void Drivetrain::drivePID(double x, double y, double heading){
     this->targetPose->setXComponent(x);
     this->targetPose->setYComponent(y);
     this->targetPose->setThetaComponent(heading);
-
-    while (!this->targetPose->comparePoses(this->posePID->getTarget())){}
 }
 
 void Drivetrain::driveToPoint(double x, double y, double heading, double xyepsilon=0.75, double thetaepsilon=0.04, double XP = -2.25, double YP = -2.25, double thetaP = -0.5)

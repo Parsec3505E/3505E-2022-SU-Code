@@ -63,9 +63,8 @@ void auton1(){
     drivetrainObj->setPower(0,0, 0,0);
 	
 	// //TURN TO GOAL
-
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 	drivetrainObj->turnToPoint(17.78, 122.63, 1.5, 0.04, 0.0, 0.0, -10.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
 	
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
@@ -88,11 +87,12 @@ void auton1(){
     drivetrainObj->setPower(0,0, 0,0);
 
 //TURNING
+	drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.1, 0.0, 0.0, -3.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.04, 0.0, 0.0, -4.0);
     while(!drivetrainObj->isSettled()){}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello222222");
+	//driver.print(2, 2, "Hello222222");
+
 
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
@@ -101,12 +101,12 @@ void auton1(){
     // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 
+	drivetrainObj->driveToPoint(115.0, 70.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -1.75, -1.5);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->driveToPoint(100.0, 82.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -2.25, -0.5);
     while(!drivetrainObj->isSettled()){}
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-	pros::delay(10000);
+	pros::delay(5000);
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     // drivetrainObj->setPower(50, 50, 50, 50);
@@ -121,8 +121,9 @@ void auton1(){
     // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	// ROLLERS
+	
+	drivetrainObj->driveToPoint(125.0, 105.0, -(M_PI/2.0), 1.5, 0.5, -1.0, -1.0, -0.1);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	drivetrainObj->driveToPoint(129.0, 105.0, -(M_PI/2.0), 0.75, 0.5, -0.5, -0.5, -0.1);
     while(!drivetrainObj->isSettled()){}
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	driver.print(2, 2, "Hello222222");
@@ -131,7 +132,6 @@ void auton1(){
     // drivetrainObj->moveRobot(&tempPose);
     // pros::delay(500);
     // drivetrainObj->setPower(0,0, 0,0);
-
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(500);
