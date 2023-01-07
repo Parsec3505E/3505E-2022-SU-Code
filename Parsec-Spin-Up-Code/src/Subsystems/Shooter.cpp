@@ -60,7 +60,7 @@ void Shooter::updateShooter(pros::Controller driver)
         shooterPwr2->move_velocity(targetVel);
         driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
 
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)  && shooterPwr1->get_actual_velocity() >= targetVel*0.8 && isSettled()) 
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A) && isSettled()) 
         {
 
             if(!indexerTrigger)
@@ -151,7 +151,7 @@ double Shooter::slewRPM(double request)
 bool Shooter::isSettled()
 {
     
-    if((targetVel-epsilon) >= shooterPwr1->get_actual_velocity()){
+    if(shooterPwr1->get_actual_velocity() >= targetVel*0.8){
         if(!beenSettled){
             beenSettled = true;
             timeSettled = pros::millis();

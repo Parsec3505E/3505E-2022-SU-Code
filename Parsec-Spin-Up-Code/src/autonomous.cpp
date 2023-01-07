@@ -63,7 +63,7 @@ void auton1(){
     drivetrainObj->setPower(0,0, 0,0);
 	
 	// //TURN TO GOAL
-	drivetrainObj->turnToPoint(17.78, 122.63, 1.5, 0.04, 0.0, 0.0, -10.0);
+	drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.05, 0.0, 0.0, -12.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
 	
@@ -91,9 +91,9 @@ void auton1(){
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	//driver.print(2, 2, "Hello222222");
+	driver.print(2, 2, "Hello222222");
 
-
+	pros::delay(5000);
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 	// drivetrainObj->driveToPoint(40.0, 16.0, 0);
