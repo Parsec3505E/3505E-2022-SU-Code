@@ -94,6 +94,7 @@ void autonomous() {
 
 
 void opcontrol() {
+	auton1();
 	// auton1();
 
 	//Uncomment below

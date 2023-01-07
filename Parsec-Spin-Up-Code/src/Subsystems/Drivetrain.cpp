@@ -120,19 +120,24 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
                 break;
             }
         case PID:
-            //driver.print(2, 2, "in PID%d    ", pros::millis());
-            posePID->setTarget(this->targetPose);
+            {
+                //driver.print(2, 2, "in PID%d    ", pros::millis());
+                posePID->setTarget(this->targetPose);
 
-             //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
-            // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
+                //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", this->targetPose->getThetaComponent());
+                // pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target: %f", thetaTarget);
+                    
+                this->currTime = pros::millis();
                 
-            this->currTime = pros::millis();
+                Pose* globalPoseVel = posePID->stepPID(this->robotPose, this->currTime - this->prevTime);
+                Pose localPoseVel = globalPoseVel->rotatePose(this->robotPose->getThetaComponent());
 
-            moveRobot(posePID->stepPID(this->robotPose, this->currTime - this->prevTime));
+                moveRobot(&localPoseVel);
 
-            this->prevTime = this->currTime;
+                this->prevTime = this->currTime;
 
-            break;
+                break;
+            }
         case BLANK:
 
             break;

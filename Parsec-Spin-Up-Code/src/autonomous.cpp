@@ -48,7 +48,8 @@ void auton1(){
 
 //====== START =========
 	// ROLLERS
-	shooterObj->setMotorSpeed(600);
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+	shooterObj->setMotorSpeed(550);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
@@ -63,12 +64,11 @@ void auton1(){
     drivetrainObj->setPower(0,0, 0,0);
 	
 	// //TURN TO GOAL
-	drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.05, 0.0, 0.0, -12.0);
+	drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
-	
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	driver.print(2, 2, "Hello11111");
 	// //SHOOTING
 	
     shooterObj->indexAll();
@@ -85,15 +85,20 @@ void auton1(){
     pros::delay(800);
 	 //driver.print(2, 2, "Hello");
     drivetrainObj->setPower(0,0, 0,0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	pros::delay(100);
 
 //TURNING
 	drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.1, 0.0, 0.0, -3.0);
+	pros::delay(100);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	pros::delay(100);
     while(!drivetrainObj->isSettled()){}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	driver.print(2, 2, "Hello222222");
 
-	pros::delay(5000);
+	pros::delay(100);
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
 	// drivetrainObj->driveToPoint(40.0, 16.0, 0);
@@ -101,12 +106,12 @@ void auton1(){
     // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 
-	drivetrainObj->driveToPoint(115.0, 70.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -1.75, -1.5);
+	drivetrainObj->driveToPoint(115.0, 70.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -2.25, -1.5);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-    while(!drivetrainObj->isSettled()){}
+	//while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
+	while(!drivetrainObj->isSettled()){}
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-	pros::delay(5000);
+	driver.print(2, 2, "Hello333333");
 
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     // drivetrainObj->setPower(50, 50, 50, 50);
@@ -122,11 +127,11 @@ void auton1(){
 
 	// ROLLERS
 	
-	drivetrainObj->driveToPoint(125.0, 105.0, -(M_PI/2.0), 1.5, 0.5, -1.0, -1.0, -0.1);
+	drivetrainObj->driveToPoint(125.0, 115.0, -(M_PI/2.0), 1.5, 0.5, -1.0, -1.0, -0.1);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
     drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello222222");
+	driver.print(2, 2, "Hello44444");
 
 	//  drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     // drivetrainObj->moveRobot(&tempPose);

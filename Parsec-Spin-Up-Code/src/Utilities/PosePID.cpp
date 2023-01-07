@@ -79,12 +79,11 @@ Pose* PosePID::stepPID(Pose* input, double deltaTime)
     double thetaOutput = this->thetaPID->stepPID(fmod(input->getThetaComponent(), M_PI*2), deltaTime);
     this->outputPose->setThetaComponent(thetaOutput);
 
-    // pros::screen::print(pros::E_TEXT_MEDIUM, 4, "x: %f", xOutput);
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 9, "x: %f    ", xOutput);
     // pros::screen::print(pros::E_TEXT_MEDIUM, 6, "y: %f", yOutput);
-     pros::screen::print(pros::E_TEXT_MEDIUM, 9, "theta: %f", thetaOutput);
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 9, "theta: %f", thetaOutput);
 
     return outputPose;
-    
 }
 
 bool PosePID::isSettled()

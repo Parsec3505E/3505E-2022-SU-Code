@@ -49,3 +49,13 @@ bool Pose::comparePoses(Pose* otherPose)
 {
     return this->x == otherPose->getXComponent() && this->y == otherPose->getYComponent() && this->theta == otherPose->getThetaComponent();
 }
+
+Pose Pose::rotatePose(double angle)
+{
+    double rotatedX = (this->x * cos(angle)) - (this->y * sin(angle));
+    double rotatedY = (this->x * sin(angle)) + (this->y * cos(angle));
+
+    Pose tempPose(Vector(rotatedX, rotatedY), this->theta);
+
+    return tempPose;
+}
