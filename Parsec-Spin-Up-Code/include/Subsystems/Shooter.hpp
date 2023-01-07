@@ -30,7 +30,7 @@ class Shooter
         bool beenSettled;
         int timeSettled;
         int minSettledTime;
-        int epsilon;
+        double epsilon;
 
         // Shooter Motor Declarations
         pros::Motor* shooterPwr1;

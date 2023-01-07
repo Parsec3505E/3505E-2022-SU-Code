@@ -55,6 +55,7 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
+
 }
 
 /**
@@ -93,7 +94,7 @@ void autonomous() {
 
 
 void opcontrol() {
-	//auton1();
+	// auton1();
 
 	//Uncomment below
 	pros::Controller driver(pros::E_CONTROLLER_MASTER);
