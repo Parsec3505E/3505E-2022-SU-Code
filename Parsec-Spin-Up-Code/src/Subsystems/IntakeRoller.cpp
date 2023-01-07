@@ -23,9 +23,14 @@ switch (mIntakeState)
 
 
     case OPERATOR_CONTROL:
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
-            intakeMotor->move_velocity(600);
+            //TRUE IS RED ALLIANCE
+            // FALSE IS BLUE
+            //setIntakeState(COLOUR_MANUAL);
+            colourSensor->set_led_pwm(50);
+            rollToColourDRIVE(true);
+            
 
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
@@ -33,13 +38,9 @@ switch (mIntakeState)
             intakeMotor->move_velocity(-600);
         }
         
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
-            //TRUE IS RED ALLIANCE
-            // FALSE IS BLUE
-            //setIntakeState(COLOUR_MANUAL);
-            colourSensor->set_led_pwm(50);
-            rollToColourDRIVE(true);
+            intakeMotor->move_velocity(600);
         }
         else
         {
@@ -181,13 +182,23 @@ void IntakeRoller::rollToColourDRIVE(bool alliance){
         break;
 
         case 2:
+            intakeMotor->move_velocity(400);
+            //RED
+            if(alliance){
+                if(colourSensor->get_hue()<10.0){intakeMotor->move_velocity(0);}
+            }
+            //BLUE
+            else{
+                if(colourSensor->get_hue()>200.0){intakeMotor->move_velocity(0);}
+                
+            }
+
+            //intakeMotor->move_absolute(800, 400);
             
-            intakeMotor->move_absolute(800, 400);
-            if(intakeMotor->get_position() >= 100){
-                    intakeMotor->move_velocity(0);
-                }
 
         break;
+
+       
 
 
 
