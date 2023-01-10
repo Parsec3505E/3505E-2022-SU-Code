@@ -113,6 +113,7 @@ void opcontrol() {
 	
 
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	shooter.setTargetRPM(380);
 	while (true) {
 
 		drive.updateDrivetrain(driver);

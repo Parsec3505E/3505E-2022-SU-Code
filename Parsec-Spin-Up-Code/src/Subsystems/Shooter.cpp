@@ -19,7 +19,7 @@ Shooter::Shooter()
     beenSettled = false;
     timeSettled = pros::millis();
 
-    minSettledTime = 100;
+    minSettledTime = 1;
     epsilon = 0.8;
 
 }
@@ -31,13 +31,14 @@ void Shooter::updateShooter(pros::Controller driver)
     {
 
     case CLOSED_LOOP:
-
+        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), beenSettled);
         // Put closed loop code for the shooter here
         //driver.print(2, 2, "Hello2");
         
         break;
 
     case OPERATOR_CONTROL:
+        
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
             targetVel = 380;
             epsilon = 0.8;
@@ -66,6 +67,7 @@ void Shooter::updateShooter(pros::Controller driver)
         else if(!driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
             shooterPwr1->move_velocity(0);
             shooterPwr2->move_velocity(0);
+            
         }
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
         {
@@ -118,6 +120,7 @@ enum Shooter::ShooterStates Shooter::getState()
 
 void Shooter::setTargetRPM(double RPM)
 {
+    targetVel = RPM;
 
 }
 
@@ -138,11 +141,20 @@ void Shooter::indexAll()
 {
 
     epsilon = 0.7;
+    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Before VEL:    %f", shooterPwr1->get_actual_velocity());
     while(!isSettled()){}
-    shooterInd->move_absolute(-165, 95);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Exits at VEL:    %f", shooterPwr1->get_actual_velocity());
+    //shooterInd->move_relative(-165, 95);
+    shooterInd->move(-80);
+    pros::delay(750);
+
+    //while(shooterInd->get_position() <= -160){}
     while(!isSettled()){}
-    shooterInd->move_absolute(0, -95);
-    while(shooterInd->get_position() >= -100){}
+    //shooterInd->move_absolute(0, -95);
+    shooterInd->move(80);
+    pros::delay(750);
+   // shooterInd->move_relative(0, -95);
+    //while(shooterInd->get_position() >= -100){}
     //shooterInd->move_velocity(0);
 
 
@@ -156,7 +168,8 @@ double Shooter::slewRPM(double request)
 
 bool Shooter::isSettled()
 {
-    
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "SHOOTER VEL    %f", shooterPwr1->get_actual_velocity());
+    pros::screen::print(pros::E_TEXT_MEDIUM, 9, "TIME SETTLED: %f", timeSettled);
     if(shooterPwr1->get_actual_velocity() >= targetVel*epsilon){
         if(!beenSettled){
             beenSettled = true;
