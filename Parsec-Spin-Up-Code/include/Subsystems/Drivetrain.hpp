@@ -30,9 +30,18 @@ class Drivetrain
         Pose* velocityPose;
         Pose* targetPose;
 
+        Pose* previousPose; // Previous operator control pose
+        Pose* outputPose; // Output pose of the PID
+
+
+
         DrivetrainStates mDriveState;
 
         PosePID* posePID;
+
+        PIDController* driverCorrectionXPID;
+        PIDController* driverCorrectionYPID;
+        PIDController* driverCorrectionThetaPID;
 
         double motorVelLimit;
         double motorAccLimit;
@@ -61,7 +70,7 @@ class Drivetrain
 
         const double MOTOR_MAX_RPM = 200.0;
 
-        const double MOTOR_MAX_ACC = 180.0;
+        const double MOTOR_MAX_ACC = 175.0;
 
         std::uint32_t currTime;
         std::uint32_t prevTime;

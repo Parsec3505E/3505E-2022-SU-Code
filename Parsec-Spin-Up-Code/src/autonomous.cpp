@@ -90,58 +90,58 @@ void auton1(){
 	pros::delay(100);
 
 //TURNING
-	drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.1, 0.0, 0.0, -3.0);
-	pros::delay(100);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	pros::delay(100);
-    while(!drivetrainObj->isSettled()){}
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello222222");
-
-	pros::delay(100);
-
+	// drivetrainObj->turnToHeading(-(M_PI/2.0), 10.0, 0.1, 0.0, 0.0, -3.0);
+	// pros::delay(100);
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	// drivetrainObj->driveToPoint(40.0, 16.0, 0);
+	// pros::delay(100);
     // while(!drivetrainObj->isSettled()){}
-    // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// driver.print(2, 2, "Hello222222");
+
+	// pros::delay(100);
+
+	// // drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// // drivetrainObj->driveToPoint(40.0, 16.0, 0);
+    // // while(!drivetrainObj->isSettled()){}
+    // // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 
-	drivetrainObj->driveToPoint(115.0, 70.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -2.25, -1.5);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	//while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
-	while(!drivetrainObj->isSettled()){}
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello333333");
-
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    // drivetrainObj->setPower(50, 50, 50, 50);
-    // pros::delay(500);
-    // drivetrainObj->setPower(0,0, 0,0);
-
-
+	// drivetrainObj->driveToPoint(115.0, 70.0, -(M_PI/2.0), 20.0, 0.5, -2.25, -2.25, -1.5);
 	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	// drivetrainObj->turnToPoint(0.0, 105.35);
-    // while(!drivetrainObj->isSettled()){}
-	// driver.print(2, 2, "%f     ", drivetrainObj->getRobotPose()->getThetaComponent() );
+	// //while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
+	// while(!drivetrainObj->isSettled()){}
     // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// driver.print(2, 2, "Hello333333");
 
-	// ROLLERS
+	// // drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // // drivetrainObj->setPower(50, 50, 50, 50);
+    // // pros::delay(500);
+    // // drivetrainObj->setPower(0,0, 0,0);
+
+
+	// // drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// // drivetrainObj->turnToPoint(0.0, 105.35);
+    // // while(!drivetrainObj->isSettled()){}
+	// // driver.print(2, 2, "%f     ", drivetrainObj->getRobotPose()->getThetaComponent() );
+    // // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// // ROLLERS
 	
-	drivetrainObj->driveToPoint(125.0, 115.0, -(M_PI/2.0), 1.5, 0.5, -1.0, -1.0, -0.1);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-    while(!drivetrainObj->isSettled()){}
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello44444");
+	// drivetrainObj->driveToPoint(125.0, 115.0, -(M_PI/2.0), 1.5, 0.5, -1.0, -1.0, -0.1);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+    // while(!drivetrainObj->isSettled()){}
+    // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// driver.print(2, 2, "Hello44444");
 
-	//  drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    // drivetrainObj->moveRobot(&tempPose);
+	// //  drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // // drivetrainObj->moveRobot(&tempPose);
+    // // pros::delay(500);
+    // // drivetrainObj->setPower(0,0, 0,0);
+    // drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // drivetrainObj->setPower(-50,-50, -50, -50);
     // pros::delay(500);
     // drivetrainObj->setPower(0,0, 0,0);
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    drivetrainObj->setPower(-50,-50, -50, -50);
-    pros::delay(500);
-    drivetrainObj->setPower(0,0, 0,0);
-    intakeObj->rollToColourAUTO();
+    // intakeObj->rollToColourAUTO();
 
 
    
@@ -151,7 +151,7 @@ void auton1(){
 	
 	
 	
-	pros::delay(1000);
+	// pros::delay(1000);
 	
 
 
