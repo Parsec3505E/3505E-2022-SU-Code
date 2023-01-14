@@ -14,10 +14,16 @@ Drivetrain::Drivetrain()
     velocityPose = new Pose(Vector(0.0, 0.0), 0.0);
     targetPose = new Pose(Vector(0.0, 0.0), 0.0);
 
+    previousPose = new Pose(Vector(0.0, 0.0), 0.0);
+
     xPoseGlobal = robotPose->getXComponent();
     yPoseGlobal = robotPose->getYComponent();
 
     posePID = new PosePID();
+
+    driverCorrectionXPID = new PIDController(0.2, 0, 0);
+
+
 
     // Construct the Motor objects
     //PORT 17 IS BROKEN FOR SOME REASON!!!
@@ -96,11 +102,60 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
         case OPERATOR_CONTROL:
             {
+
+                // PID CODE FOR CORRECTING DRIVING
+
                 //driver.print(2, 2, "in OP%d    ", pros::millis());
                 // Setting the x, y and theta components to the joystick values
 
                 //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "target 2: %f", this->targetPose->getThetaComponent());
                 
+                // Finding the delta distance travelled from last iteration
+
+                // double deltaDistX = this->robotPose->getXComponent() - this->previousPose->getXComponent();
+                // double deltaDistY = this->robotPose->getYComponent() - this->previousPose->getYComponent();
+                // double deltaDistTheta = this->robotPose->getThetaComponent() - this->previousPose->getThetaComponent();
+
+                // // Start iteration timer
+
+                // this->currTime = pros::millis();
+
+                // // Calculating delta time
+                
+                // double deltaTimeMs = this->currTime - this->prevTime;
+
+                // // Calculating delta velocity
+
+                // double deltaVelocityX = deltaDistX / deltaTimeMs;
+                // double deltaVelocityY = deltaDistY / deltaTimeMs;
+                // double deltaVelocityTheta = deltaDistTheta / deltaTimeMs;
+
+                // // Get the commanded remote control values
+
+                // int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
+                // int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+                // int theta_val = driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1;
+                            
+                // // Get commanded remote control velocities
+
+                // double controllerVelocityX = x_val / deltaTimeMs;
+                // double controllerVelocityY = y_val / deltaTimeMs;
+                // double controllerVelocityTheta = theta_val / deltaTimeMs;
+
+                // //  this->targetPose->setXComponent(-x_val);
+                // //  this->targetPose->setYComponent(-y_val);
+                // //  this->targetPose->setThetaComponent(theta_val);
+
+                // moveRobot(this->targetPose);
+
+                // this->prevTime = this->currTime;
+
+                // this->previousPose->setXComponent(this->robotPose->getXComponent());
+                // this->previousPose->setYComponent(this->robotPose->getYComponent());
+                // this->previousPose->setThetaComponent(this->robotPose->getThetaComponent());
+
+                // break;
+
 
                 int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
                 int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
@@ -118,6 +173,8 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
                 this->prevTime = this->currTime;
 
                 break;
+
+                
             }
         case PID:
             {
@@ -205,7 +262,7 @@ void Drivetrain::moveRobot(Pose* velocityPose)
 
     std::map<std::string, double> motorVels = slewPose(this->rotationVels);
     //std::map<std::string, double> 
-    motorVels = this->rotationVels;
+    //motorVels = this->rotationVels;
 
     // Setting the motor slewed values to the physical motors
 
