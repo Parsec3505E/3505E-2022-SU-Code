@@ -29,6 +29,8 @@ class Pose
 
         bool comparePoses(Pose* otherPose);
 
+        Pose rotatePose(double angle);
+
 
     
 

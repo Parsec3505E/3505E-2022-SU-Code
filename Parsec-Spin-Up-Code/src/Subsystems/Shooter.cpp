@@ -31,7 +31,7 @@ void Shooter::updateShooter(pros::Controller driver)
     {
 
     case CLOSED_LOOP:
-        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), beenSettled);
+        //driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
         // Put closed loop code for the shooter here
         //driver.print(2, 2, "Hello2");
         
@@ -143,18 +143,11 @@ void Shooter::indexAll()
     epsilon = 0.7;
     pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Before VEL:    %f", shooterPwr1->get_actual_velocity());
     while(!isSettled()){}
-    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Exits at VEL:    %f", shooterPwr1->get_actual_velocity());
-    //shooterInd->move_relative(-165, 95);
-    shooterInd->move(-80);
-    pros::delay(750);
-
-    //while(shooterInd->get_position() <= -160){}
+    shooterInd->move_absolute(-165, 95);
+    while(shooterInd->get_position() >= -160){}
     while(!isSettled()){}
-    //shooterInd->move_absolute(0, -95);
-    shooterInd->move(80);
-    pros::delay(750);
-   // shooterInd->move_relative(0, -95);
-    //while(shooterInd->get_position() >= -100){}
+    shooterInd->move_absolute(0, -95);
+    while(shooterInd->get_position() <= -5){}
     //shooterInd->move_velocity(0);
 
 
