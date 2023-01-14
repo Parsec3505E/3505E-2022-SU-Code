@@ -145,6 +145,7 @@ void Shooter::indexAll()
     while(!isSettled()){}
     shooterInd->move_absolute(-165, 95);
     while(shooterInd->get_position() >= -160){}
+    pros::delay(300);
     while(!isSettled()){}
     shooterInd->move_absolute(0, -95);
     while(shooterInd->get_position() <= -5){}

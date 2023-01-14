@@ -70,7 +70,7 @@ class Drivetrain
 
         const double MOTOR_MAX_RPM = 200.0;
 
-        const double MOTOR_MAX_ACC = 175.0;
+        const double MOTOR_MAX_ACC = 120.0;
 
         std::uint32_t currTime;
         std::uint32_t prevTime;

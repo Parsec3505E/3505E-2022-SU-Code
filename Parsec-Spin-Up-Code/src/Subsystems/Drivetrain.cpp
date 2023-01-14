@@ -260,9 +260,8 @@ void Drivetrain::moveRobot(Pose* velocityPose)
 
     // Slewing the rotationVels
 
-    std::map<std::string, double> motorVels = slewPose(this->rotationVels);
-    //std::map<std::string, double> 
-    //motorVels = this->rotationVels;
+    //std::map<std::string, double> motorVels = slewPose(this->rotationVels);
+    std::map<std::string, double> motorVels = this->rotationVels;
 
     // Setting the motor slewed values to the physical motors
 
@@ -439,8 +438,8 @@ void Drivetrain::odometryStep(pros::Controller driver)
     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 
 
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
-    //driver.print(2, 2, "%.1f, %.1f", forwardEncoderRaw, sideEncoderRaw);
+    driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
+    // driver.print(2, 2, "%.1f, %.1f", forwardEncoderRaw, sideEncoderRaw);
 
     this->forwardEncoderPrevRaw = forwardEncoderRaw;
     this->sideEncoderPrevRaw = sideEncoderRaw;
