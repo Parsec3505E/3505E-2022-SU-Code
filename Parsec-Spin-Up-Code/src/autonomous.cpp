@@ -49,7 +49,7 @@ void auton1(){
 //====== START =========
 	// ROLLERS
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
-	shooterObj->setMotorSpeed(550);
+	shooterObj->setMotorSpeed(570);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
