@@ -144,6 +144,8 @@ class Drivetrain
         void turnToHeading(double heading, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
 
         void setPower(int rFront, int lFront, int rBack, int lBack);
+        
+        void setTicks(int vel, int rFront, int lFront, int rBack, int lBack);
 
         void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
 

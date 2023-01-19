@@ -284,6 +284,8 @@ double Drivetrain::getAcceleration(double prevRPM, double requestedRPM)
 }
 
 
+
+
 std::map<std::string, double> Drivetrain::slewPose(std::map<std::string, double> requestedRPM)
 {
 
@@ -438,7 +440,7 @@ void Drivetrain::odometryStep(pros::Controller driver)
     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 
 
-    driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
+    //driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
     // driver.print(2, 2, "%.1f, %.1f", forwardEncoderRaw, sideEncoderRaw);
 
     this->forwardEncoderPrevRaw = forwardEncoderRaw;
@@ -518,6 +520,12 @@ Pose Drivetrain::calcPoseToGoal()
 Pose* Drivetrain::getRobotPose()
 {
     return this->robotPose;
+}
+void Drivetrain::setTicks(int vel, int rFront, int lFront, int rBack, int lBack){
+    rightFront->move_relative(rFront, vel);
+    leftFront->move_relative(lFront, vel);
+    rightBack->move_relative(rBack, vel);
+    leftBack->move_relative(lBack, vel);
 }
 void Drivetrain::setPower(int rFront, int lFront, int rBack, int lBack){
     rightFront->move_velocity(rFront);

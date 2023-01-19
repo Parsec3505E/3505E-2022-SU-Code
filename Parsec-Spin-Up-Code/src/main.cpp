@@ -74,8 +74,8 @@ void competition_initialize() {
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
-	// auton1();
-	auton2();
+	auton1();
+	// auton2();
 }
 
 /**
