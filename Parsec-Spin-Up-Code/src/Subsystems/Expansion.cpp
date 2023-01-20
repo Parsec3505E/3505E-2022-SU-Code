@@ -3,8 +3,7 @@
 Expansion::Expansion()
 {
     //!!!!!!!UPDATE THESE PORTS!!!!!!!!
-    expansionPistonR = new pros::ADIDigitalOut('H');
-    expansionPistonL = new pros::ADIDigitalOut('B');
+    expansionPistonR = new pros::ADIDigitalOut('E');
 }
 
 enum ExpansionStates{
@@ -24,10 +23,6 @@ void Expansion::updateExpansion(pros::Controller driver)
             expansionPistonR->set_value(true);
 
         }
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT))
-        {
-            expansionPistonL->set_value(true);
-        }
         
         break;
     
@@ -44,7 +39,7 @@ Expansion::ExpansionStates Expansion::getState()
 
 void Expansion::setState(ExpansionStates state)
 {
-
+    mExpansionState = state;
 }
 
 

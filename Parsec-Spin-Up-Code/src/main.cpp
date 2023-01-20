@@ -2,6 +2,7 @@
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
+#include "Subsystems/Expansion.hpp"
 #include "autonomous.hpp"
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
@@ -103,6 +104,7 @@ void opcontrol() {
 	Drivetrain drive;
 	IntakeRoller intake;
 	Shooter shooter;
+	Expansion expansion;
 
 	// drive.setRobotPose(persistPose);
 
@@ -112,15 +114,25 @@ void opcontrol() {
 	//driver.rumble("...");
 	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	
-
+	//driver.rumble("...");
+	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	
 	shooter.setTargetRPM(380);
+
+	std::uint32_t oppStartTime = pros::millis();
 	while (true) {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
 		shooter.updateShooter(driver);
+		
+		if((pros::millis() - oppStartTime) > 95000){
+			expansion.updateExpansion(driver);
+		}
+		
 		
 		pros::delay(50);
 	}

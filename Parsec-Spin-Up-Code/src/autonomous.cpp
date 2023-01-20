@@ -49,7 +49,7 @@ void auton1(){
 //====== START =========
 	// ROLLERS
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
-	shooterObj->setMotorSpeed(600);
+	shooterObj->setMotorSpeed(200);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
@@ -60,12 +60,23 @@ void auton1(){
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(50,50, 50, 50);
-    pros::delay(300);
+    pros::delay(600);
     drivetrainObj->setPower(0,0, 0,0);
+
+ 	pros::delay(350);
+
+	//DRIVE TO MIDDLE
+//added 2 to x and y
+	Pose tempPose2(Vector(77.0, 70.0), 0.0);
+    drivetrainObj->moveRobot(&tempPose2);
+    pros::delay(3200);
+    drivetrainObj->setPower(0,0, 0,0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	
 	// //TURN TO GOAL
-	drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
+	drivetrainObj->turnToHeading(-0.767, 10.0, 0.1, 0.0, 0.0, -3.0);
+	//drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
@@ -74,6 +85,8 @@ void auton1(){
 	pros::delay(500);
     shooterObj->indexAll();
 	shooterObj->setMotorSpeed(0);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
 	
 	
 
@@ -169,7 +182,9 @@ void auton1(){
 	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
 	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
 	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
-	// drivetrainObj->~Drivetrain();
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
 }
 void auton2(){
 //pros::Controller driver(pros::E_CONTROLLER_MASTER);
