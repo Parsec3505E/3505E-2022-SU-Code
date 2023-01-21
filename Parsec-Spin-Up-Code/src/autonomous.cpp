@@ -44,12 +44,11 @@ void auton1(){
 
 	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
 
-	
 
 //====== START =========
 	// ROLLERS
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
-	shooterObj->setMotorSpeed(475);
+	shooterObj->setMotorSpeed(495);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
