@@ -5,6 +5,8 @@
 
 void auton1();
 void auton2();
+
+void farSideRollerAuton();
 void skills();
 
 void endAllTasks();

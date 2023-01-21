@@ -140,11 +140,12 @@ void Shooter::setMotorSpeed(int vel)
 void Shooter::indexAll()
 {
 
-    epsilon = 0.7;
+    epsilon = 0.8;
     pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Before VEL:    %f", shooterPwr1->get_actual_velocity());
     pros::delay(1000);
     while(!isSettled()){}
     shooterInd->move_absolute(-165, 95);
+    setMotorSpeed(400);
     while(shooterInd->get_position() >= -160){}
     pros::delay(800);
     while(!isSettled()){}

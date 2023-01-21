@@ -75,6 +75,7 @@ void competition_initialize() {
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
+	// farSideRollerAuton();
 	auton1();
 	// auton2();
 }
@@ -129,9 +130,9 @@ void opcontrol() {
 		intake.updateIntake(driver);
 		shooter.updateShooter(driver);
 		
-		if((pros::millis() - oppStartTime) > 95000){
+		//if((pros::millis() - oppStartTime) > 95000){
 			expansion.updateExpansion(driver);
-		}
+		//}
 		
 		
 		pros::delay(50);

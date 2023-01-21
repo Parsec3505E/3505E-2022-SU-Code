@@ -49,7 +49,7 @@ void auton1(){
 //====== START =========
 	// ROLLERS
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
-	shooterObj->setMotorSpeed(200);
+	shooterObj->setMotorSpeed(475);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
@@ -60,22 +60,22 @@ void auton1(){
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(50,50, 50, 50);
-    pros::delay(600);
+    pros::delay(300);
     drivetrainObj->setPower(0,0, 0,0);
 
- 	pros::delay(350);
+ 
 
 	//DRIVE TO MIDDLE
-//added 2 to x and y
-	Pose tempPose2(Vector(77.0, 70.0), 0.0);
+//added 2 to y
+	Pose tempPose2(Vector(77.0, 72.0), 0.0);
     drivetrainObj->moveRobot(&tempPose2);
-    pros::delay(3200);
+    pros::delay(3000);
     drivetrainObj->setPower(0,0, 0,0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	
 	// //TURN TO GOAL
-	drivetrainObj->turnToHeading(-0.767, 10.0, 0.1, 0.0, 0.0, -3.0);
+	drivetrainObj->turnToHeading(-0.667, 10.0, 0.1, 0.0, 0.0, -3.0);
 	//drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
     while(!drivetrainObj->isSettled()){}
@@ -307,7 +307,63 @@ while(pros::millis() - autoStartTime < 14500)
 
 
 }
-    
+
+void farSideRollerAuton(){
+    //pros::Controller driver(pros::E_CONTROLLER_MASTER);
+	std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+
+	drivetrainObj->resetGyro();
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+//+++++++ START ++++++++++
+
+	//shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+	//shooterObj->setMotorSpeed(500);
+
+	//RIGHT ODOM
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	// Pose tempPose2(Vector(55.0, 13.0), 0.0);
+    // drivetrainObj->moveRobot(&tempPose2);
+    // pros::delay(2750);
+    // drivetrainObj->setPower(0,0, 0,0);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	//RIGHT
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(50,-50,50,-50);
+    pros::delay(700);
+    drivetrainObj->setPower(0,0, 0,0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	//BACKWARDS & ROLL
+
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50,-50,-50);
+    pros::delay(400);
+    drivetrainObj->setPower(0,0, 0,0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+    intakeObj->rollToColourAUTO();
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+
+	
+}
 
 
 void skills()
