@@ -11,7 +11,7 @@ void controlFunction(void* controlArg)
     IntakeRoller* intake = ((control_arg*)controlArg)->intake;
     Shooter* shooter  = ((control_arg*)controlArg)->shooter;
 	int curTime = pros::millis();
-	while(pros::millis() - curTime < 14990 + 1000000)
+	while(pros::millis() - curTime < 14990)
 	{
 		drive->updateDrivetrain(driver);
 		intake->updateIntake(driver);
@@ -47,45 +47,47 @@ void auton1(){
 
 //====== START =========
 	// ROLLERS
-	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
-	shooterObj->setMotorSpeed(495);
+	//shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+	//shooterObj->setMotorSpeed(495);
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50, -50, -50);
-    pros::delay(400);
+    pros::delay(500);
     drivetrainObj->setPower(0,0, 0,0);
-    intakeObj->rollToColourAUTO();
+	//TRUE IS RED 
+	//BLUE IS FALSE
+    intakeObj->rollToColourAUTO(false);
 
 	// // //MOVE FORWARD 
 
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    drivetrainObj->setPower(50,50, 50, 50);
-    pros::delay(300);
-    drivetrainObj->setPower(0,0, 0,0);
+// 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+//     drivetrainObj->setPower(50,50, 50, 50);
+//     pros::delay(300);
+//     drivetrainObj->setPower(0,0, 0,0);
 
  
 
-	//DRIVE TO MIDDLE
-//added 2 to y
-	Pose tempPose2(Vector(77.0, 72.0), 0.0);
-    drivetrainObj->moveRobot(&tempPose2);
-    pros::delay(3000);
-    drivetrainObj->setPower(0,0, 0,0);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+// 	//DRIVE TO MIDDLE
+// //added 2 to y
+// 	Pose tempPose2(Vector(77.0, 72.0), 0.0);
+//     drivetrainObj->moveRobot(&tempPose2);
+//     pros::delay(3000);
+//     drivetrainObj->setPower(0,0, 0,0);
+// 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	
-	// //TURN TO GOAL
-	drivetrainObj->turnToHeading(-0.667, 10.0, 0.1, 0.0, 0.0, -3.0);
-	//drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-    while(!drivetrainObj->isSettled()){}
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	driver.print(2, 2, "Hello11111");
-	// //SHOOTING
-	pros::delay(500);
-    shooterObj->indexAll();
-	shooterObj->setMotorSpeed(0);
+// 	// //TURN TO GOAL
+// 	drivetrainObj->turnToHeading(-0.667, 10.0, 0.1, 0.0, 0.0, -3.0);
+// 	//drivetrainObj->turnToPoint(17.78, 122.63, 10, 0.06, 0.0, 0.0, -5.0);
+// 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+//     while(!drivetrainObj->isSettled()){}
+// 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+// 	driver.print(2, 2, "Hello11111");
+// 	// //SHOOTING
+// 	pros::delay(500);
+//     shooterObj->indexAll();
+// 	shooterObj->setMotorSpeed(0);
 
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+// 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
 	
 	
 
@@ -217,7 +219,7 @@ void auton2(){
     drivetrainObj->setPower(-50,-50, -50, -50);
     pros::delay(400);
     drivetrainObj->setPower(0,0, 0,0);
-    intakeObj->rollToColourAUTO();
+    intakeObj->rollToColourAUTO(false);
 
 	// // //MOVE FORWARD 
 
@@ -335,28 +337,28 @@ void farSideRollerAuton(){
 	//shooterObj->setMotorSpeed(500);
 
 	//RIGHT ODOM
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-	// Pose tempPose2(Vector(55.0, 13.0), 0.0);
-    // drivetrainObj->moveRobot(&tempPose2);
-    // pros::delay(2750);
-    // drivetrainObj->setPower(0,0, 0,0);
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-	//RIGHT
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
-    drivetrainObj->setPower(50,-50,50,-50);
-    pros::delay(700);
+	Pose tempPose2(Vector(40.0, 15.0), 0.0);
+    drivetrainObj->moveRobot(&tempPose2);
+    pros::delay(950);
     drivetrainObj->setPower(0,0, 0,0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	//RIGHT
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    // drivetrainObj->setPower(50,-50,50,-50);
+    // pros::delay(700);
+    // drivetrainObj->setPower(0,0, 0,0);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	//BACKWARDS & ROLL
 
     drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
     drivetrainObj->setPower(-50,-50,-50,-50);
-    pros::delay(400);
+    pros::delay(700);
     drivetrainObj->setPower(0,0, 0,0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-    intakeObj->rollToColourAUTO();
+    intakeObj->rollToColourAUTO(false);
 
 	while(pros::millis() - autoStartTime < 14500)
 	{}

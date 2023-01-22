@@ -75,8 +75,8 @@ void competition_initialize() {
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
-	// farSideRollerAuton();
-	auton1();
+	farSideRollerAuton();
+	// auton1();
 	// auton2();
 }
 
@@ -121,7 +121,7 @@ void opcontrol() {
 	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 	
-	shooter.setTargetRPM(380);
+	shooter.setTargetRPM(395);
 
 	std::uint32_t oppStartTime = pros::millis();
 	while (true) {
@@ -130,9 +130,9 @@ void opcontrol() {
 		intake.updateIntake(driver);
 		shooter.updateShooter(driver);
 		
-		//if((pros::millis() - oppStartTime) > 95000){
+		if((pros::millis() - oppStartTime) > 95000){
 			expansion.updateExpansion(driver);
-		//}
+		}
 		
 		
 		pros::delay(50);

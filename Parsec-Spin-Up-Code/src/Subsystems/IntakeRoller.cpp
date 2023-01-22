@@ -126,14 +126,19 @@ void IntakeRoller::setIntakeState(IntakeStates intakeState)
 {
     mIntakeState = intakeState;
 }
-void IntakeRoller::rollToColourAUTO(){
+void IntakeRoller::rollToColourAUTO(bool colour){
    
     colourSensor->set_led_pwm(50);
     //IF STARTING COLOUR IS RED
-    if(colourSensor->get_hue()<10.0){
+    if(colour == true){
         //MOVE UNTIL SEE BLUE
         intakeMotor->move_velocity(-400);
         while(colourSensor->get_hue()<10.0){}
+
+        //MOVE UNIL YOU SEE RED
+        intakeMotor->move_velocity(400);
+        while(colourSensor->get_hue()>200.0){
+        }
         
     }
     //IF STARTING COLOUR IS BLUE
@@ -142,11 +147,15 @@ void IntakeRoller::rollToColourAUTO(){
         intakeMotor->move_velocity(-400);
         while(colourSensor->get_hue()>200.0){
         }
+        //MOVE UNIL YOU SEE BLUE
+        intakeMotor->move_velocity(400);
+        while(colourSensor->get_hue()<10.0){
+        }
         
     }
     //CORRECTION FOR GOING OVER
-        intakeMotor->move_velocity(400);
-        pros::delay(500);
+        intakeMotor->move_velocity(-400);
+        pros::delay(300);
 
         intakeMotor->move_velocity(0);
     

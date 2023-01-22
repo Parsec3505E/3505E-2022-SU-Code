@@ -38,7 +38,7 @@ class IntakeRoller
         void updateIntake(pros::Controller driver);
 
         //Optical Methods
-        void rollToColourAUTO();
+        void rollToColourAUTO(bool colour);
         void rollToColourDRIVE(bool alliance);
         void rollToColourMANUAL(bool colour);
 

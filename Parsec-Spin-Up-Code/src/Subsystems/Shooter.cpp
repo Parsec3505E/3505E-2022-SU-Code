@@ -40,7 +40,7 @@ void Shooter::updateShooter(pros::Controller driver)
     case OPERATOR_CONTROL:
         
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-            targetVel = 380;
+            targetVel = 395;
             epsilon = 0.8;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
