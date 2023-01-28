@@ -21,7 +21,9 @@ Drivetrain::Drivetrain()
 
     posePID = new PosePID();
 
-    driverCorrectionXPID = new PIDController(0.2, 0, 0);
+    driverXPID = new PIDController(-10.0, 0.0, 0.0);
+    driverYPID = new PIDController(-10.0, 0.0, 0.0);
+    driverThetaPID = new PIDController(-30.0, 0.0, 0.0);
 
 
 
@@ -118,59 +120,82 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
                 // // Start iteration timer
 
-                // this->currTime = pros::millis();
+                this->currTime = pros::millis();
 
                 // // Calculating delta time
                 
-                // double deltaTimeMs = this->currTime - this->prevTime;
+                double deltaTimeMs = this->currTime - this->prevTime;
 
-                // // Calculating delta velocity
+                // // Get the commanded remote control values - local
 
-                // double deltaVelocityX = deltaDistX / deltaTimeMs;
-                // double deltaVelocityY = deltaDistY / deltaTimeMs;
-                // double deltaVelocityTheta = deltaDistTheta / deltaTimeMs;
+                double x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? double(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) : 0.0;
+                double y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? double(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) : 0.0;
+                double theta_val = double(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) * 0.05;
 
-                // // Get the commanded remote control values
+                // Rotate these values from global to local
 
-                // int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
-                // int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-                // int theta_val = driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1;
+                Pose* globalPoseVel = (this->robotPose->subtractPose(this->previousPose))->DividePose(deltaTimeMs);
+                Pose* localPoseVel = globalPoseVel->rotatePose(this->robotPose->getThetaComponent());
                             
                 // // Get commanded remote control velocities
 
-                // double controllerVelocityX = x_val / deltaTimeMs;
-                // double controllerVelocityY = y_val / deltaTimeMs;
-                // double controllerVelocityTheta = theta_val / deltaTimeMs;
+                double controllerVelocityX = x_val / deltaTimeMs;
+                double controllerVelocityY = y_val / deltaTimeMs;
+                double controllerVelocityTheta = theta_val / deltaTimeMs;
 
-                // //  this->targetPose->setXComponent(-x_val);
-                // //  this->targetPose->setYComponent(-y_val);
-                // //  this->targetPose->setThetaComponent(theta_val);
-
-                // moveRobot(this->targetPose);
-
-                // this->prevTime = this->currTime;
-
-                // this->previousPose->setXComponent(this->robotPose->getXComponent());
-                // this->previousPose->setYComponent(this->robotPose->getYComponent());
-                // this->previousPose->setThetaComponent(this->robotPose->getThetaComponent());
-
-                // break;
+                // driver.print(2, 2, "%.1f           ",controllerVelocityX);
 
 
-                int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
-                int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-                //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
-                //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
 
-                this->targetPose->setXComponent(-x_val);
-                this->targetPose->setYComponent(-y_val);
-                this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1);
+                Pose* controllerPose = new Pose(Vector(controllerVelocityX, controllerVelocityY), controllerVelocityTheta);
 
-                this->currTime = pros::millis();
+                driverXPID->setTarget(controllerVelocityX);
+                //driverXPID->stepPID(localPoseVel->getXComponent(), deltaTimeMs);
+
+                driverYPID->setTarget(controllerVelocityY);
+                //driverYPID->stepPID(localPoseVel->getYComponent(), deltaTimeMs);
+
+                driverThetaPID->setTarget(controllerVelocityTheta);
+                //driverThetaPID->stepPID(localPoseVel->getThetaComponent(), deltaTimeMs);
+
+
+                //Subtract previous pose from current pose and divide by delta time
+
+                this->targetPose->setXComponent(x_val + driverXPID->stepPID(100.0 * localPoseVel->getXComponent(), deltaTimeMs));
+                this->targetPose->setYComponent(y_val + driverYPID->stepPID(100.0 * localPoseVel->getYComponent(), deltaTimeMs));
+                this->targetPose->setThetaComponent(theta_val + driverThetaPID->stepPID(20.0 * localPoseVel->getThetaComponent(), deltaTimeMs));
+                 driver.print(2, 2, "%.1f Y: %.1f T: %.1f   ", 100.0 * localPoseVel->getXComponent(), 100.0 * localPoseVel->getYComponent(), 10.0 * localPoseVel->getThetaComponent());
+                //driver.print(2, 2, "%.1f           ",localPoseVel->getXComponent());
+
+                
+                
+
 
                 moveRobot(this->targetPose);
 
                 this->prevTime = this->currTime;
+
+                this->previousPose->setXComponent(this->robotPose->getXComponent());
+                this->previousPose->setYComponent(this->robotPose->getYComponent());
+                this->previousPose->setThetaComponent(this->robotPose->getThetaComponent());
+
+                // break;
+
+
+                // int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
+                // int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+                // //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
+                // //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
+
+                // this->targetPose->setXComponent(-x_val);
+                // this->targetPose->setYComponent(-y_val);
+                // this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1);
+
+                // this->currTime = pros::millis();
+
+                //moveRobot(this->targetPose);
+
+                //this->prevTime = this->currTime;
 
                 break;
 
@@ -187,9 +212,9 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
                 this->currTime = pros::millis();
                 
                 Pose* globalPoseVel = posePID->stepPID(this->robotPose, this->currTime - this->prevTime);
-                Pose localPoseVel = globalPoseVel->rotatePose(this->robotPose->getThetaComponent());
+                Pose* localPoseVel = globalPoseVel->rotatePose(this->robotPose->getThetaComponent());
 
-                moveRobot(&localPoseVel);
+                moveRobot(localPoseVel);
 
                 this->prevTime = this->currTime;
 

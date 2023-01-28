@@ -39,9 +39,9 @@ class Drivetrain
 
         PosePID* posePID;
 
-        PIDController* driverCorrectionXPID;
-        PIDController* driverCorrectionYPID;
-        PIDController* driverCorrectionThetaPID;
+        PIDController* driverXPID;
+        PIDController* driverYPID;
+        PIDController* driverThetaPID;
 
         double motorVelLimit;
         double motorAccLimit;

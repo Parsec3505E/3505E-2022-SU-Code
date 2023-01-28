@@ -29,7 +29,10 @@ class Pose
 
         bool comparePoses(Pose* otherPose);
 
-        Pose rotatePose(double angle);
+        Pose* rotatePose(double angle);
+
+        Pose* DividePose(double divisor);
+        Pose* subtractPose(Pose* subtractedPose);
 
 
     

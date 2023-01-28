@@ -44,6 +44,9 @@ class Shooter
 
         bool indexerTrigger = false;
 
+        std::uint32_t currTime;
+        std::uint32_t prevTime;
+
     public:
 
         // Shooter Constructor
@@ -72,6 +75,8 @@ class Shooter
         bool isSettled();
 
         double calcShotRPM(double distance);
+
+        double stepPID(double deltaTime);
 };
 
 

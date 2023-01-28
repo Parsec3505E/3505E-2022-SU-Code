@@ -5,7 +5,7 @@ Shooter::Shooter()
     //PORT 17 IS BROKEN FOR SOME REASON!!!
     shooterPwr1 = new pros::Motor(5, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
     shooterPwr2 = new pros::Motor(14, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterInd = new pros::Motor(13, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterInd = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 
     motorVelLimit = 0;
     motorAccLimit = 0;
@@ -40,7 +40,7 @@ void Shooter::updateShooter(pros::Controller driver)
     case OPERATOR_CONTROL:
         
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-            targetVel = 380;
+            targetVel = 325;
             epsilon = 0.8;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
@@ -90,7 +90,7 @@ void Shooter::updateShooter(pros::Controller driver)
        
 
         
-        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
+        // driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
 
        
        
@@ -187,11 +187,3 @@ double Shooter::calcShotRPM(double distance)
 {
 
 }
-
-
-
-
-
-
-
-

@@ -97,6 +97,7 @@ void autonomous() {
 
 
 void opcontrol() {
+	pros::delay(3000);
 	//auton1();
 	// auton1();
 
