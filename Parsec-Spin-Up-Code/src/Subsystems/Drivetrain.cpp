@@ -46,7 +46,7 @@ Drivetrain::Drivetrain()
     sideEncoder = new pros::ADIEncoder('C', 'D', false);
 
     // Construct Gyro object
-    gyro = new pros::Imu(10);
+    gyro = new pros::Imu(17);
 
     forwardEncoderPrevRaw = 0.0;
     sideEncoderPrevRaw = 0.0;
@@ -161,9 +161,9 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
                 //Subtract previous pose from current pose and divide by delta time
 
-                this->targetPose->setXComponent(x_val + driverXPID->stepPID(100.0 * localPoseVel->getXComponent(), deltaTimeMs));
-                this->targetPose->setYComponent(y_val + driverYPID->stepPID(100.0 * localPoseVel->getYComponent(), deltaTimeMs));
-                this->targetPose->setThetaComponent(theta_val + driverThetaPID->stepPID(20.0 * localPoseVel->getThetaComponent(), deltaTimeMs));
+                this->targetPose->setXComponent(x_val + driverXPID->stepPID(1000.0 * localPoseVel->getXComponent(), deltaTimeMs));
+                this->targetPose->setYComponent(y_val + driverYPID->stepPID(1000.0 * localPoseVel->getYComponent(), deltaTimeMs));
+                this->targetPose->setThetaComponent(theta_val + driverThetaPID->stepPID(100.0 * localPoseVel->getThetaComponent(), deltaTimeMs));
                  driver.print(2, 2, "%.1f Y: %.1f T: %.1f   ", 100.0 * localPoseVel->getXComponent(), 100.0 * localPoseVel->getYComponent(), 10.0 * localPoseVel->getThetaComponent());
                 //driver.print(2, 2, "%.1f           ",localPoseVel->getXComponent());
 
@@ -201,6 +201,26 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
                 
             }
+
+        case OPEN_LOOP_OPERATOR:
+        {
+            int x_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) : 0;
+            int y_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 12) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+            //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "x value %d      ", x_val);
+            //pros::screen::print(pros::E_TEXT_MEDIUM, 8, "y value %d       ", y_val);
+
+            this->targetPose->setXComponent(-x_val);
+            this->targetPose->setYComponent(-y_val);
+            this->targetPose->setThetaComponent(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) * 0.1);
+
+            this->currTime = pros::millis();
+
+            moveRobot(this->targetPose);
+
+            this->prevTime = this->currTime;
+
+            break;
+        }
         case PID:
             {
                 //driver.print(2, 2, "in PID%d    ", pros::millis());

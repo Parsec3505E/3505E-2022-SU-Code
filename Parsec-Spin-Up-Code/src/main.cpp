@@ -114,7 +114,7 @@ void opcontrol() {
 	
 	//drive.resetGyro();
 	//driver.rumble("...");
-	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
+	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP_OPERATOR);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	

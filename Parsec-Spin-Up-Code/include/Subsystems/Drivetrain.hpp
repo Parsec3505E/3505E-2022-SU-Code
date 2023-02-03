@@ -19,7 +19,7 @@ class Drivetrain
 
     public:
         //Drivetrain States
-        enum DrivetrainStates{OPERATOR_CONTROL, PID, BLANK, DEAD};
+        enum DrivetrainStates{OPERATOR_CONTROL, OPEN_LOOP_OPERATOR, PID, BLANK, DEAD};
 
     private:
 

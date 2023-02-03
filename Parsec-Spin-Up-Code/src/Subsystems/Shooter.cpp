@@ -71,23 +71,26 @@ void Shooter::updateShooter(pros::Controller driver)
         }
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
         {
-           if(!indexerTrigger)
-            {
-                shooterInd->move_absolute(-165, 95);
-                if(shooterInd->get_position() <= -160){
-                    indexerTrigger = true;
-                }
+                        
+            shooterInd->move_relative(-355, 95);
+        //    if(!indexerTrigger)
+        //     {
+
+        //         if(shooterInd->get_position() <= -360){
+        //             indexerTrigger = true;
+        //         }
                 
-            }
-            else{
-                shooterInd->move_absolute(0, 95);
-                if(shooterInd->get_position() >= -5){
-                    indexerTrigger = false;
-                }
+        //     }
+            // else{
+            //     shooterInd->move_absolute(0, 95);
+            //     if(shooterInd->get_position() >= -5){
+            //         indexerTrigger = false;
+            //     }
                 
-            }
+            // }
+
         }
-       
+       break;
 
         
         // driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
@@ -95,10 +98,9 @@ void Shooter::updateShooter(pros::Controller driver)
        
        
 
-        break;
     
     case DISABLED:
-
+    
         shooterPwr1->move_velocity(0);
         shooterPwr2->move_velocity(0);
 

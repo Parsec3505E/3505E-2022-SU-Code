@@ -5,7 +5,7 @@
 IntakeRoller::IntakeRoller()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    intakeMotor = new pros::Motor(17, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
     colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
