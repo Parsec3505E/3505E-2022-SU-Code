@@ -76,7 +76,8 @@ Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
 void autonomous() {
 	// farSideRollerAuton();
-	auton1();
+	// auton1();
+	odomAuton();
 	// auton2();
 }
 

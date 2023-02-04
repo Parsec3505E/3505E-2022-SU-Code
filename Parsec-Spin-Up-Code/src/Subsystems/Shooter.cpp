@@ -40,21 +40,21 @@ void Shooter::updateShooter(pros::Controller driver)
     case OPERATOR_CONTROL:
         
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-            targetVel = 325;
-            epsilon = 0.8;
+            targetVel = 275;
+            epsilon = 0.85;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-            targetVel = 420;
+            targetVel = 380;
             epsilon = 0.8;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-            targetVel = 510;
+            targetVel = 480;
             epsilon = 0.7;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
             // shooterPwr1->move_velocity(0);
             // shooterPwr2->move_velocity(0);
-            targetVel = 600;
+            targetVel = 510;
             epsilon = 0.7;
         }
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
@@ -72,7 +72,7 @@ void Shooter::updateShooter(pros::Controller driver)
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
         {
                         
-            shooterInd->move_relative(-355, 95);
+            shooterInd->move_relative(-355, 500);
         //    if(!indexerTrigger)
         //     {
 
@@ -90,15 +90,13 @@ void Shooter::updateShooter(pros::Controller driver)
             // }
 
         }
+
+        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
+
+
+
+
        break;
-
-        
-        // driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
-
-       
-       
-
-    
     case DISABLED:
     
         shooterPwr1->move_velocity(0);

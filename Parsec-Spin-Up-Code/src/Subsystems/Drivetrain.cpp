@@ -42,7 +42,7 @@ Drivetrain::Drivetrain()
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // Construct Odometry Encoder objects
-    forwardEncoder = new pros::ADIEncoder('A', 'B', true);
+    forwardEncoder = new pros::ADIEncoder('A', 'B', false);
     sideEncoder = new pros::ADIEncoder('C', 'D', false);
 
     // Construct Gyro object
@@ -448,7 +448,7 @@ void Drivetrain::odometryStep(pros::Controller driver)
 
     deltaDistForward = ((forwardEncoderRaw - this->forwardEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
     deltaDistSide = ((sideEncoderRaw - this->sideEncoderPrevRaw)/360.0) * M_PI * WHEEL_DIAMETER;
-    headingRaw = (gyro->get_rotation() * M_PI) / 180.0;
+    headingRaw = (gyro->get_yaw() * M_PI) / 180.0;
 
     deltaHeading = headingRaw - this->prevHeadingRaw;
 
@@ -485,7 +485,7 @@ void Drivetrain::odometryStep(pros::Controller driver)
     pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", this->headingRaw);
 
 
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
+    // driver.print(2, 2, "%.1f, %.1f, %.4f", xPoseGlobal, yPoseGlobal, headingRaw);
     // driver.print(2, 2, "%.1f, %.1f", forwardEncoderRaw, sideEncoderRaw);
 
     this->forwardEncoderPrevRaw = forwardEncoderRaw;

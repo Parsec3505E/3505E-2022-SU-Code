@@ -21,7 +21,76 @@ void controlFunction(void* controlArg)
 	}
 
 }
+void odomAuton(){
+    //pros::Controller driver(pros::E_CONTROLLER_MASTER);
+	std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
 
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+
+	drivetrainObj->resetGyro();
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+
+//====== START =========
+	// ROLLERS
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50, -50, -50);
+    pros::delay(400);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourAUTO();
+
+	// // //MOVE FORWARD 
+	shooterObj->setMotorSpeed(400);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+ 
+	drivetrainObj->driveToPoint(70.0, 70.0, 0.0, 2.0, 0.5, -2.25, -2.25, -1.5);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	//while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
+	while(!drivetrainObj->isSettled()){}
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->turnToPoint(17.78, 122.63, 0.08, 0.06, 0.0, 0.0, -4.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+    while(!drivetrainObj->isSettled()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	shooterObj->indexAll();
+	shooterObj->setMotorSpeed(0);
+	
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+
+	//wait till timer hits 14.9 seconds
+	//do end of auton stuff
+	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
+
+}
 void auton1(){
     //pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	std::uint32_t autoStartTime = pros::millis();

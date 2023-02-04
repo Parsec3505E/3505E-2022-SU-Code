@@ -130,16 +130,17 @@ void IntakeRoller::rollToColourAUTO(){
    
     colourSensor->set_led_pwm(50);
     //IF STARTING COLOUR IS RED
+     intakeMotor->move_velocity(-400);
     if(colourSensor->get_hue()<10.0){
         //MOVE UNTIL SEE BLUE
-        intakeMotor->move_velocity(-400);
+       
         while(colourSensor->get_hue()<10.0){}
         
     }
     //IF STARTING COLOUR IS BLUE
     else{
         //MOVE UNIL YOU SEE RED
-        intakeMotor->move_velocity(-400);
+       
         while(colourSensor->get_hue()>200.0){
         }
         

@@ -3,6 +3,7 @@
 
 #include "main.h"
 
+void odomAuton();
 void auton1();
 void auton2();
 
