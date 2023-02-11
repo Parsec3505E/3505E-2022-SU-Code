@@ -98,7 +98,7 @@ void autonomous() {
 
 
 void opcontrol() {
-	pros::delay(3000);
+	
 	//auton1();
 	// auton1();
 
@@ -123,7 +123,7 @@ void opcontrol() {
 	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 	
-	shooter.setTargetRPM(380);
+	shooter.setTargetRPM(290);
 
 	std::uint32_t oppStartTime = pros::millis();
 	while (true) {

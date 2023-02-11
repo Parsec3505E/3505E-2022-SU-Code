@@ -40,21 +40,21 @@ void Shooter::updateShooter(pros::Controller driver)
     case OPERATOR_CONTROL:
         
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-            targetVel = 275;
+            targetVel = 290;
             epsilon = 0.85;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-            targetVel = 380;
+            targetVel = 300;
             epsilon = 0.8;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
-            targetVel = 480;
+            targetVel = 380;
             epsilon = 0.7;
         }
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+        else if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
             // shooterPwr1->move_velocity(0);
             // shooterPwr2->move_velocity(0);
-            targetVel = 510;
+            targetVel += 10;
             epsilon = 0.7;
         }
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
@@ -72,7 +72,24 @@ void Shooter::updateShooter(pros::Controller driver)
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
         {
                         
-            shooterInd->move_relative(-355, 500);
+            shooterInd->move_absolute(360, 600);
+            pros::delay(500);
+            shooterInd->set_zero_position(0.0);
+            while(!isSettled()){}
+            shooterInd->move_absolute(360, 600);
+            pros::delay(500);
+            shooterInd->set_zero_position(0.0);
+            while(!isSettled()){}
+            shooterInd->move_absolute(360, 600);
+            pros::delay(500);
+            shooterInd->set_zero_position(0.0);
+            
+
+            // pros::delay(500);
+            // shooterInd->move_absolute(355, 600);
+            // shooterInd->move_relative(-355, 600);
+            // while(shooterInd->get_position() <= -360){}
+            // shooterInd->move_relative(-355, 600);
         //    if(!indexerTrigger)
         //     {
 
@@ -141,16 +158,14 @@ void Shooter::indexAll()
 {
 
     epsilon = 0.8;
-    pros::screen::print(pros::E_TEXT_MEDIUM, 7, "Before VEL:    %f", shooterPwr1->get_actual_velocity());
-    pros::delay(1000);
+    shooterInd->move_absolute(360, 600);
+    pros::delay(500);
+    shooterInd->set_zero_position(0.0);
     while(!isSettled()){}
-    shooterInd->move_absolute(-165, 95);
-    setMotorSpeed(400);
-    while(shooterInd->get_position() >= -160){}
-    pros::delay(800);
-    while(!isSettled()){}
-    shooterInd->move_absolute(0, -95);
-    while(shooterInd->get_position() <= -5){}
+    shooterInd->move_absolute(360, 600);
+    pros::delay(500);
+    shooterInd->set_zero_position(0.0);
+  
     //shooterInd->move_velocity(0);
 
 
