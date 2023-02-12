@@ -37,6 +37,13 @@ Expansion::ExpansionStates Expansion::getState()
 
 }
 
+void Expansion::expand()
+{
+
+    expansionPistonR->set_value(true);
+
+}
+
 void Expansion::setState(ExpansionStates state)
 {
     mExpansionState = state;

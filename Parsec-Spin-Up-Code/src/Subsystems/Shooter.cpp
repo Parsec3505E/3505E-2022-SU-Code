@@ -69,7 +69,7 @@ void Shooter::updateShooter(pros::Controller driver)
             shooterPwr2->move_velocity(0);
             
         }
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
         {
                         
             shooterInd->move_absolute(360, 600);
@@ -163,7 +163,7 @@ void Shooter::indexAll()
     shooterInd->set_zero_position(0.0);
     while(!isSettled()){}
     shooterInd->move_absolute(360, 600);
-    pros::delay(500);
+    pros::delay(200);
     shooterInd->set_zero_position(0.0);
   
     //shooterInd->move_velocity(0);

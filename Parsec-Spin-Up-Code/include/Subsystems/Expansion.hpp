@@ -29,6 +29,7 @@ class Expansion
 
         enum ExpansionStates getState();
 
+        void expand();
         void setState(enum ExpansionStates);
 
 

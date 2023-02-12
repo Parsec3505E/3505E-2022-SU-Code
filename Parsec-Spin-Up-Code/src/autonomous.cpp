@@ -10,6 +10,7 @@ void controlFunction(void* controlArg)
     Drivetrain* drive = ((control_arg*)controlArg)->drive;
     IntakeRoller* intake = ((control_arg*)controlArg)->intake;
     Shooter* shooter  = ((control_arg*)controlArg)->shooter;
+	Expansion* expansion = ((control_arg*)controlArg)->expansion;
 	int curTime = pros::millis();
 	while(pros::millis() - curTime < 14990 + 1000000)
 	{
@@ -63,11 +64,11 @@ void odomAuton(){
     drivetrainObj->setPower(0,0, 0,0);
 
  
-	drivetrainObj->driveToPoint(70.0, 70.0, 0.0, 2.0, 0.5, -2.25, -2.25, -1.5);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
-	//while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
-	while(!drivetrainObj->isSettled()){}
-    drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->driveToPoint(70.0, 70.0, 0.0, 2.0, 0.5, -2.25, -2.25, -1.5);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+	// //while(drivetrainObj->getRobotPose()->getXComponent() < 115.0 && drivetrainObj->getRobotPose()->getYComponent() < 70.0)
+	// while(!drivetrainObj->isSettled()){}
+    // drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	drivetrainObj->turnToPoint(17.78, 122.63, 0.08, 0.06, 0.0, 0.0, -4.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
@@ -75,7 +76,7 @@ void odomAuton(){
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	shooterObj->indexAll();
-	shooterObj->setMotorSpeed(0);
+	// shooterObj->setMotorSpeed(0);
 	
 
 	while(pros::millis() - autoStartTime < 14500)
@@ -433,8 +434,259 @@ void farSideRollerAuton(){
 	
 }
 
+void rollerAuton(){
+	
+	std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+
+	drivetrainObj->resetGyro();
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+
+//====== START =========
+	// ROLLERS
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50, -50, -50);
+    pros::delay(400);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourAUTO();
+
+	// // //MOVE FORWARD 
+	// shooterObj->setMotorSpeed(400);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	
+	
+
+	
+	
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+
+}
+
+void skillsNoDisk()
+{
+   std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	Expansion* expansionObj = new Expansion();
+	control_task_arg->expansion = expansionObj;
+
+
+	drivetrainObj->resetGyro();
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+
+//====== START =========
+	// ROLLERS
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-50,-50, -50, -50);
+    pros::delay(400);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourMANUAL(true);
+
+	
+
+	//MOVE FORWARD
+	drivetrainObj->setPower(40,50, 40, 50);
+    pros::delay(1500);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	//TURN TOWARDS ROLLER 2
+    drivetrainObj->setPower(100,-100, 100, -100);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	//BACK UP & ROLL
+	drivetrainObj->setPower(-50,-80, -50, -80);
+    pros::delay(600);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourMANUAL(true);
+
+	//GET INTO POS TO EXPAND
+	drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(500);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	drivetrainObj->setPower(-50,50, -50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	//EXPAND
+
+	// expansionObj->expand();
+	
+
+	
+	
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+
+	//wait till timer hits 14.9 seconds
+	//do end of auton stuff
+	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
+}
 
 void skills()
 {
-   
+   std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	Expansion* expansionObj = new Expansion();
+	control_task_arg->shooter = shooterObj;
+
+
+	drivetrainObj->resetGyro();
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+
+//====== START =========
+	// ROLLERS
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP);
+
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+    drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+    drivetrainObj->setPower(-60,-60, -60, -60);
+    pros::delay(400);
+	shooterObj->setMotorSpeed(400);
+    drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourMANUAL(true);
+
+	// // //MOVE FORWARD 
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);	
+	
+	
+    drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	drivetrainObj->turnToPoint(8.78, 122.63, 10.0, 0.08, 0.0, 0.0, -4.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+    while(!drivetrainObj->isSettled()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	
+	shooterObj->indexAll();
+	shooterObj->setMotorSpeed(0);
+
+	drivetrainObj->turnToPoint(15.78, 122.63, 10.0, 0.08, 0.0, 0.0, -4.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::PID);
+    while(!drivetrainObj->isSettled()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+
+	drivetrainObj->setPower(50,-50, 50, -50);
+    pros::delay(100);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	drivetrainObj->setPower(100,100, 100, 100);
+    pros::delay(1000);
+    drivetrainObj->setPower(0,0, 0,0);
+
+
+    drivetrainObj->setPower(100,-100, 100, -100);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	drivetrainObj->setPower(-50,-50, -50, -80);
+    pros::delay(1500);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	// drivetrainObj->setPower(-100,100, -100, 100);
+    // pros::delay(300);
+    // drivetrainObj->setPower(0,0, 0,0);
+
+	// drivetrainObj->setPower(-50,-50, -50, -50);
+    // pros::delay(1000);
+    // drivetrainObj->setPower(0,0, 0,0);
+    intakeObj->rollToColourMANUAL(true);
+
+	drivetrainObj->setPower(50,50, 50, 50);
+    pros::delay(500);
+    drivetrainObj->setPower(0,0, 0,0);
+
+	drivetrainObj->setPower(-50,50, -50, 50);
+    pros::delay(300);
+    drivetrainObj->setPower(0,0, 0,0);
+	
+	
+
+	
+	//EXPAND
+
+	// expansionObj->expand();
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+
+	//wait till timer hits 14.9 seconds
+	//do end of auton stuff
+	// persistPose.setXComponent(drivetrainObj->getRobotPose()->getXComponent());
+	// persistPose.setYComponent(drivetrainObj->getRobotPose()->getYComponent());
+	// persistPose.setThetaComponent(drivetrainObj->getRobotPose()->getThetaComponent());
 }

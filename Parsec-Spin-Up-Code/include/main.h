@@ -41,6 +41,7 @@
 #include "Subsystems/Drivetrain.hpp"
 #include "Subsystems/IntakeRoller.hpp"
 #include "Subsystems/Shooter.hpp"
+#include "Subsystems/Expansion.hpp"
 
 /**
  * You should add more #includes here
@@ -74,6 +75,7 @@ typedef struct{
 Drivetrain* drive;
 IntakeRoller* intake;
 Shooter* shooter;
+Expansion* expansion;
 } control_arg;
 
 
