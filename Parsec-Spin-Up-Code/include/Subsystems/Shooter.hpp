@@ -31,11 +31,14 @@ class Shooter
         int timeSettled;
         int minSettledTime;
         double epsilon;
+        bool indFlag;
+        int reloadDelay;
+        int delayConst;
 
         // Shooter Motor Declarations
-        pros::Motor* shooterPwr1;
-        pros::Motor* shooterPwr2;
-        pros::Motor* shooterInd;
+        pros::Motor* shooterPwr;
+       
+        pros::ADIDigitalOut* shooterInd;
 
         // Shooter Sensors
 
@@ -59,6 +62,7 @@ class Shooter
 
         void setMotorSpeed(int vel);
         void indexAll();
+        void indexAll2();
         
 
         enum ShooterStates getState();
@@ -67,6 +71,7 @@ class Shooter
 
         // Set the state of the Shooter
         void setState(enum ShooterStates);
+        void setIndexerState(bool state);
 
         void setTargetRPM(double RPM);
 

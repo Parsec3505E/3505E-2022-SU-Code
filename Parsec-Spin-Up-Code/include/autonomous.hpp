@@ -3,14 +3,12 @@
 
 #include "main.h"
 
-void odomAuton();
-void auton1();
-void auton2();
 
-void farSideRollerAuton();
-void rollerAuton();
-void skillsNoDisk();
-void skills();
+
+void HCRoller();
+void HCRollerDisc();
+void HCRollerTwo();
+void HCRollerTwoDisc();
 
 void endAllTasks();
 

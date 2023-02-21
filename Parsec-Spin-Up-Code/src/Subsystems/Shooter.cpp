@@ -3,9 +3,10 @@
 Shooter::Shooter()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    shooterPwr1 = new pros::Motor(5, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterPwr2 = new pros::Motor(14, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-    shooterInd = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    shooterPwr = new pros::Motor(1, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+   
+    shooterInd = new pros::ADIDigitalOut('B');
+   
 
     motorVelLimit = 0;
     motorAccLimit = 0;
@@ -21,6 +22,9 @@ Shooter::Shooter()
 
     minSettledTime = 200;
     epsilon = 0.8;
+    indFlag = false;
+    reloadDelay = 0;
+    delayConst = 500;
 
 }
 
@@ -31,20 +35,25 @@ void Shooter::updateShooter(pros::Controller driver)
     {
 
     case CLOSED_LOOP:
-        //driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
+        //driver.print(2, 2, "%.1f  %d    ", shooterPwr->get_actual_velocity(), targetVel);
         // Put closed loop code for the shooter here
         //driver.print(2, 2, "Hello2");
         
         break;
 
     case OPERATOR_CONTROL:
-        
+        if(indFlag && pros::millis()-reloadDelay>delayConst){
+            reloadDelay = pros::millis();
+            shooterInd->set_value(true);
+            indFlag = false;
+        }
+
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-            targetVel = 290;
+            targetVel = 340;
             epsilon = 0.85;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-            targetVel = 300;
+            targetVel = 310;
             epsilon = 0.8;
         }
         else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
@@ -52,63 +61,36 @@ void Shooter::updateShooter(pros::Controller driver)
             epsilon = 0.7;
         }
         else if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
-            // shooterPwr1->move_velocity(0);
+            // shooterPwr->move_velocity(0);
             // shooterPwr2->move_velocity(0);
             targetVel += 10;
             epsilon = 0.7;
         }
         if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
         {
-            shooterPwr1->move_velocity(targetVel);
-            shooterPwr2->move_velocity(targetVel);
+            shooterPwr->move_velocity(targetVel);
+            
             
 
         }
         else if(!driver.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-            shooterPwr1->move_velocity(0);
-            shooterPwr2->move_velocity(0);
-            
+            shooterPwr->move_velocity(0);
+           
         }
-        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) && isSettled() ) 
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&!indFlag && pros::millis()-reloadDelay>delayConst) 
         {
-                        
-            shooterInd->move_absolute(360, 600);
-            pros::delay(500);
-            shooterInd->set_zero_position(0.0);
-            while(!isSettled()){}
-            shooterInd->move_absolute(360, 600);
-            pros::delay(500);
-            shooterInd->set_zero_position(0.0);
-            while(!isSettled()){}
-            shooterInd->move_absolute(360, 600);
-            pros::delay(500);
-            shooterInd->set_zero_position(0.0);
+            reloadDelay = pros::millis();
+            shooterInd->set_value(false);
+            indFlag = true;
+            //shooterInd->set_value(false);
+
             
 
-            // pros::delay(500);
-            // shooterInd->move_absolute(355, 600);
-            // shooterInd->move_relative(-355, 600);
-            // while(shooterInd->get_position() <= -360){}
-            // shooterInd->move_relative(-355, 600);
-        //    if(!indexerTrigger)
-        //     {
-
-        //         if(shooterInd->get_position() <= -360){
-        //             indexerTrigger = true;
-        //         }
-                
-        //     }
-            // else{
-            //     shooterInd->move_absolute(0, 95);
-            //     if(shooterInd->get_position() >= -5){
-            //         indexerTrigger = false;
-            //     }
-                
-            // }
+            
 
         }
 
-        driver.print(2, 2, "%.1f  %d    ", shooterPwr1->get_actual_velocity(), targetVel);
+        driver.print(2, 2, "%.1f  %d    ", shooterPwr->get_actual_velocity(), targetVel);
 
 
 
@@ -116,9 +98,8 @@ void Shooter::updateShooter(pros::Controller driver)
        break;
     case DISABLED:
     
-        shooterPwr1->move_velocity(0);
-        shooterPwr2->move_velocity(0);
-
+        shooterPwr->move_velocity(0);
+        
         break;
 
     }
@@ -129,6 +110,7 @@ void Shooter::setState(ShooterStates shooterState)
 {
     mShooterState = shooterState;
 }
+
 
 enum Shooter::ShooterStates Shooter::getState()
 {
@@ -141,6 +123,13 @@ void Shooter::setTargetRPM(double RPM)
 
 }
 
+void Shooter::setIndexerState(bool state)
+{
+    
+    shooterInd->set_value(state);
+}
+
+
 void Shooter::getRPM()
 {
 
@@ -148,30 +137,50 @@ void Shooter::getRPM()
 
 void Shooter::setMotorSpeed(int vel)
 {
-    shooterPwr1->move_velocity(vel);
-    shooterPwr2->move_velocity(vel);
+    shooterPwr->move_velocity(vel);
     targetVel = vel;
 
 }
 
 void Shooter::indexAll()
 {
+    
+    
+  shooterInd->set_value(false);
+  pros::delay(500);
+  shooterInd->set_value(true);
+  pros::delay(500);
+ setMotorSpeed(445);
+    pros::delay(3000);
+  shooterInd->set_value(false);
+  pros::delay(500);
+  shooterInd->set_value(true);
+  pros::delay(500);
 
-    epsilon = 0.8;
-    shooterInd->move_absolute(360, 600);
-    pros::delay(500);
-    shooterInd->set_zero_position(0.0);
-    while(!isSettled()){}
-    shooterInd->move_absolute(360, 600);
-    pros::delay(200);
-    shooterInd->set_zero_position(0.0);
-  
-    //shooterInd->move_velocity(0);
+   
 
 
 
 }
+void Shooter::indexAll2()
+{
+    
+    
+  shooterInd->set_value(false);
+  pros::delay(500);
+  shooterInd->set_value(true);
+  pros::delay(600);
+ 
+  shooterInd->set_value(false);
+  pros::delay(500);
+  shooterInd->set_value(true);
+  pros::delay(500);
 
+   
+
+
+
+}
 double Shooter::slewRPM(double request)
 {
 
@@ -179,9 +188,9 @@ double Shooter::slewRPM(double request)
 
 bool Shooter::isSettled()
 {
-    //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "SHOOTER VEL    %f", shooterPwr1->get_actual_velocity());
+    //pros::screen::print(pros::E_TEXT_MEDIUM, 7, "SHOOTER VEL    %f", shooterPwr->get_actual_velocity());
     pros::screen::print(pros::E_TEXT_MEDIUM, 9, "TIME SETTLED: %f", timeSettled);
-    if(shooterPwr1->get_actual_velocity() >= targetVel*epsilon){
+    if(shooterPwr->get_actual_velocity() >= targetVel*epsilon){
         if(!beenSettled){
             beenSettled = true;
             timeSettled = pros::millis();

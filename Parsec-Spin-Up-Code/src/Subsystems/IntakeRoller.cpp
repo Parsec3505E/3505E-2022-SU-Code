@@ -5,7 +5,7 @@
 IntakeRoller::IntakeRoller()
 {
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    intakeMotor = new pros::Motor(16, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+    intakeMotor = new pros::Motor(3, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
     colourSensor = new pros::Optical(9);
 
     rollerPID = new PIDController(0, 0, 0);
@@ -23,17 +23,8 @@ switch (mIntakeState)
 
 
     case OPERATOR_CONTROL:
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && driver.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-        {
-            //TRUE IS RED ALLIANCE
-            // FALSE IS BLUE
-            //setIntakeState(COLOUR_MANUAL);
-            colourSensor->set_led_pwm(50);
-            rollToColourDRIVE(true);
-            
-
-        }
-        else if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        
+      if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             intakeMotor->move_velocity(-600);
         }
@@ -44,14 +35,13 @@ switch (mIntakeState)
         }
         else
         {
-            colourFlag = 0;
 
             intakeMotor->move_velocity(0);
             intakeMotor->move_velocity(0);
         }
         
         
-        readColour();
+
 
         break;
 
@@ -126,33 +116,23 @@ void IntakeRoller::setIntakeState(IntakeStates intakeState)
 {
     mIntakeState = intakeState;
 }
-void IntakeRoller::rollToColourAUTO(){
-   
-    colourSensor->set_led_pwm(50);
-    //IF STARTING COLOUR IS RED
-     intakeMotor->move_velocity(-400);
-    if(colourSensor->get_hue()<10.0){
-        //MOVE UNTIL SEE BLUE
-       
-        while(colourSensor->get_hue()<10.0){}
-        
-    }
-    //IF STARTING COLOUR IS BLUE
-    else{
-        //MOVE UNIL YOU SEE RED
-       
-        while(colourSensor->get_hue()>200.0){
-        }
-        
-    }
-    //CORRECTION FOR GOING OVER
-        intakeMotor->move_velocity(400);
-        pros::delay(500);
-
-        intakeMotor->move_velocity(0);
+void IntakeRoller::rollToColourAUTO(int inches){
+    double inchPerDeg = (M_PI*4.0)/360.0;
+    double degToMove = inches/inchPerDeg;
+    intakeMotor->move_relative(degToMove, -400);
+    while (!((intakeMotor->get_position() < degToMove+5) && (intakeMotor->get_position() > degToMove-5))) {
     
+    pros::delay(2);
+  }
 
 }
+
+void IntakeRoller::rollToColourSEC(int ms){
+    
+    intakeMotor->move_velocity(-400);
+    pros::delay(ms);
+    intakeMotor->move_velocity(0);
+  }
 void IntakeRoller::rollToColourDRIVE(bool alliance){
     switch (colourFlag){
         case 0:
@@ -207,8 +187,7 @@ void IntakeRoller::rollToColourDRIVE(bool alliance){
 }
 void IntakeRoller::rollToColourMANUAL(bool colour){
     //TRUE IS RED
-    if(colour==true){
-        //ROLL UNTIL SEE RED
+    if(3==3){
         intakeMotor->move_velocity(-400);
         while(colourSensor->get_hue()>200.0){}
 

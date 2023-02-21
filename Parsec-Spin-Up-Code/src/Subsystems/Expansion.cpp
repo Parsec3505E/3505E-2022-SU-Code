@@ -2,8 +2,8 @@
 
 Expansion::Expansion()
 {
-    //!!!!!!!UPDATE THESE PORTS!!!!!!!!
-    expansionPistonR = new pros::ADIDigitalOut('E');
+
+    expansionPistonR = new pros::ADIDigitalOut('C');
 }
 
 enum ExpansionStates{
@@ -18,7 +18,7 @@ void Expansion::updateExpansion(pros::Controller driver)
 
 
     case OPERATOR_CONTROL:
-        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT))
         {
             expansionPistonR->set_value(true);
 

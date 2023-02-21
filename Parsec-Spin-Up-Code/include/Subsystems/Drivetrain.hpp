@@ -49,6 +49,8 @@ class Drivetrain
         // Drivetrain Motor Declarations
         pros::Motor* rightFront;
         pros::Motor* leftFront;
+        pros::Motor* rightMiddle;
+        pros::Motor* leftMiddle;
         pros::Motor* rightBack;
         pros::Motor* leftBack;
 
@@ -132,47 +134,40 @@ class Drivetrain
 
         // Get the state of the Drivetrain
         enum DrivetrainStates getState();
-
+        double joystickControl(double rawSpeed);
         void resetGyro();
+        void resetEnc();
+        void moveEncoder(double inches, int vel);
+        void turnEncoder(double deg, int vel);
 
-        void drivePID(double x, double y, double heading);
-
-        void driveToPoint(double x, double y, double heading, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
-        
-        void turnToPoint(double x, double y, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
-
-        void turnToHeading(double heading, double xyepsilon, double thetaepsilon, double XP, double YP, double thetaP);
-
-        void setPower(int rFront, int lFront, int rBack, int lBack);
-        
-        void setTicks(int vel, int rFront, int lFront, int rBack, int lBack);
-
-        void driveSeconds(int ms, int rFront, int lFront, int rBack, int lBack);
+        void moveSeconds(int seconds, int vel);
+        void setVel(int vel);
+        void turnGyro(double deg, int vel);
 
         Pose* getRobotPose();
 
-        void setRobotPose(Pose pose);
+        // void setRobotPose(Pose pose);
 
-        bool isSettled();
+        // bool isSettled();
 
         ~Drivetrain();
 
-        void moveRobot(Pose* velocityPose);
+        // void moveRobot(Pose* velocityPose);
 
     private:
 
         
 
-        void setTargetPose(Pose targetPose);
+        // void setTargetPose(Pose targetPose);
 
-        double getAcceleration(double prevRPM, double requestedRPM);
+        // double getAcceleration(double prevRPM, double requestedRPM);
 
-        std::map<std::string, double> slewPose(std::map<std::string, double> requestedRPM);
+        // std::map<std::string, double> slewPose(std::map<std::string, double> requestedRPM);
 
-        void odometryStep(pros::Controller driver);
+        // void odometryStep(pros::Controller driver);
 
 
-        Pose calcPoseToGoal();
+        // Pose calcPoseToGoal();
 
        
 
