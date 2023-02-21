@@ -87,36 +87,38 @@ class Drivetrain
         const double SIDE_ENCODER_TRACK_RADIUS = 5.5225;
 
         //Calculated Values (every loop)
-        //Angles (DEGREES) *NEEDS TO BE CONVERTED TO RADIANS FOR MATH*
-        double forwardEncoderRaw = 0.0;
-        double sideEncoderRaw = 0.0;
+        // //Angles (DEGREES) *NEEDS TO BE CONVERTED TO RADIANS FOR MATH*
+        // double forwardEncoderRaw = 0.0;
+        // double sideEncoderRaw = 0.0;
 
-        double forwardEncoderPrevRaw = 0.0;
-        double sideEncoderPrevRaw = 0.0;
+        double righDriveEncoderPrev = 0.0;
+        double leftDriveEncoderPrev = 0.0;
 
-        //Distances traveled by tracking wheels each loop (INCHES)
-        double deltaDistForward = 0.0;
-        double deltaDistSide = 0.0;
+        double prevHeading = 0.0;
 
-        //The current angle of the bot (RADIANS)
-        double headingRaw = 0.0;
-        //The previous angle of the bot (RADIANS)
-        double prevHeadingRaw = 0.0;
+        // //Distances traveled by tracking wheels each loop (INCHES)
+        // double deltaDistForward = 0.0;
+        // double deltaDistSide = 0.0;
 
-        //The change in heading each loop (RADIANS)
-        double deltaHeading = 0.0;
+        // //The current angle of the bot (RADIANS)
+        // double headingRaw = 0.0;
+        // //The previous angle of the bot (RADIANS)
+        // double prevHeadingRaw = 0.0;
 
-        //The changes in the X and Y positions (INCHES)
-        /*These are calculated on a local basis each loop,
-        then converted to global position changes */
-        double deltaXLocal = 0.0;
-        double deltaYLocal = 0.0;
+        // //The change in heading each loop (RADIANS)
+        // double deltaHeading = 0.0;
 
-        //The X and Y offsets converted from their local frame to global frame (INCHES)
-        double deltaXGlobal = 0.0;
-        double deltaYGlobal = 0.0;
+        // //The changes in the X and Y positions (INCHES)
+        // /*These are calculated on a local basis each loop,
+        // then converted to global position changes */
+        // double deltaXLocal = 0.0;
+        // double deltaYLocal = 0.0;
 
-        //The global position of the bot (INCHES)
+        // //The X and Y offsets converted from their local frame to global frame (INCHES)
+        // double deltaXGlobal = 0.0;
+        // double deltaYGlobal = 0.0;
+
+        // //The global position of the bot (INCHES)
         double xPoseGlobal = 0.0;
         double yPoseGlobal = 0.0;
 
@@ -164,7 +166,7 @@ class Drivetrain
 
         // std::map<std::string, double> slewPose(std::map<std::string, double> requestedRPM);
 
-        // void odometryStep(pros::Controller driver);
+        void odometryStep(pros::Controller driver);
 
 
         // Pose calcPoseToGoal();
