@@ -66,30 +66,26 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
         case OPEN_LOOP_OPERATOR:
         {
             
-            int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 90) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-            int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 90) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
+            int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+            int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
             // int fwd_val = joystickControl(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
             // int turn_val = joystickControl(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
-
-            int fwdBlueCart = (pow(fwd_val,3.0)/127)*428;
-            int turnBlueCart = (pow(turn_val,3.0)/127)*428;
-
-            
-
-
-            rightFront->move_velocity(fwdBlueCart-turnBlueCart);
-            rightMiddle->move_velocity((abs(((fwdBlueCart-turnBlueCart)/428)*600) > 428 ? ((fwdBlueCart-turnBlueCart)/428)*600 : (428 * ((fwdBlueCart-turnBlueCart)/abs((fwdBlueCart-turnBlueCart))))));
-            rightBack->move_velocity(fwdBlueCart-turnBlueCart);
-
-            leftFront->move_velocity(fwdBlueCart+turnBlueCart);
-            leftMiddle->move_velocity((abs(((fwdBlueCart+turnBlueCart)/428)*600) > 428 ? ((fwdBlueCart+turnBlueCart)/428)*600 : (428 * ((fwdBlueCart+turnBlueCart)/abs((fwdBlueCart+turnBlueCart))))));
-            leftBack->move_velocity(fwdBlueCart+turnBlueCart);
-
-
-
+            driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
+            double fwdGrnCart = (pow(fwd_val/127.0,3.0))*600;
+            double turnGrnCart = (pow(turn_val/127,3.0))*600;
+            // double fwdGrnCart = (fwd_val/127.0)*600;
+            // double turnGrnCart = (turn_val/127.0)*600;
 
             
 
+
+            rightFront->move_velocity(fwdGrnCart-turnGrnCart);
+            rightMiddle->move_velocity((fwdGrnCart-turnGrnCart)*(-60/84));
+            rightBack->move_velocity(fwdGrnCart-turnGrnCart);
+
+            leftFront->move_velocity(fwdGrnCart+turnGrnCart);
+            leftMiddle->move_velocity((fwdGrnCart+turnGrnCart)*(-60/84));
+            leftBack->move_velocity(fwdGrnCart+turnGrnCart);
             break;
         }
         case PID:
