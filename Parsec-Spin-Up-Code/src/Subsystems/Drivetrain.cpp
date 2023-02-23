@@ -266,24 +266,24 @@ void Drivetrain::odometryStep(pros::Controller driver)
     
     // ------------------------------- CALCULATIONS ------------------------------- 
 
-    double rightDriveEncoderRaw = double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
-    double leftDriveEncoderRaw = double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
+    double rightDriveEncoderRaw = -1.0 * double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
+    double leftDriveEncoderRaw = -1.0 * double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
 
 
     double deltaRightSideEncoderInches = (rightDriveEncoderRaw - this->righDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
     double deltaLeftSideEncoderInches = (leftDriveEncoderRaw - this->leftDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
 
-    double heading = this->gyro->get_yaw();
+    double heading = (this->gyro->get_yaw()) * M_PI /180.0;
 
-    double deltaHeading = (heading - prevHeading) * M_PI /180.0;
+    double deltaHeading = (heading - prevHeading);
 
     double totalDistance = ((deltaRightSideEncoderInches + (deltaHeading * DRIVE_RADIUS) + deltaLeftSideEncoderInches - (deltaHeading * DRIVE_RADIUS)) / 2);
 
-    double deltaXLocal = totalDistance * cos(deltaHeading);
-    double deltaYLocal = totalDistance * sin(deltaHeading);
+    double deltaYLocal = totalDistance * cos(deltaHeading);
+    double deltaXLocal = totalDistance * sin(deltaHeading);
 
-    double deltaXGlobal = (deltaXLocal * cos(heading)) + (deltaYLocal * sin(heading));
-    double deltaYGlobal = (-deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
+    double deltaYGlobal = (deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
+    double deltaXGlobal = (deltaXLocal * cos(heading)) - (deltaYLocal * sin(heading));
 
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;

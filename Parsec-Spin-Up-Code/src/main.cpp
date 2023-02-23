@@ -112,9 +112,9 @@ void opcontrol() {
 	//Uncomment below
 	pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	Drivetrain drive;
-	// IntakeRoller intake;
-	// Shooter shooter;
-	// Expansion expansion;
+	IntakeRoller intake;
+	Shooter shooter;
+	Expansion expansion;
 
 	drive.resetGyro();
 	pros::delay(4000);
@@ -125,9 +125,9 @@ void opcontrol() {
 	
 	//drive.resetGyro();
 	//driver.rumble("...");
-	drive.setState(Drivetrain::DrivetrainStates::OPERATOR_CONTROL);
-	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	// expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
+	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP_OPERATOR);
+	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	
 	// //driver.rumble("...");
 	// // intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
@@ -140,12 +140,12 @@ void opcontrol() {
 	while (true) {
 
 		drive.updateDrivetrain(driver);
-		// intake.updateIntake(driver);
-		// shooter.updateShooter(driver);
+		intake.updateIntake(driver);
+		shooter.updateShooter(driver);
 		
-		// if((pros::millis() - oppStartTime) > 95000){
-		// 	expansion.updateExpansion(driver);
-		// }
+		if((pros::millis() - oppStartTime) > 95000){
+			expansion.updateExpansion(driver);
+		}
 		
 		
 		pros::delay(50);
