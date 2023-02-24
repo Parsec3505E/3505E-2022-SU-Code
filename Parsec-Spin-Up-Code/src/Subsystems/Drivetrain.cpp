@@ -11,22 +11,22 @@ Drivetrain::Drivetrain()
 
     // Construct the Motor objects
     //PORT 17 IS BROKEN FOR SOME REASON!!!
-    rightFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightMiddle = new pros::Motor(19, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+    rightMiddle = new pros::Motor(19, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     rightMiddle->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    rightBack = new pros::Motor(4, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+    rightBack = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-    leftMiddle = new pros::Motor(11, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+    leftMiddle = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     leftMiddle->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+	leftBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // // Construct Odometry Encoder objects
@@ -68,11 +68,10 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
             
             int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
             int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
-            // int fwd_val = joystickControl(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
-            // int turn_val = joystickControl(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X));
-            driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
-            double fwdGrnCart = (pow(fwd_val/127.0,3.0))*600;
-            double turnGrnCart = (pow(turn_val/127,3.0))*600;
+
+            // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
+            double fwdGrnCart = (pow(fwd_val/127.0,3.0))*200;
+            double turnGrnCart = (pow(turn_val/127,3.0))*200;
             // double fwdGrnCart = (fwd_val/127.0)*600;
             // double turnGrnCart = (turn_val/127.0)*600;
 
@@ -262,24 +261,24 @@ void Drivetrain::odometryStep(pros::Controller driver)
     
     // ------------------------------- CALCULATIONS ------------------------------- 
 
-    double rightDriveEncoderRaw = double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
-    double leftDriveEncoderRaw = double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
+    double rightDriveEncoderRaw = -1.0 * double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
+    double leftDriveEncoderRaw = -1.0 * double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
 
 
     double deltaRightSideEncoderInches = (rightDriveEncoderRaw - this->righDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
     double deltaLeftSideEncoderInches = (leftDriveEncoderRaw - this->leftDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
 
-    double heading = this->gyro->get_yaw();
+    double heading = (this->gyro->get_yaw()) * M_PI /180.0;
 
-    double deltaHeading = (heading - prevHeading) * M_PI /180.0;
+    double deltaHeading = (heading - prevHeading);
 
     double totalDistance = ((deltaRightSideEncoderInches + (deltaHeading * DRIVE_RADIUS) + deltaLeftSideEncoderInches - (deltaHeading * DRIVE_RADIUS)) / 2);
 
-    double deltaXLocal = totalDistance * cos(deltaHeading);
-    double deltaYLocal = totalDistance * sin(deltaHeading);
+    double deltaYLocal = totalDistance * cos(deltaHeading);
+    double deltaXLocal = totalDistance * sin(deltaHeading);
 
-    double deltaXGlobal = (deltaXLocal * cos(heading)) + (deltaYLocal * sin(heading));
-    double deltaYGlobal = (-deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
+    double deltaYGlobal = (deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
+    double deltaXGlobal = (deltaXLocal * cos(heading)) - (deltaYLocal * sin(heading));
 
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;

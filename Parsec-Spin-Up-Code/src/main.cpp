@@ -106,10 +106,8 @@ void opcontrol() {
 
 	
 	
-	//auton1();
-	// auton1();
+	
 
-	//Uncomment below
 	pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	Drivetrain drive;
 	IntakeRoller intake;
@@ -123,15 +121,12 @@ void opcontrol() {
 
     //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
 	
-	//drive.resetGyro();
-	//driver.rumble("...");
 	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP_OPERATOR);
-	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	// expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
+	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	
-	// //driver.rumble("...");
-	// // intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
-	// shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 	
 	shooter.setTargetRPM(340);
 	shooter.setIndexerState(true);
@@ -140,12 +135,12 @@ void opcontrol() {
 	while (true) {
 
 		drive.updateDrivetrain(driver);
-		// intake.updateIntake(driver);
-		// shooter.updateShooter(driver);
+		intake.updateIntake(driver);
+		shooter.updateShooter(driver);
 		
-		// if((pros::millis() - oppStartTime) > 95000){
-		// 	expansion.updateExpansion(driver);
-		// }
+		if((pros::millis() - oppStartTime) > 95000){
+			expansion.updateExpansion(driver);
+		}
 		
 		
 		pros::delay(50);
