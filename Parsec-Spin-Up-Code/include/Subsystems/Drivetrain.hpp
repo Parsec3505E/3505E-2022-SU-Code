@@ -26,17 +26,20 @@ class Drivetrain
         const double DRIVE_RADIUS = 6.453;
         const double WHEEL_RADIUS = 2.0;
 
-
         DrivetrainStates mDriveState;
-
 
         PIDController* driveDistancePID;
         PIDController* turnAnglePID;
+        PIDController* driveTurnPID;
         bool justResetFlag;
 
         const double DRIVE_P = 0.0;
         const double DRIVE_I = 0.0;
         const double DRIVE_D = 0.0;
+
+        const double DRIVE_TURN_P = 2.5;
+        const double DRIVE_TURN_I = 0.0;
+        const double DRIVE_TURN_D = 0.0;
 
         const double TURN_P = 2.5;
         const double TURN_I = 0.0;
@@ -44,6 +47,7 @@ class Drivetrain
 
         const double DRIVE_EPSILON = 0.0;
         const double TURN_EPSILON = 0.5;
+        const double DRIVE_TURN_EPSILON = 0.5;
 
 
 
@@ -87,6 +91,7 @@ class Drivetrain
 
         double distanceSetpoint;
         double angleSepoint;
+        double headingSetpoint;
 
 
     public:
@@ -122,11 +127,13 @@ class Drivetrain
         bool isSettledTurned();
         bool isSettledMove();
         // Ses the distance setpoint
-        void moveDistance(double setpoint);
+        void moveDistance(double driveSetpoint, double headingSetpoint);
        
         // Set the turn setpoint
         void turnAngle(double setpoint);
         void turnToPoint(double x, double y);
+
+        double getGyroYaw();
 
 
 

@@ -4,13 +4,10 @@
 #include "pros/screen.h"
 #include <iostream>
 
-
-
 Drivetrain::Drivetrain()
 {
-
     // Construct the Motor objects
-    //PORT 17 IS BROKEN FOR SOME REASON!!!
+    // PORT 17 IS BROKEN FOR SOME REASON!!!
     rightFront = new pros::Motor(6, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
@@ -20,13 +17,13 @@ Drivetrain::Drivetrain()
     rightBack = new pros::Motor(4, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     rightBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    leftFront = new pros::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftFront->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     leftMiddle = new pros::Motor(11, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
     leftMiddle->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	leftBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+    leftBack = new pros::Motor(20, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     leftBack->set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
     // // Construct Odometry Encoder objects
@@ -35,24 +32,28 @@ Drivetrain::Drivetrain()
 
     driveDistancePID = new PIDController(DRIVE_P, DRIVE_I, DRIVE_D);
     turnAnglePID = new PIDController(TURN_P, TURN_I, TURN_D);
+    driveTurnPID = new PIDController(DRIVE_TURN_P, DRIVE_TURN_I, DRIVE_TURN_D);
+
     // turnTarget = 0.0;
     driveDistancePID->setEpsilon(DRIVE_EPSILON);
     turnAnglePID->setEpsilon(TURN_EPSILON);
+    driveTurnPID->setEpsilon(DRIVE_TURN_EPSILON);
 
     justResetFlag = false;
+
     // Construct Gyro object
     gyro = new pros::Imu(17);
 
     this->distanceSetpoint = 0;
     this->angleSepoint = 0;
+    this->headingSetpoint = 0;
 
     prevTime = pros::millis();
-
-    
 }
 
 Drivetrain::~Drivetrain()
-{}
+{
+}
 
 void Drivetrain::updateDrivetrain(pros::Controller &driver)
 {
@@ -61,88 +62,83 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
     odometryStep(driver);
 
-    switch(mDriveState)
+    switch (mDriveState)
     {
         // The Operator Control state that allows the driver to have open loop control over the drivetrain
 
-        case MOVE_DISTANCE:
-        {
-            this->currTime = pros::millis();
-            double deltaTimeMs = this->currTime - this->prevTime;
+    case MOVE_DISTANCE:
+    {
+        this->currTime = pros::millis();
+        double deltaTimeMs = this->currTime - this->prevTime;
 
-            driveDistancePID->setTarget(this->distanceSetpoint);
-            double output = driveDistancePID->stepPID(yPoseGlobal, deltaTimeMs);
+        driveDistancePID->setTarget(this->distanceSetpoint);
+        double driveOutput = driveDistancePID->stepPID(yPoseGlobal, deltaTimeMs);
 
-            rightFront->move_velocity(output);
-            rightMiddle->move_velocity((output)*(60.0/84.0)); 
-            rightBack->move_velocity(output);
+        driveTurnPID->setTarget(this->headingSetpoint);
+        double headingOutput = driveDistancePID->stepPID(gyro->get_yaw(), deltaTimeMs);
 
-            leftFront->move_velocity(output);
-            leftMiddle->move_velocity((output)*(60.0/84.0));
-            leftBack->move_velocity(output);
-                
-            this->prevTime = this->currTime;
-            
-            justResetFlag = true;
-            break;
+        rightFront->move_velocity(driveOutput + headingOutput);
+        rightMiddle->move_velocity((driveOutput + headingOutput) * (60.0 / 84.0));
+        rightBack->move_velocity(driveOutput + headingOutput);
 
-                
-        }
+        leftFront->move_velocity(driveOutput - headingOutput);
+        leftMiddle->move_velocity((driveOutput - headingOutput) * (60.0 / 84.0));
+        leftBack->move_velocity(driveOutput - headingOutput);
 
-        case TURN_ANGLE:
-        {
-            this->currTime = pros::millis();
-            double deltaTimeMs = this->currTime - this->prevTime;
+        this->prevTime = this->currTime;
 
-            turnAnglePID->setTarget(this->angleSepoint);
-            double output = turnAnglePID->stepPID(gyro->get_yaw(), deltaTimeMs);
-            // driver.print(2, 2, "%f   ", output);
-            rightFront->move_velocity(output);
-            rightMiddle->move_velocity((output)*(60.0/84.0)); 
-            rightBack->move_velocity(output);
-
-            leftFront->move_velocity(-output);
-            leftMiddle->move_velocity(-(output)*(60.0/84.0));
-            leftBack->move_velocity(-output);
-
-            this->prevTime = this->currTime;
-            justResetFlag = true;
-            break;
-        }
-
-        case OPEN_LOOP:
-        {
-            
-            int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-            int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
-
-            // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
-            double fwdGrnCart = (pow(fwd_val/127.0,3.0))*200;
-            double turnGrnCart = (pow(turn_val/127.0,3.0))*200;
-            // double fwdGrnCart = (fwd_val/127.0)*600;
-            // double turnGrnCart = (turn_val/127.0)*600;
-
-            
-
-
-            rightFront->move_velocity(fwdGrnCart-turnGrnCart);
-            rightMiddle->move_velocity((fwdGrnCart-turnGrnCart)*(60.0/84.0)); 
-            rightBack->move_velocity(fwdGrnCart-turnGrnCart);
-
-            leftFront->move_velocity(fwdGrnCart+turnGrnCart);
-            leftMiddle->move_velocity((fwdGrnCart+turnGrnCart)*(60.0/84.0));
-            leftBack->move_velocity(fwdGrnCart+turnGrnCart);
-            break;
-        }
-
-        case DEAD:
-            stop();
-
-            break;
+        justResetFlag = true;
+        break;
     }
 
-   
+    case TURN_ANGLE:
+    {
+        this->currTime = pros::millis();
+        double deltaTimeMs = this->currTime - this->prevTime;
 
+        turnAnglePID->setTarget(this->angleSepoint);
+        double output = turnAnglePID->stepPID(gyro->get_yaw(), deltaTimeMs);
+        // driver.print(2, 2, "%f   ", output);
+        rightFront->move_velocity(output);
+        rightMiddle->move_velocity((output) * (60.0 / 84.0));
+        rightBack->move_velocity(output);
+
+        leftFront->move_velocity(-output);
+        leftMiddle->move_velocity(-(output) * (60.0 / 84.0));
+        leftBack->move_velocity(-output);
+
+        this->prevTime = this->currTime;
+        justResetFlag = true;
+        break;
+    }
+
+    case OPEN_LOOP:
+    {
+
+        int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
+        int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
+
+        // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
+        double fwdGrnCart = (pow(fwd_val / 127.0, 3.0)) * 200;
+        double turnGrnCart = (pow(turn_val / 127.0, 3.0)) * 200;
+        // double fwdGrnCart = (fwd_val/127.0)*600;
+        // double turnGrnCart = (turn_val/127.0)*600;
+
+        rightFront->move_velocity(fwdGrnCart - turnGrnCart);
+        rightMiddle->move_velocity((fwdGrnCart - turnGrnCart) * (60.0 / 84.0));
+        rightBack->move_velocity(fwdGrnCart - turnGrnCart);
+
+        leftFront->move_velocity(fwdGrnCart + turnGrnCart);
+        leftMiddle->move_velocity((fwdGrnCart + turnGrnCart) * (60.0 / 84.0));
+        leftBack->move_velocity(fwdGrnCart + turnGrnCart);
+        break;
+    }
+
+    case DEAD:
+        stop();
+
+        break;
+    }
 }
 
 Drivetrain::DrivetrainStates Drivetrain::getState()
@@ -154,42 +150,44 @@ void Drivetrain::setState(DrivetrainStates state)
 {
 
     mDriveState = state;
-
 }
 
 bool Drivetrain::isSettledTurned()
 {
-
-
-    if (justResetFlag){
-        if(turnAnglePID->isSettledTime()){
-                return true;
+    bool isSettled;
+    if (justResetFlag)
+    {
+        if (turnAnglePID->isSettledTime())
+        {
+            isSettled = true;
         }
     }
-    return false;
+    isSettled = false;
 
-    
-
+    return isSettled;
 }
 
 bool Drivetrain::isSettledMove()
 {
-
-    if (justResetFlag){
-        if(driveDistancePID->isSettledTime()){
-                return true;
+    bool isSettled;
+    if (justResetFlag)
+    {
+        if (driveDistancePID->isSettledTime())
+        {
+            isSettled = true;
         }
     }
-    return false;
+    isSettled = false;
 
+    return isSettled;
 }
 
-void Drivetrain::moveDistance(double setpoint)
+void Drivetrain::moveDistance(double driveSetpoint, double headingSetpoint)
 {
     justResetFlag = false;
-    this->distanceSetpoint = setpoint;
+    this->distanceSetpoint = driveSetpoint;
+    this->headingSetpoint = headingSetpoint;
 }
-
 
 void Drivetrain::turnAngle(double setpoint)
 {
@@ -197,20 +195,23 @@ void Drivetrain::turnAngle(double setpoint)
     this->angleSepoint = setpoint;
 }
 
+double Drivetrain::getGyroYaw()
+{
+    return this->gyro->get_yaw();
+}
 
 void Drivetrain::odometryStep(pros::Controller driver)
 {
-    
-    // ------------------------------- CALCULATIONS ------------------------------- 
+
+    // ------------------------------- CALCULATIONS -------------------------------
 
     double rightDriveEncoderRaw = -1.0 * double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
     double leftDriveEncoderRaw = -1.0 * double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
 
-
     double deltaRightSideEncoderInches = (rightDriveEncoderRaw - this->righDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
     double deltaLeftSideEncoderInches = (leftDriveEncoderRaw - this->leftDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
 
-    double heading = (this->gyro->get_yaw()) * M_PI /180.0;
+    double heading = (this->gyro->get_yaw()) * M_PI / 180.0;
 
     double deltaHeading = (heading - prevHeading);
 
@@ -225,12 +226,11 @@ void Drivetrain::odometryStep(pros::Controller driver)
     xPoseGlobal += deltaXGlobal;
     yPoseGlobal += deltaYGlobal;
 
-
     // this->robotPose->setXComponent(xPoseGlobal);
     // this->robotPose->setYComponent(yPoseGlobal);
     // this->robotPose->setThetaComponent(heading);
 
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
+    // driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
 
     pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
     pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
@@ -239,70 +239,64 @@ void Drivetrain::odometryStep(pros::Controller driver)
     this->prevHeading = heading;
     this->righDriveEncoderPrev = rightDriveEncoderRaw;
     this->leftDriveEncoderPrev = leftDriveEncoderRaw;
-
-
 }
 
-void Drivetrain::moveEncoder(double inches, int vel){
+void Drivetrain::moveEncoder(double inches, int vel)
+{
     resetEnc();
-    double inchPerDeg = (M_PI*4.0)/360.0;
-    double degToMove = inches/inchPerDeg;
-    rightFront->move_relative(degToMove, vel); 
-    rightMiddle->move_relative(degToMove, (vel/600)*428); 
-    rightBack->move_relative(degToMove, vel); 
+    double inchPerDeg = (M_PI * 4.0) / 360.0;
+    double degToMove = inches / inchPerDeg;
+    rightFront->move_relative(degToMove, vel);
+    rightMiddle->move_relative(degToMove, (vel / 600) * 428);
+    rightBack->move_relative(degToMove, vel);
 
-    leftFront->move_relative(degToMove, vel); 
-    leftMiddle->move_relative(degToMove, (vel/600)*428); 
-    leftBack->move_relative(degToMove, vel); 
-   
-  while (!((rightFront->get_position() < degToMove+5) && (rightFront->get_position() > degToMove-5))) {
-    
-    pros::delay(2);
-  }
+    leftFront->move_relative(degToMove, vel);
+    leftMiddle->move_relative(degToMove, (vel / 600) * 428);
+    leftBack->move_relative(degToMove, vel);
+
+    while (!((rightFront->get_position() < degToMove + 5) && (rightFront->get_position() > degToMove - 5)))
+    {
+
+        pros::delay(2);
+    }
 }
 
-void Drivetrain::moveSeconds(int seconds, int vel){
+void Drivetrain::moveSeconds(int seconds, int vel)
+{
 
-    
-    rightFront->move_velocity(vel); 
-    rightMiddle->move_velocity(vel); 
-    rightBack->move_velocity(vel); 
+    rightFront->move_velocity(vel);
+    rightMiddle->move_velocity(vel);
+    rightBack->move_velocity(vel);
 
-    leftFront->move_velocity(vel);  
-    leftMiddle->move_velocity(vel);  
-    leftBack->move_velocity(vel); 
-    
+    leftFront->move_velocity(vel);
+    leftMiddle->move_velocity(vel);
+    leftBack->move_velocity(vel);
+
     pros::delay(seconds);
     stop();
-
-  
 }
-void Drivetrain::setVel(int vel){
+void Drivetrain::setVel(int vel)
+{
 
-    
-    rightFront->move_velocity(vel); 
-    rightMiddle->move_velocity(vel); 
-    rightBack->move_velocity(vel); 
+    rightFront->move_velocity(vel);
+    rightMiddle->move_velocity(vel);
+    rightBack->move_velocity(vel);
 
-    leftFront->move_velocity(vel);  
-    leftMiddle->move_velocity(vel);  
-    leftBack->move_velocity(vel); 
-    
-   
-
-  
+    leftFront->move_velocity(vel);
+    leftMiddle->move_velocity(vel);
+    leftBack->move_velocity(vel);
 }
-void Drivetrain::turnEncoder(double deg, int vel){
+void Drivetrain::turnEncoder(double deg, int vel)
+{
     // double inchPerDeg = (M_PI*13.4)/360.0;
     // double turnInches = inchPerDeg*deg;
-    // rightFront->move_relative(degToMove, vel); 
-    // rightMiddle->move_relative(degToMove, (vel/600)*428); 
-    // rightBack->move_relative(degToMove, vel); 
+    // rightFront->move_relative(degToMove, vel);
+    // rightMiddle->move_relative(degToMove, (vel/600)*428);
+    // rightBack->move_relative(degToMove, vel);
 
-    // leftFront->move_relative(degToMove, vel); 
-    // leftMiddle->move_relative(degToMove, (vel/600)*428); 
-    // leftBack->move_relative(degToMove, vel); 
-
+    // leftFront->move_relative(degToMove, vel);
+    // leftMiddle->move_relative(degToMove, (vel/600)*428);
+    // leftBack->move_relative(degToMove, vel);
 }
 
 void Drivetrain::resetGyro()
@@ -311,41 +305,40 @@ void Drivetrain::resetGyro()
     pros::delay(50);
 }
 
-void Drivetrain::turnGyro(double deg, int vel){
-    //TURN LEFT
+void Drivetrain::turnGyro(double deg, int vel)
+{
+    // TURN LEFT
     resetGyro();
-    if(deg<0){
-      while(gyro->get_yaw()>deg)  {
-        rightFront->move_velocity(vel); 
-    rightMiddle->move_velocity(vel); 
-    rightBack->move_velocity(vel); 
+    if (deg < 0)
+    {
+        while (gyro->get_yaw() > deg)
+        {
+            rightFront->move_velocity(vel);
+            rightMiddle->move_velocity(vel);
+            rightBack->move_velocity(vel);
 
-    leftFront->move_velocity(-vel);  
-    leftMiddle->move_velocity(-vel);  
-    leftBack->move_velocity(-vel); 
-      }
-      stop();
-
-    
-    
+            leftFront->move_velocity(-vel);
+            leftMiddle->move_velocity(-vel);
+            leftBack->move_velocity(-vel);
+        }
+        stop();
     }
 
-    else{
-        while(gyro->get_yaw()<deg)  {
-        rightFront->move_velocity(-vel); 
-    rightMiddle->move_velocity(-vel); 
-    rightBack->move_velocity(-vel); 
+    else
+    {
+        while (gyro->get_yaw() < deg)
+        {
+            rightFront->move_velocity(-vel);
+            rightMiddle->move_velocity(-vel);
+            rightBack->move_velocity(-vel);
 
-    leftFront->move_velocity(vel);  
-    leftMiddle->move_velocity(vel);  
-    leftBack->move_velocity(vel); 
-      }
-      stop();
-
+            leftFront->move_velocity(vel);
+            leftMiddle->move_velocity(vel);
+            leftBack->move_velocity(vel);
+        }
+        stop();
     }
-    
 }
-
 
 void Drivetrain::stop()
 {

@@ -3,14 +3,14 @@
 #include "autonomous.hpp"
 // #include "main.h"
 pros::Controller driver(pros::E_CONTROLLER_MASTER);
-void controlFunction(void* controlArg)
+void controlFunction(void *controlArg)
 {
-    
-    Drivetrain* drive = ((control_arg*)controlArg)->drive;
-    IntakeRoller* intake = ((control_arg*)controlArg)->intake;
-    Shooter* shooter  = ((control_arg*)controlArg)->shooter;
+
+	Drivetrain *drive = ((control_arg *)controlArg)->drive;
+	IntakeRoller *intake = ((control_arg *)controlArg)->intake;
+	Shooter *shooter = ((control_arg *)controlArg)->shooter;
 	int curTime = pros::millis();
-	while(pros::millis() - curTime < 14990 + 1000000)
+	while (pros::millis() - curTime < 14990 + 1000000)
 	{
 		drive->updateDrivetrain(driver);
 		intake->updateIntake(driver);
@@ -19,66 +19,63 @@ void controlFunction(void* controlArg)
 		pros::delay(50);
 	}
 }
-void odomAuton(){
+void odomAuton()
+{
 	std::uint32_t autoStartTime = pros::millis();
-	
-	control_arg* control_task_arg = new control_arg;
 
+	control_arg *control_task_arg = new control_arg;
 
-	Drivetrain* drivetrainObj = new Drivetrain();
+	Drivetrain *drivetrainObj = new Drivetrain();
 	control_task_arg->drive = drivetrainObj;
 
-	IntakeRoller* intakeObj = new IntakeRoller();
+	IntakeRoller *intakeObj = new IntakeRoller();
 	control_task_arg->intake = intakeObj;
 
-	Shooter* shooterObj = new Shooter();
+	Shooter *shooterObj = new Shooter();
 	control_task_arg->shooter = shooterObj;
-
 
 	drivetrainObj->resetGyro();
 	shooterObj->setIndexerState(true);
 	pros::delay(2500);
 
 	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
-	
+
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-//TESTED
+	// TESTED
 	drivetrainObj->turnAngle(90.0);
 	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	while(!drivetrainObj->isSettledTurned()){}
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	drivetrainObj->turnAngle(0.0);
 	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	while(!drivetrainObj->isSettledTurned()){}
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
 	driver.print(2, 2, "SETTLED  ");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	//!!!!!!!!!!!!! NEED TO TEST !!!!!!!!!!!!!!!!!!
-	drivetrainObj->moveDistance(5.0);
+	drivetrainObj->moveDistance(5.0, drivetrainObj->getGyroYaw());
 	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-	while(!drivetrainObj->isSettledMove()){}
+	while (!drivetrainObj->isSettledMove())
+	{
+	}
 	driver.print(2, 2, "SETTLED  ");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-
-
-	
-	
-
-
-
-
 }
 
-void HCRoller(){
+void HCRoller()
+{
 	Drivetrain drivetrainObj = Drivetrain();
-	IntakeRoller intakeObj =  IntakeRoller();
-	Shooter shooterObj =  Shooter();
+	IntakeRoller intakeObj = IntakeRoller();
+	Shooter shooterObj = Shooter();
 	Expansion expansionObj = Expansion();
 	// expansionObj.expansionPistonR->set_value(false);
 	drivetrainObj.resetGyro();
@@ -86,8 +83,8 @@ void HCRoller(){
 	pros::delay(3000);
 
 	//===== START =====
-	
-	//ROLLERS
+
+	// ROLLERS
 	drivetrainObj.moveSeconds(700, 40);
 	drivetrainObj.setVel(40);
 	intakeObj.rollToColourSEC(800);
@@ -96,8 +93,8 @@ void HCRoller(){
 void HCRollerDisc()
 {
 	Drivetrain drivetrainObj = Drivetrain();
-	IntakeRoller intakeObj =  IntakeRoller();
-	Shooter shooterObj =  Shooter();
+	IntakeRoller intakeObj = IntakeRoller();
+	Shooter shooterObj = Shooter();
 	Expansion expansionObj = Expansion();
 	// expansionObj.expansionPistonR->set_value(false);
 	drivetrainObj.resetGyro();
@@ -105,16 +102,12 @@ void HCRollerDisc()
 	shooterObj.setMotorSpeed(450);
 	pros::delay(3000);
 
-	
-
 	//===== START =====
-	
-	//ROLLERS
-	
 
-	
+	// ROLLERS
+
 	shooterObj.indexAll();
-	
+
 	shooterObj.setMotorSpeed(0);
 
 	drivetrainObj.moveSeconds(800, 40);
@@ -122,14 +115,12 @@ void HCRollerDisc()
 	intakeObj.rollToColourSEC(800);
 	drivetrainObj.moveEncoder(-5, 200);
 	// pros::delay(500);
-	
-	//Turn & Drive to middle
-	// drivetrainObj.turnGyro(-64.0, 100);
+
+	// Turn & Drive to middle
+	//  drivetrainObj.turnGyro(-64.0, 100);
 
 	// drivetrainObj.moveEncoder(120, 100);
 	// pros::delay(500);
-	
-	
 
 	// //Shoot into goal
 	// shooterObj.indexAll();
@@ -138,38 +129,33 @@ void HCRollerDisc()
 	// //turn & drive to 2nd roller
 	// drivetrainObj.turnGyro(-22.0, 100);
 	// // drivetrainObj.moveEncoder(65, 100);
-
-
-
-	
 }
 void HCRollerTwo()
 {
 	Drivetrain drivetrainObj = Drivetrain();
-	IntakeRoller intakeObj =  IntakeRoller();
-	Shooter shooterObj =  Shooter();
+	IntakeRoller intakeObj = IntakeRoller();
+	Shooter shooterObj = Shooter();
 
 	drivetrainObj.resetGyro();
 	shooterObj.setIndexerState(true);
 	pros::delay(3000);
 
 	//===== START =====
-	
-	//ROLLERS
-	
+
+	// ROLLERS
+
 	drivetrainObj.moveEncoder(20, 100);
 	pros::delay(500);
 	drivetrainObj.turnGyro(22.0, 100);
 	drivetrainObj.moveSeconds(700, 40);
 	drivetrainObj.setVel(40);
 	intakeObj.rollToColourSEC(800);
-	
-	
 }
-void HCRollerTwoDisc(){
+void HCRollerTwoDisc()
+{
 	Drivetrain drivetrainObj = Drivetrain();
-	IntakeRoller intakeObj =  IntakeRoller();
-	Shooter shooterObj =  Shooter();
+	IntakeRoller intakeObj = IntakeRoller();
+	Shooter shooterObj = Shooter();
 
 	drivetrainObj.resetGyro();
 	shooterObj.setIndexerState(true);
@@ -177,10 +163,10 @@ void HCRollerTwoDisc(){
 	pros::delay(4000);
 
 	//===== START =====
-	
-	//ROLLERS
+
+	// ROLLERS
 	shooterObj.indexAll2();
-	
+
 	shooterObj.setMotorSpeed(0);
 
 	drivetrainObj.moveEncoder(70, 200);

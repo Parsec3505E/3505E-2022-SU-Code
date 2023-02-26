@@ -7,22 +7,22 @@
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 
-
-
-
-
 /**
  * A callback function for LLEMU's center button.
  *
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
-void on_center_button() {
+void on_center_button()
+{
 	static bool pressed = false;
 	pressed = !pressed;
-	if (pressed) {
+	if (pressed)
+	{
 		pros::lcd::set_text(2, "I was pressed!");
-	} else {
+	}
+	else
+	{
 		pros::lcd::clear_line(2);
 	}
 }
@@ -32,7 +32,8 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
+void initialize()
+{
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
@@ -55,8 +56,8 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-
+void competition_initialize()
+{
 }
 
 /**
@@ -71,10 +72,10 @@ void competition_initialize() {
  * from where it left off.
  */
 
-
 Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
 
-void autonomous() {
+void autonomous()
+{
 	// farSideRollerAuton();
 	// auton1();
 	// odomAuton();
@@ -101,13 +102,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-
-
-void opcontrol() {
-
-	
-	
-	
+void opcontrol()
+{
 
 	pros::Controller driver(pros::E_CONTROLLER_MASTER);
 	Drivetrain drive;
@@ -120,30 +116,30 @@ void opcontrol() {
 
 	// drive.setRobotPose(persistPose);
 
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
-	
+	// driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
+
 	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
-	
-	
+
 	// shooter.setState(Shooter::ShooterStates::CLOSED_LOOP);
-	
+
 	// shooter.setTargetRPM(340);
 	// shooter.setIndexerState(true);
 
 	std::uint32_t oppStartTime = pros::millis();
-	while (true) {
+	while (true)
+	{
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
 		// shooter.updateShooter(driver);
-		
-		if((pros::millis() - oppStartTime) > 95000){
+
+		if ((pros::millis() - oppStartTime) > 95000)
+		{
 			expansion.updateExpansion(driver);
 		}
-		
-		
+
 		pros::delay(50);
 	}
 }
