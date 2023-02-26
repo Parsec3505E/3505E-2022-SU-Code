@@ -17,6 +17,11 @@ PIDController::PIDController(double kP, double kI, double kD)
 
     this->maxOutput = 0.0;
     this->minOutput = 0.0;
+
+    beenSettled = false;
+    timeSettled = pros::millis();
+
+    minSettledTime = 100;
 }
 
 void PIDController::setConstants(double kP, double kI, double kD)
@@ -70,4 +75,19 @@ bool PIDController::isSettled()
 {
     return (fabs(this->error) < this->epsilon);
     //pros::screen::print(pros::E_TEXT_MEDIUM, 6, "settle");
+}
+bool PIDController::isSettledTime()
+{
+    if(isSettled()){
+        if(!beenSettled){
+            beenSettled = true;
+            timeSettled = pros::millis();
+        }
+        return (pros::millis()-timeSettled)>minSettledTime;
+    }
+    else{
+        beenSettled = false;
+        return false;
+ 
+    }
 }

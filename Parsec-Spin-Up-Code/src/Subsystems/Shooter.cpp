@@ -15,7 +15,12 @@ Shooter::Shooter()
 
     rpmPID = new PIDController(0, 0, 0);
     //targetRPM = 0;
-    
+    TBHPrevErr = 0.0;
+    TBHGain = 0.3;
+    TBHThresh = 0.0;
+    TBHInputVolt = 0.0;
+    TBHCross = false;
+
     targetVel = 0;
     beenSettled = false;
     timeSettled = pros::millis();
@@ -35,10 +40,32 @@ void Shooter::updateShooter(pros::Controller driver)
     {
 
     case CLOSED_LOOP:
-        //driver.print(2, 2, "%.1f  %d    ", shooterPwr->get_actual_velocity(), targetVel);
-        // Put closed loop code for the shooter here
-        //driver.print(2, 2, "Hello2");
-        
+        TBHController(targetVel);
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+            TBHGain+=0.1;
+        }
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+            TBHGain-=0.1;
+        }
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+            targetVel+=20.0;
+        }
+        if(driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+            targetVel-=20.0;
+        }
+
+        if(indFlag && pros::millis()-reloadDelay>delayConst){
+            reloadDelay = pros::millis();
+            shooterInd->set_value(true);
+            indFlag = false;
+        }
+        if(driver.get_digital(pros::E_CONTROLLER_DIGITAL_L2)&&!indFlag && pros::millis()-reloadDelay>delayConst) 
+        {
+            reloadDelay = pros::millis();
+            shooterInd->set_value(false);
+            indFlag = true;
+        }
+        driver.print(2, 2, "%.1f  %d  %f  ", shooterPwr->get_actual_velocity(), targetVel, TBHGain);
         break;
 
     case OPERATOR_CONTROL:
@@ -120,6 +147,34 @@ enum Shooter::ShooterStates Shooter::getState()
 void Shooter::setTargetRPM(double RPM)
 {
     targetVel = RPM;
+
+}
+
+void Shooter::TBHController(int targetVel)
+{
+    double TBHErr = targetVel - shooterPwr->get_actual_velocity();
+    TBHInputVolt += TBHErr*TBHGain;
+    if(TBHInputVolt>12000){
+        TBHInputVolt = 12000;
+    }
+    if(TBHInputVolt<0){
+        TBHInputVolt = 0;
+    }
+
+    if(std::signbit(TBHErr) != std::signbit(TBHPrevErr)){
+        if(!TBHCross){
+            TBHThresh = TBHInputVolt * 0.5;
+            TBHInputVolt = TBHThresh;
+            TBHCross = true;
+        }
+        else{
+            TBHInputVolt = 0.5*(TBHThresh+TBHInputVolt);
+        }
+    TBHThresh = TBHInputVolt;
+    }
+    
+    TBHPrevErr = TBHErr;
+    shooterPwr->move_voltage(TBHInputVolt);
 
 }
 

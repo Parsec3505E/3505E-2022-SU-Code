@@ -3,7 +3,68 @@
 #include "autonomous.hpp"
 // #include "main.h"
 pros::Controller driver(pros::E_CONTROLLER_MASTER);
+void controlFunction(void* controlArg)
+{
+    
+    Drivetrain* drive = ((control_arg*)controlArg)->drive;
+    IntakeRoller* intake = ((control_arg*)controlArg)->intake;
+    Shooter* shooter  = ((control_arg*)controlArg)->shooter;
+	int curTime = pros::millis();
+	while(pros::millis() - curTime < 14990 + 1000000)
+	{
+		drive->updateDrivetrain(driver);
+		intake->updateIntake(driver);
+		shooter->updateShooter(driver);
 
+		pros::delay(50);
+	}
+}
+void odomAuton(){
+	std::uint32_t autoStartTime = pros::millis();
+	
+	control_arg* control_task_arg = new control_arg;
+
+
+	Drivetrain* drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller* intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter* shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+
+	drivetrainObj->resetGyro();
+	shooterObj->setIndexerState(true);
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+	
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->turnAngle(90.0);
+	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while(!drivetrainObj->isSettledTurned()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->turnAngle(0.0);
+	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while(!drivetrainObj->isSettledTurned()){}
+	driver.print(2, 2, "SETTLED  ");
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+
+	
+	
+
+
+
+
+}
 
 void HCRoller(){
 	Drivetrain drivetrainObj = Drivetrain();

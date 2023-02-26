@@ -33,8 +33,20 @@ Drivetrain::Drivetrain()
     // forwardEncoder = new pros::ADIEncoder('A', 'B', false);
     // sideEncoder = new pros::ADIEncoder('C', 'D', false);
 
+    driveDistancePID = new PIDController(DRIVE_P, DRIVE_I, DRIVE_D);
+    turnAnglePID = new PIDController(TURN_P, TURN_I, TURN_D);
+    // turnTarget = 0.0;
+    driveDistancePID->setEpsilon(DRIVE_EPSILON);
+    turnAnglePID->setEpsilon(TURN_EPSILON);
+
+    justResetFlag = false;
     // Construct Gyro object
     gyro = new pros::Imu(17);
+
+    this->distanceSetpoint = 0;
+    this->angleSepoint = 0;
+
+    prevTime = pros::millis();
 
     
 }
@@ -53,17 +65,54 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
     {
         // The Operator Control state that allows the driver to have open loop control over the drivetrain
 
-        case OPERATOR_CONTROL:
-            {
+        case MOVE_DISTANCE:
+        {
+            this->currTime = pros::millis();
+            double deltaTimeMs = this->currTime - this->prevTime;
 
+            driveDistancePID->setTarget(this->distanceSetpoint);
+            double output = driveDistancePID->stepPID(yPoseGlobal, deltaTimeMs);
+
+            rightFront->move_velocity(output);
+            rightMiddle->move_velocity((output)*(60.0/84.0)); 
+            rightBack->move_velocity(output);
+
+            leftFront->move_velocity(output);
+            leftMiddle->move_velocity((output)*(60.0/84.0));
+            leftBack->move_velocity(output);
                 
-
-                break;
-
-                
+            this->prevTime = this->currTime;
+            if(driveDistancePID->isSettled()){
+                setState(DEAD);
             }
+            justResetFlag = true;
+            break;
 
-        case OPEN_LOOP_OPERATOR:
+                
+        }
+
+        case TURN_ANGLE:
+        {
+            this->currTime = pros::millis();
+            double deltaTimeMs = this->currTime - this->prevTime;
+
+            turnAnglePID->setTarget(this->angleSepoint);
+            double output = turnAnglePID->stepPID(gyro->get_yaw(), deltaTimeMs);
+            // driver.print(2, 2, "%f   ", output);
+            rightFront->move_velocity(output);
+            rightMiddle->move_velocity((output)*(60.0/84.0)); 
+            rightBack->move_velocity(output);
+
+            leftFront->move_velocity(-output);
+            leftMiddle->move_velocity(-(output)*(60.0/84.0));
+            leftBack->move_velocity(-output);
+
+            this->prevTime = this->currTime;
+            justResetFlag = true;
+            break;
+        }
+
+        case OPEN_LOOP:
         {
             
             int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
@@ -71,7 +120,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
             // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
             double fwdGrnCart = (pow(fwd_val/127.0,3.0))*200;
-            double turnGrnCart = (pow(turn_val/127,3.0))*200;
+            double turnGrnCart = (pow(turn_val/127.0,3.0))*200;
             // double fwdGrnCart = (fwd_val/127.0)*600;
             // double turnGrnCart = (turn_val/127.0)*600;
 
@@ -79,23 +128,15 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
 
             rightFront->move_velocity(fwdGrnCart-turnGrnCart);
-            rightMiddle->move_velocity((fwdGrnCart-turnGrnCart)*(-60/84));
+            rightMiddle->move_velocity((fwdGrnCart-turnGrnCart)*(60.0/84.0)); 
             rightBack->move_velocity(fwdGrnCart-turnGrnCart);
 
             leftFront->move_velocity(fwdGrnCart+turnGrnCart);
-            leftMiddle->move_velocity((fwdGrnCart+turnGrnCart)*(-60/84));
+            leftMiddle->move_velocity((fwdGrnCart+turnGrnCart)*(60.0/84.0));
             leftBack->move_velocity(fwdGrnCart+turnGrnCart);
             break;
         }
-        case PID:
-            {
-               
 
-                break;
-            }
-        case BLANK:
-
-            break;
         case DEAD:
             stop();
 
@@ -117,30 +158,87 @@ void Drivetrain::setState(DrivetrainStates state)
     mDriveState = state;
 
 }
-void Drivetrain::resetEnc()
+
+bool Drivetrain::isSettledTurned()
 {
-    rightFront->tare_position(); 
-    rightMiddle->tare_position(); 
-    rightBack->tare_position();  
 
-    leftFront->tare_position(); 
-    leftMiddle->tare_position(); 
-    leftBack->tare_position(); 
 
-}
-double Drivetrain::joystickControl(double rawSpeed){
-    double logSpeed;
-
-    if(rawSpeed >= 0){
-        logSpeed = ((rawSpeed)/abs(rawSpeed))*(pow(rawSpeed, 3));
-        if(logSpeed < 50.0){
-            logSpeed = 0;
+    if (justResetFlag){
+        if(turnAnglePID->isSettledTime()){
+                return true;
         }
-
-        return logSpeed;
     }
+    return false;
+
+    
+
 }
 
+bool Drivetrain::isSettledMove()
+{
+
+    return false;
+
+}
+
+void Drivetrain::moveDistance(double setpoint)
+{
+    justResetFlag = false;
+    this->distanceSetpoint = setpoint;
+}
+
+
+void Drivetrain::turnAngle(double setpoint)
+{
+    justResetFlag = false;
+    this->angleSepoint = setpoint;
+}
+
+
+void Drivetrain::odometryStep(pros::Controller driver)
+{
+    
+    // ------------------------------- CALCULATIONS ------------------------------- 
+
+    double rightDriveEncoderRaw = -1.0 * double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
+    double leftDriveEncoderRaw = -1.0 * double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
+
+
+    double deltaRightSideEncoderInches = (rightDriveEncoderRaw - this->righDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
+    double deltaLeftSideEncoderInches = (leftDriveEncoderRaw - this->leftDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
+
+    double heading = (this->gyro->get_yaw()) * M_PI /180.0;
+
+    double deltaHeading = (heading - prevHeading);
+
+    double totalDistance = ((deltaRightSideEncoderInches + (deltaHeading * DRIVE_RADIUS) + deltaLeftSideEncoderInches - (deltaHeading * DRIVE_RADIUS)) / 2);
+
+    double deltaYLocal = totalDistance * cos(deltaHeading);
+    double deltaXLocal = totalDistance * sin(deltaHeading);
+
+    double deltaYGlobal = (deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
+    double deltaXGlobal = (deltaXLocal * cos(heading)) - (deltaYLocal * sin(heading));
+
+    xPoseGlobal += deltaXGlobal;
+    yPoseGlobal += deltaYGlobal;
+
+
+    // this->robotPose->setXComponent(xPoseGlobal);
+    // this->robotPose->setYComponent(yPoseGlobal);
+    // this->robotPose->setThetaComponent(heading);
+
+    //driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
+
+    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
+    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", heading);
+
+    this->prevHeading = heading;
+    this->righDriveEncoderPrev = rightDriveEncoderRaw;
+    this->leftDriveEncoderPrev = leftDriveEncoderRaw;
+
+
+}
 
 void Drivetrain::moveEncoder(double inches, int vel){
     resetEnc();
@@ -254,49 +352,4 @@ void Drivetrain::stop()
     this->leftFront->move_velocity(0);
     this->leftMiddle->move_velocity(0);
     this->leftBack->move_velocity(0);
-}
-
-void Drivetrain::odometryStep(pros::Controller driver)
-{
-    
-    // ------------------------------- CALCULATIONS ------------------------------- 
-
-    double rightDriveEncoderRaw = -1.0 * double(this->rightFront->get_position() + this->rightBack->get_position()) / 2.0;
-    double leftDriveEncoderRaw = -1.0 * double(this->leftFront->get_position() + this->leftBack->get_position()) / 2.0;
-
-
-    double deltaRightSideEncoderInches = (rightDriveEncoderRaw - this->righDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
-    double deltaLeftSideEncoderInches = (leftDriveEncoderRaw - this->leftDriveEncoderPrev) * (2.0 * M_PI * WHEEL_RADIUS) / 900.0;
-
-    double heading = (this->gyro->get_yaw()) * M_PI /180.0;
-
-    double deltaHeading = (heading - prevHeading);
-
-    double totalDistance = ((deltaRightSideEncoderInches + (deltaHeading * DRIVE_RADIUS) + deltaLeftSideEncoderInches - (deltaHeading * DRIVE_RADIUS)) / 2);
-
-    double deltaYLocal = totalDistance * cos(deltaHeading);
-    double deltaXLocal = totalDistance * sin(deltaHeading);
-
-    double deltaYGlobal = (deltaXLocal * sin(heading)) + (deltaYLocal * cos(heading));
-    double deltaXGlobal = (deltaXLocal * cos(heading)) - (deltaYLocal * sin(heading));
-
-    xPoseGlobal += deltaXGlobal;
-    yPoseGlobal += deltaYGlobal;
-
-
-    // this->robotPose->setXComponent(xPoseGlobal);
-    // this->robotPose->setYComponent(yPoseGlobal);
-    // this->robotPose->setThetaComponent(heading);
-
-    //driver.print(2, 2, "%.1f, %.1f, %.4f", this->deltaXGlobal, xPoseGlobal, headingRaw);
-
-    pros::screen::print(pros::E_TEXT_MEDIUM, 4, "X Global: %f", this->xPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 6, "Y Global: %f", this->yPoseGlobal);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 5, "Heading: %f", heading);
-
-    this->prevHeading = heading;
-    this->righDriveEncoderPrev = rightDriveEncoderRaw;
-    this->leftDriveEncoderPrev = leftDriveEncoderRaw;
-
-
 }

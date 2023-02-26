@@ -19,32 +19,33 @@ class Drivetrain
 
     public:
         //Drivetrain States
-        enum DrivetrainStates{OPERATOR_CONTROL, OPEN_LOOP_OPERATOR, PID, BLANK, DEAD};
+        enum DrivetrainStates{OPEN_LOOP, MOVE_DISTANCE, TURN_ANGLE, DEAD};
 
-    private:
+    //private:
 
         const double DRIVE_RADIUS = 6.453;
         const double WHEEL_RADIUS = 2.0;
 
-        Pose* robotPose;
-        Pose* velocityPose;
-        Pose* targetPose;
-
-        Pose* previousPose; // Previous operator control pose
-        Pose* outputPose; // Output pose of the PID
-
-
 
         DrivetrainStates mDriveState;
 
-        PosePID* posePID;
 
-        PIDController* driverXPID;
-        PIDController* driverYPID;
-        PIDController* driverThetaPID;
+        PIDController* driveDistancePID;
+        PIDController* turnAnglePID;
+        bool justResetFlag;
 
-        double motorVelLimit;
-        double motorAccLimit;
+        const double DRIVE_P = 0.0;
+        const double DRIVE_I = 0.0;
+        const double DRIVE_D = 0.0;
+
+        const double TURN_P = 2.5;
+        const double TURN_I = 0.0;
+        const double TURN_D = 0.0;  
+
+        const double DRIVE_EPSILON = 0.0;
+        const double TURN_EPSILON = 0.5;
+
+
 
         // Drivetrain Motor Declarations
         pros::Motor* rightFront;
@@ -63,16 +64,6 @@ class Drivetrain
         // Drivetrain Gyro Declaration
         pros::IMU* gyro;
 
-        std::map<std::string, double> requestedAcc;
-        std::map<std::string, double> proposedMotorVelocities;
-        std::map<std::string, double> proposedDeltaVelocities;
-        std::map<std::string, double> finalVelocities;
-        std::map<std::string, double> rotationVels;
-        std::map<std::string, double> lastVels;
-
-        const double MOTOR_MAX_RPM = 200.0;
-
-        const double MOTOR_MAX_ACC = 120.0;
 
         std::uint32_t currTime;
         std::uint32_t prevTime;
@@ -86,41 +77,16 @@ class Drivetrain
         //Might need to be negative
         const double SIDE_ENCODER_TRACK_RADIUS = 5.5225;
 
-        //Calculated Values (every loop)
-        // //Angles (DEGREES) *NEEDS TO BE CONVERTED TO RADIANS FOR MATH*
-        // double forwardEncoderRaw = 0.0;
-        // double sideEncoderRaw = 0.0;
-
         double righDriveEncoderPrev = 0.0;
         double leftDriveEncoderPrev = 0.0;
 
         double prevHeading = 0.0;
 
-        // //Distances traveled by tracking wheels each loop (INCHES)
-        // double deltaDistForward = 0.0;
-        // double deltaDistSide = 0.0;
-
-        // //The current angle of the bot (RADIANS)
-        // double headingRaw = 0.0;
-        // //The previous angle of the bot (RADIANS)
-        // double prevHeadingRaw = 0.0;
-
-        // //The change in heading each loop (RADIANS)
-        // double deltaHeading = 0.0;
-
-        // //The changes in the X and Y positions (INCHES)
-        // /*These are calculated on a local basis each loop,
-        // then converted to global position changes */
-        // double deltaXLocal = 0.0;
-        // double deltaYLocal = 0.0;
-
-        // //The X and Y offsets converted from their local frame to global frame (INCHES)
-        // double deltaXGlobal = 0.0;
-        // double deltaYGlobal = 0.0;
-
-        // //The global position of the bot (INCHES)
         double xPoseGlobal = 0.0;
         double yPoseGlobal = 0.0;
+
+        double distanceSetpoint;
+        double angleSepoint;
 
 
     public:
@@ -153,6 +119,16 @@ class Drivetrain
         // bool isSettled();
 
         ~Drivetrain();
+        bool isSettledTurned();
+        bool isSettledMove();
+        // Ses the distance setpoint
+        void moveDistance(double setpoint);
+       
+        // Set the turn setpoint
+        void turnAngle(double setpoint);
+        void turnToPoint(double x, double y);
+
+
 
         // void moveRobot(Pose* velocityPose);
 

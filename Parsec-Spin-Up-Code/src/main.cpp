@@ -83,7 +83,8 @@ void autonomous() {
 	// rollerAuton();
 	// hardCodedAuton();
 	// HCRollerDisc();
-	HCRollerTwoDisc();
+	// HCRollerTwoDisc();
+	odomAuton();
 }
 
 /**
@@ -121,22 +122,22 @@ void opcontrol() {
 
     //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
 	
-	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP_OPERATOR);
+	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP);
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 	
 	
-	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	// shooter.setState(Shooter::ShooterStates::CLOSED_LOOP);
 	
-	shooter.setTargetRPM(340);
-	shooter.setIndexerState(true);
+	// shooter.setTargetRPM(340);
+	// shooter.setIndexerState(true);
 
 	std::uint32_t oppStartTime = pros::millis();
 	while (true) {
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
-		shooter.updateShooter(driver);
+		// shooter.updateShooter(driver);
 		
 		if((pros::millis() - oppStartTime) > 95000){
 			expansion.updateExpansion(driver);

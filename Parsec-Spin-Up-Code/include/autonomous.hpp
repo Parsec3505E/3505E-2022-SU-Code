@@ -4,6 +4,7 @@
 #include "main.h"
 
 
+void odomAuton();
 
 void HCRoller();
 void HCRollerDisc();

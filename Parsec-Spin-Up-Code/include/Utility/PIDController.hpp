@@ -29,6 +29,9 @@ class PIDController
         double deriative;
 
         double epsilon;
+        bool beenSettled;
+        int timeSettled;
+        int minSettledTime;
 
     public:
 
@@ -49,6 +52,7 @@ class PIDController
 
         // Determines if the PID is settled
         bool isSettled();
+        bool isSettledTime();
     
 
 };

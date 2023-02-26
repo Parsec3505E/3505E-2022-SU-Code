@@ -22,6 +22,11 @@ class Shooter
         double RPM;
 
         PIDController* rpmPID;
+        double TBHPrevErr;
+        double TBHGain;
+        double TBHThresh;
+        double TBHInputVolt;
+        bool TBHCross;
 
         double motorVelLimit;
         double motorAccLimit;
@@ -74,6 +79,7 @@ class Shooter
         void setIndexerState(bool state);
 
         void setTargetRPM(double RPM);
+        void TBHController(int targetVel);
 
         double slewRPM(double request);
 
