@@ -82,9 +82,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
             leftBack->move_velocity(output);
                 
             this->prevTime = this->currTime;
-            if(driveDistancePID->isSettled()){
-                setState(DEAD);
-            }
+            
             justResetFlag = true;
             break;
 
@@ -177,6 +175,11 @@ bool Drivetrain::isSettledTurned()
 bool Drivetrain::isSettledMove()
 {
 
+    if (justResetFlag){
+        if(driveDistancePID->isSettledTime()){
+                return true;
+        }
+    }
     return false;
 
 }

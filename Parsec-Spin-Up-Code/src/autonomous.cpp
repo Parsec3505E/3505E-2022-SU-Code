@@ -43,6 +43,7 @@ void odomAuton(){
 	
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
+//TESTED
 	drivetrainObj->turnAngle(90.0);
 	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
@@ -53,6 +54,14 @@ void odomAuton(){
 	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
 	while(!drivetrainObj->isSettledTurned()){}
+	driver.print(2, 2, "SETTLED  ");
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	//!!!!!!!!!!!!! NEED TO TEST !!!!!!!!!!!!!!!!!!
+	drivetrainObj->moveDistance(5.0);
+	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	while(!drivetrainObj->isSettledMove()){}
 	driver.print(2, 2, "SETTLED  ");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
