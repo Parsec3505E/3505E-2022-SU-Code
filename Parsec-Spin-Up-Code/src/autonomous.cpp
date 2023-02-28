@@ -43,32 +43,38 @@ void odomAuton()
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	// TESTED
-	drivetrainObj->turnAngle(90.0);
-	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	while (!drivetrainObj->isSettledTurned())
-	{
-	}
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->turnAngle(90.0);
+	// // driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-	drivetrainObj->turnAngle(0.0);
-	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	while (!drivetrainObj->isSettledTurned())
-	{
-	}
-	driver.print(2, 2, "SETTLED  ");
-	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// drivetrainObj->turnAngle(0.0);
+	// driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// driver.print(2, 2, "SETTLED  ");
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	//!!!!!!!!!!!!! NEED TO TEST !!!!!!!!!!!!!!!!!!
-	drivetrainObj->moveDistance(5.0, drivetrainObj->getGyroYaw());
-	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->moveDistance(48.0, 0.0);
+	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
 	while (!drivetrainObj->isSettledMove())
 	{
 	}
 	driver.print(2, 2, "SETTLED  ");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
 }
 
 void HCRoller()

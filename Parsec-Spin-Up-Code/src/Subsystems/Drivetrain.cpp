@@ -72,11 +72,11 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
         double deltaTimeMs = this->currTime - this->prevTime;
 
         driveDistancePID->setTarget(this->distanceSetpoint);
-        double driveOutput = driveDistancePID->stepPID(yPoseGlobal, deltaTimeMs);
-
-        driveTurnPID->setTarget(this->headingSetpoint);
-        double headingOutput = driveDistancePID->stepPID(gyro->get_yaw(), deltaTimeMs);
-
+        double driveOutput = driveDistancePID->stepPID(getAvgEncInches(), deltaTimeMs);
+        driver.print(2, 2, "%f   %f ", getAvgEncInches(), driveOutput);
+        // driveDistancePID->setTarget(this->headingSetpoint);
+        // double headingOutput = driveDistancePID->stepPID(gyro->get_yaw(), deltaTimeMs);
+        double headingOutput = 0.0;
         rightFront->move_velocity(driveOutput + headingOutput);
         rightMiddle->move_velocity((driveOutput + headingOutput) * (60.0 / 84.0));
         rightBack->move_velocity(driveOutput + headingOutput);
@@ -98,7 +98,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
         turnAnglePID->setTarget(this->angleSepoint);
         double output = turnAnglePID->stepPID(gyro->get_yaw(), deltaTimeMs);
-        // driver.print(2, 2, "%f   ", output);
+        driver.print(2, 2, "%f   ", output);
         rightFront->move_velocity(output);
         rightMiddle->move_velocity((output) * (60.0 / 84.0));
         rightBack->move_velocity(output);
@@ -118,7 +118,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
         int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
         int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
 
-        // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
+        driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
         double fwdGrnCart = (pow(fwd_val / 127.0, 3.0)) * 200;
         double turnGrnCart = (pow(turn_val / 127.0, 3.0)) * 200;
         // double fwdGrnCart = (fwd_val/127.0)*600;
@@ -151,7 +151,14 @@ void Drivetrain::setState(DrivetrainStates state)
 
     mDriveState = state;
 }
+void Drivetrain::resetEnc(){
+    rightFront->tare_position();
+    rightBack->tare_position();
 
+    leftFront->tare_position();
+    leftBack->tare_position();
+
+}
 bool Drivetrain::isSettledTurned()
 {
     bool isSettled;
@@ -198,6 +205,24 @@ void Drivetrain::turnAngle(double setpoint)
 double Drivetrain::getGyroYaw()
 {
     return this->gyro->get_yaw();
+}
+
+double Drivetrain::getRightEncInches()
+{
+    // double rightAvg = (rightFront->get_position()+rightBack->get_position()) / 2;
+    return rightFront->get_position()* TICKS_PER_INCH*4.0;
+}
+
+double Drivetrain::getLeftEncInches()
+{
+    // double leftAvg = (leftFront->get_position()+leftBack->get_position()) / 2;
+    return leftFront->get_position()*TICKS_PER_INCH*4.0;
+}
+
+double Drivetrain::getAvgEncInches()
+{
+
+    return (getRightEncInches() + getLeftEncInches()) / 2.0;
 }
 
 void Drivetrain::odometryStep(pros::Controller driver)

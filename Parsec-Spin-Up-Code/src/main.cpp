@@ -111,7 +111,7 @@ void opcontrol()
 	Shooter shooter;
 	Expansion expansion;
 
-	drive.resetGyro();
+	// drive.resetGyro();
 	// pros::delay(4000);
 
 	// drive.setRobotPose(persistPose);
@@ -122,10 +122,10 @@ void opcontrol()
 	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
 	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
 
-	// shooter.setState(Shooter::ShooterStates::CLOSED_LOOP);
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
 
-	// shooter.setTargetRPM(340);
-	// shooter.setIndexerState(true);
+	shooter.setTargetRPM(340);
+	shooter.setIndexerState(true);
 
 	std::uint32_t oppStartTime = pros::millis();
 	while (true)
@@ -133,7 +133,7 @@ void opcontrol()
 
 		drive.updateDrivetrain(driver);
 		intake.updateIntake(driver);
-		// shooter.updateShooter(driver);
+		shooter.updateShooter(driver);
 
 		if ((pros::millis() - oppStartTime) > 95000)
 		{
