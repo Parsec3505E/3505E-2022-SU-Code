@@ -85,7 +85,7 @@ void autonomous()
 	// hardCodedAuton();
 	// HCRollerDisc();
 	// HCRollerTwoDisc();
-	odomAuton();
+	odomAutonAWP();
 }
 
 /**
@@ -126,6 +126,8 @@ void opcontrol()
 
 	shooter.setTargetRPM(340);
 	shooter.setIndexerState(true);
+	expansion.expansionPistonR->set_value(false);
+    expansion.blockerPiston->set_value(false);
 
 	std::uint32_t oppStartTime = pros::millis();
 	while (true)

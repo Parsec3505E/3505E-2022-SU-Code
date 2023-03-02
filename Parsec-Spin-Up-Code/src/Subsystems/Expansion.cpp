@@ -3,7 +3,8 @@
 Expansion::Expansion()
 {
 
-    expansionPistonR = new pros::ADIDigitalOut('C');
+    expansionPistonR = new pros::ADIDigitalOut('A');
+    blockerPiston = new pros::ADIDigitalOut('C');
 }
 
 void Expansion::updateExpansion(pros::Controller driver)
@@ -15,6 +16,10 @@ void Expansion::updateExpansion(pros::Controller driver)
         if (driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT))
         {
             expansionPistonR->set_value(true);
+        }
+        if (driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))
+        {
+            blockerPiston->set_value(true);
         }
 
         break;

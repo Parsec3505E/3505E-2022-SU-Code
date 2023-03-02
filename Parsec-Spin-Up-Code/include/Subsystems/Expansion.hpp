@@ -18,7 +18,7 @@ class Expansion
 
         // Expansion Piston Declarations
         pros::ADIDigitalOut* expansionPistonR;
-        pros::ADIDigitalOut* expansionPistonL;
+        pros::ADIDigitalOut* blockerPiston;
 
     
         // Expansion Constructor

@@ -43,22 +43,22 @@ void odomAuton()
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	// TESTED
-	// drivetrainObj->turnAngle(90.0);
-	// // driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	// while (!drivetrainObj->isSettledTurned())
-	// {
-	// }
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-	// drivetrainObj->turnAngle(0.0);
+	drivetrainObj->turnAngle(90.0);
 	// driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
-	// while (!drivetrainObj->isSettledTurned())
-	// {
-	// }
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	// driver.print(2, 2, "SETTLED  ");
-	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	drivetrainObj->turnAngle(0.0);
+	driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
+	driver.print(2, 2, "SETTLED  ");
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	//!!!!!!!!!!!!! NEED TO TEST !!!!!!!!!!!!!!!!!!
 	drivetrainObj->moveDistance(48.0, 0.0);
@@ -69,6 +69,15 @@ void odomAuton()
 	}
 	driver.print(2, 2, "SETTLED  ");
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->turnAngle(90.0);
+	// driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
 	
 	while(pros::millis() - autoStartTime < 14500)
 	{}
@@ -76,6 +85,80 @@ void odomAuton()
 
 	controlTask.remove();
 }
+
+void odomAutonAWP()
+{
+	std::uint32_t autoStartTime = pros::millis();
+
+	control_arg *control_task_arg = new control_arg;
+
+	Drivetrain *drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller *intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter *shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	drivetrainObj->resetGyro();
+	shooterObj->setIndexerState(true);
+	pros::delay(2500);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	drivetrainObj->moveSeconds(750, 50);
+	drivetrainObj->setVel(10);
+	intakeObj->rollToColourMANUAL(true);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// TESTED
+
+	// drivetrainObj->turnAngle(90.0);
+	// // driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	// // driver.print(2, 2, "SETTLED  ");
+	// drivetrainObj->turnAngle(0.0);
+	// driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// driver.print(2, 2, "SETTLED  ");
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// //!!!!!!!!!!!!! NEED TO TEST !!!!!!!!!!!!!!!!!!
+	// drivetrainObj->moveDistance(48.0, 0.0);
+	// drivetrainObj->resetEnc();
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	// while (!drivetrainObj->isSettledMove())
+	// {
+	// }
+	// driver.print(2, 2, "SETTLED  ");
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// drivetrainObj->turnAngle(90.0);
+	// // driver.print(2, 2, "%f  ", drivetrainObj->angleSepoint);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+}
+
 
 void HCRoller()
 {

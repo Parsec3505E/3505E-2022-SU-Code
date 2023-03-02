@@ -49,6 +49,7 @@ class PIDController
         
         // Step the PID every iteration of the loop
         double stepPID(double input, double deltaTime);
+        double stepTurnPID(double input, double deltaTime);
 
         // Determines if the PID is settled
         bool isSettled();

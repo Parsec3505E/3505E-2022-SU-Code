@@ -5,6 +5,7 @@
 
 
 void odomAuton();
+void odomAutonAWP();
 
 void HCRoller();
 void HCRollerDisc();

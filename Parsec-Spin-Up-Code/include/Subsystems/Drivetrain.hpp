@@ -19,7 +19,7 @@ class Drivetrain
 
     public:
         //Drivetrain States
-        enum DrivetrainStates{OPEN_LOOP, MOVE_DISTANCE, TURN_ANGLE, DEAD};
+        enum DrivetrainStates{OPEN_LOOP, MOVE_DISTANCE, TURN_ANGLE, DEAD, BLANK};
 
     //private:
 
@@ -33,7 +33,7 @@ class Drivetrain
         PIDController* driveTurnPID;
         bool justResetFlag;
 
-        const double DRIVE_P = 1.0;
+        const double DRIVE_P = 5.0;
         const double DRIVE_I = 0.0;
         const double DRIVE_D = 0.0;
 
@@ -43,10 +43,10 @@ class Drivetrain
 
         const double TURN_P = 2.5;
         const double TURN_I = 0.05;
-        const double TURN_D = 0.0;  
+        const double TURN_D = 2.0;  
 
         const double DRIVE_EPSILON = 2.0;
-        const double TURN_EPSILON = 0.5;
+        const double TURN_EPSILON = 0.3;
         const double DRIVE_TURN_EPSILON = 5.0;
 
         const double VEL_TO_VOLT_RATIO = 12000/200;

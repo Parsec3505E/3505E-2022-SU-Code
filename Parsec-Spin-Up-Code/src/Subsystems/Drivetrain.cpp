@@ -97,8 +97,8 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
         double deltaTimeMs = this->currTime - this->prevTime;
 
         turnAnglePID->setTarget(this->angleSepoint);
-        double output = turnAnglePID->stepPID(gyro->get_yaw(), deltaTimeMs);
-        driver.print(2, 2, "%f   ", output);
+        double output = turnAnglePID->stepTurnPID(gyro->get_yaw(), deltaTimeMs);
+        driver.print(2, 2, "%d   ", justResetFlag);
         rightFront->move_velocity(output);
         rightMiddle->move_velocity((output) * (60.0 / 84.0));
         rightBack->move_velocity(output);
@@ -118,7 +118,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
         int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
         int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
 
-        driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
+        // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
         double fwdGrnCart = (pow(fwd_val / 127.0, 3.0)) * 200;
         double turnGrnCart = (pow(turn_val / 127.0, 3.0)) * 200;
         // double fwdGrnCart = (fwd_val/127.0)*600;
@@ -136,6 +136,10 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
     case DEAD:
         stop();
+
+        break;
+    case BLANK:
+      
 
         break;
     }
@@ -162,21 +166,27 @@ void Drivetrain::resetEnc(){
 bool Drivetrain::isSettledTurned()
 {
     bool isSettled;
+    isSettled = false;
     if (justResetFlag)
     {
+        pros::screen::print(pros::E_TEXT_MEDIUM, 8, "IN RESET");
+    // pros::screen::print(pros::E_TEXT_MEDIUM, 6, "IN RESET");
         if (turnAnglePID->isSettledTime())
         {
             isSettled = true;
         }
     }
-    isSettled = false;
+    
 
     return isSettled;
+
+    
 }
 
 bool Drivetrain::isSettledMove()
 {
     bool isSettled;
+    isSettled = false;
     if (justResetFlag)
     {
         if (driveDistancePID->isSettledTime())
@@ -184,7 +194,7 @@ bool Drivetrain::isSettledMove()
             isSettled = true;
         }
     }
-    isSettled = false;
+    
 
     return isSettled;
 }
@@ -290,11 +300,11 @@ void Drivetrain::moveSeconds(int seconds, int vel)
 {
 
     rightFront->move_velocity(vel);
-    rightMiddle->move_velocity(vel);
+    rightMiddle->move_velocity(vel* (60.0 / 84.0));
     rightBack->move_velocity(vel);
 
     leftFront->move_velocity(vel);
-    leftMiddle->move_velocity(vel);
+    leftMiddle->move_velocity(vel* (60.0 / 84.0));
     leftBack->move_velocity(vel);
 
     pros::delay(seconds);
@@ -304,11 +314,11 @@ void Drivetrain::setVel(int vel)
 {
 
     rightFront->move_velocity(vel);
-    rightMiddle->move_velocity(vel);
+    rightMiddle->move_velocity(vel* (60.0 / 84.0));
     rightBack->move_velocity(vel);
 
     leftFront->move_velocity(vel);
-    leftMiddle->move_velocity(vel);
+    leftMiddle->move_velocity(vel* (60.0 / 84.0));
     leftBack->move_velocity(vel);
 }
 void Drivetrain::turnEncoder(double deg, int vel)

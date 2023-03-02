@@ -208,16 +208,16 @@ void IntakeRoller::rollToColourDRIVE(bool alliance)
 void IntakeRoller::rollToColourMANUAL(bool colour)
 {
     // TRUE IS RED
-    if (3 == 3)
+    if (colour)
     {
         intakeMotor->move_velocity(-400);
-        while (colourSensor->get_hue() > 200.0)
+        while (100.0 < colourSensor->get_hue() < 300.0)
         {
         }
 
         // ROLL UNTIL SEE BLUE
         intakeMotor->move_velocity(-400);
-        while (colourSensor->get_hue() < 10.0)
+        while (!(100.0 < colourSensor->get_hue() < 300.0))
         {
         }
 
