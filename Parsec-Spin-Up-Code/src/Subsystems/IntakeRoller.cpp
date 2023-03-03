@@ -205,6 +205,12 @@ void IntakeRoller::rollToColourDRIVE(bool alliance)
         break;
     }
 }
+
+void IntakeRoller::spinSec(int ms, int vel){
+    intakeMotor->move_velocity(vel);
+    pros::delay(ms);
+    intakeMotor->move_velocity(0);
+}
 void IntakeRoller::rollToColourMANUAL(bool colour)
 {
     // TRUE IS RED

@@ -37,6 +37,8 @@ class IntakeRoller
         // Update the state of the Intake
         void updateIntake(pros::Controller driver);
 
+        //Hardcoded Methods
+        void spinSec(int ms, int vel);
         //Optical Methods
         void rollToColourAUTO(int inches);
         void rollToColourDRIVE(bool alliance);

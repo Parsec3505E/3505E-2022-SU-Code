@@ -109,8 +109,7 @@ void odomAutonAWP()
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
 	drivetrainObj->moveSeconds(750, 50);
-	drivetrainObj->setVel(10);
-	intakeObj->rollToColourMANUAL(true);
+	intakeObj->spinSec(800,-400);
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
