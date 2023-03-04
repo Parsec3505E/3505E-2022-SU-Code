@@ -17,7 +17,7 @@ Shooter::Shooter()
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TBH VARS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     TBHPrevErr = 0.0;
-    TBHGain = 0.3;
+    TBHGain = 1.0;
     TBHThresh = 0.0;
     TBHInputVolt = 0.0;
     TBHCross = false;
@@ -122,6 +122,14 @@ void Shooter::updateShooter(pros::Controller driver)
         driver.print(2, 2, "%.1f  %d    ", shooterPwr->get_actual_velocity(), targetVel);
 
         break;
+
+    case CLOSED_LOOP_AUTO:
+        TBHController(this->targetVel);
+        driver.print(2, 2, "%.1f  %d  %f  ", shooterPwr->get_actual_velocity(), targetVel, TBHGain);
+
+
+        break;
+
     case DISABLED:
 
         shooterPwr->move_velocity(0);
@@ -142,7 +150,7 @@ enum Shooter::ShooterStates Shooter::getState()
 
 void Shooter::setTargetRPM(double RPM)
 {
-    targetVel = RPM;
+    this->targetVel = RPM;
 }
 
 void Shooter::TBHController(int targetVel)
@@ -162,7 +170,7 @@ void Shooter::TBHController(int targetVel)
     {
         if (!TBHCross)
         {
-            TBHThresh = TBHInputVolt * 0.5;
+            TBHThresh = TBHInputVolt * 0.10;
             TBHInputVolt = TBHThresh;
             TBHCross = true;
         }
@@ -213,7 +221,7 @@ void Shooter::indexAll2()
     shooterInd->set_value(false);
     pros::delay(500);
     shooterInd->set_value(true);
-    pros::delay(600);
+    pros::delay(800);
 
     shooterInd->set_value(false);
     pros::delay(500);

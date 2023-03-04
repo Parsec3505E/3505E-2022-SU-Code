@@ -13,7 +13,7 @@ class Shooter
     public:
 
         // Shooter States
-        enum ShooterStates{CLOSED_LOOP, OPERATOR_CONTROL, DISABLED};
+        enum ShooterStates{CLOSED_LOOP, CLOSED_LOOP_AUTO, OPERATOR_CONTROL, DISABLED};
 
     private:
 

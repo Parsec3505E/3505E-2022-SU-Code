@@ -73,7 +73,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
         driveDistancePID->setTarget(this->distanceSetpoint);
         double driveOutput = driveDistancePID->stepPID(getAvgEncInches(), deltaTimeMs);
-        driver.print(2, 2, "%f   %f ", getAvgEncInches(), driveOutput);
+       
         // driveDistancePID->setTarget(this->headingSetpoint);
         // double headingOutput = driveDistancePID->stepPID(gyro->get_yaw(), deltaTimeMs);
         double headingOutput = 0.0;
@@ -98,7 +98,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
 
         turnAnglePID->setTarget(this->angleSepoint);
         double output = turnAnglePID->stepTurnPID(gyro->get_yaw(), deltaTimeMs);
-        driver.print(2, 2, "%d   ", justResetFlag);
+        // driver.print(2, 2, "%d   ", justResetFlag);
         rightFront->move_velocity(output);
         rightMiddle->move_velocity((output) * (60.0 / 84.0));
         rightBack->move_velocity(output);
