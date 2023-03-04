@@ -174,6 +174,60 @@ void odomAutonAWP()
 
 	controlTask.remove();
 }
+void PIDAutonFarRollDisk(){
+	std::uint32_t autoStartTime = pros::millis();
+
+	control_arg *control_task_arg = new control_arg;
+
+	Drivetrain *drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller *intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter *shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	drivetrainObj->resetGyro();
+	shooterObj->setIndexerState(true);
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+
+
+
+
+	shooterObj->setTargetRPM(405.0);
+	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP_AUTO);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	
+	drivetrainObj->moveDistance(5.0, 0.0);
+	drivetrainObj->resetEnc();
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+		intakeObj->spinSec(3500,600);
+	while (!drivetrainObj->isSettledMove())
+	{
+	}
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	drivetrainObj->turnAngle(15.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned())
+	{
+	}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+	shooterObj->indexAll2();
+
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+}
 void PIDAutonFarRoller(){
 	std::uint32_t autoStartTime = pros::millis();
 
