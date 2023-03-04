@@ -157,8 +157,74 @@ void odomAutonAWP()
 
 	controlTask.remove();
 }
+void PIDAutonFarRoller(){
+	std::uint32_t autoStartTime = pros::millis();
 
+	control_arg *control_task_arg = new control_arg;
 
+	Drivetrain *drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller *intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter *shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	drivetrainObj->resetGyro();
+	shooterObj->setIndexerState(true);
+	
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	//DRIVE IN FRONT OF ROLLER
+	drivetrainObj->moveDistance(6.0, 0.0);
+	drivetrainObj->resetEnc();
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	while (!drivetrainObj->isSettledMove()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	//TURN TO ROLLER
+	drivetrainObj->turnAngle(-90.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned()){}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	drivetrainObj->moveSeconds(750, 50);
+	intakeObj->spinSec(500,-400);
+	//SPIN ROLLERS
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	drivetrainObj->~Drivetrain();
+
+	controlTask.remove();
+}
+void PIDAutonTwoRoller(){
+	std::uint32_t autoStartTime = pros::millis();
+
+	control_arg *control_task_arg = new control_arg;
+
+	Drivetrain *drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller *intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter *shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	drivetrainObj->resetGyro();
+	shooterObj->setIndexerState(true);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	drivetrainObj->moveSeconds(750, 50);
+	intakeObj->spinSec(500,-400);
+
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+}
 void HCRoller()
 {
 	Drivetrain drivetrainObj = Drivetrain();
