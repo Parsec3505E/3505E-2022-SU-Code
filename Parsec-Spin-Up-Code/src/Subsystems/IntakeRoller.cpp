@@ -18,6 +18,7 @@ void IntakeRoller::updateIntake(pros::Controller driver)
     switch (mIntakeState)
     {
 
+
     case OPERATOR_CONTROL:
 
         if (driver.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
@@ -99,6 +100,13 @@ void IntakeRoller::updateIntake(pros::Controller driver)
     case BLANK:
 
         break;
+
+    case ON:
+        intakeMotor->move_velocity(600);
+        break;
+    case DEAD:
+        intakeMotor->move_velocity(0);
+        break;
     }
 }
 
@@ -126,6 +134,10 @@ void IntakeRoller::rollToColourAUTO(int inches)
 
         pros::delay(2);
     }
+}
+void IntakeRoller::setVel(int vel)
+{
+    intakeMotor->move_velocity(vel);
 }
 
 void IntakeRoller::rollToColourSEC(int ms)

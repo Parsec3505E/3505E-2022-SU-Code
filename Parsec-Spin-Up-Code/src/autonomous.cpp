@@ -107,14 +107,19 @@ void odomAutonAWP()
 
 	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
 
-	shooterObj->setTargetRPM(405.0);
+	shooterObj->setTargetRPM(420.0);
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP_AUTO);
 
+	//ROLLERS
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	intakeObj->setVel(-300);
 	drivetrainObj->moveSeconds(750, 50);
-	intakeObj->spinSec(500,-200);
+	intakeObj->setVel(0);
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+	intakeObj->spinSec(500,-300);
 	
-
+	
+	//TURN DRIVE STRAIGHT
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
 	drivetrainObj->moveDistance(-4.5, 0.0);
@@ -128,7 +133,7 @@ void odomAutonAWP()
 
 
 	// This can be changed back to 45 if needed
-	drivetrainObj->turnAngle(-135.0);
+	drivetrainObj->turnAngle(-130.0);
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
 	while (!drivetrainObj->isSettledTurned())
@@ -136,26 +141,30 @@ void odomAutonAWP()
 	}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	
-	drivetrainObj->moveDistance(100.0, 0.0);
+	drivetrainObj->moveDistance(96.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-		intakeObj->spinSec(3500,600);
+	intakeObj->spinSec(500, -300);
+	intakeObj->spinSec(500, 300);
 	while (!drivetrainObj->isSettledMove())
 	{
 	}
-
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-	// This can be changed back to 45 if needed
-	drivetrainObj->turnAngle(-45.0);
-
+	// INTAKE AND SHOT
+	
+	
+	drivetrainObj->turnAngle(-40.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	
 	while (!drivetrainObj->isSettledTurned())
 	{
 	}
+	intakeObj->setVel(600);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-
-	drivetrainObj->moveDistance(-5.0, 0.0);
+	
+	drivetrainObj->moveDistance(-8.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
 	while (!drivetrainObj->isSettledMove())
@@ -164,15 +173,15 @@ void odomAutonAWP()
 	
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-	pros::delay(1000);
 
 	shooterObj->indexAll2();
 	
 	while(pros::millis() - autoStartTime < 14500)
 	{}
-	drivetrainObj->~Drivetrain();
-
+	//drivetrainObj->~Drivetrain();
 	controlTask.remove();
+	delete(intakeObj);
+	delete(drivetrainObj);
 }
 void PIDAutonFarRollDisk(){
 	std::uint32_t autoStartTime = pros::millis();
@@ -205,12 +214,11 @@ void PIDAutonFarRollDisk(){
 	drivetrainObj->moveDistance(-45.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-
 	while (!drivetrainObj->isSettledMove())
 	{
 	}
-
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
 	drivetrainObj->turnAngle(23.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
 	while (!drivetrainObj->isSettledTurned())
@@ -250,7 +258,7 @@ void PIDAutonFarRoller(){
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
 	//DRIVE IN FRONT OF ROLLER
-	drivetrainObj->moveDistance(6.0, 0.0);
+	drivetrainObj->moveDistance(15.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
 	while (!drivetrainObj->isSettledMove()){}
@@ -294,7 +302,22 @@ void PIDAutonTwoRoller(){
 	drivetrainObj->moveSeconds(750, 50);
 	intakeObj->spinSec(500,-400);
 
+	//TURN AND DRIVE ACROSS
+
+	drivetrainObj->turnAngle(-135.0);
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	while (!drivetrainObj->isSettledTurned())
+	{}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+	drivetrainObj->moveDistance(-200.0, 0.0);
+	drivetrainObj->resetEnc();
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	while (!drivetrainObj->isSettledMove())
+	{}
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
 }
 void HCRoller()
 {

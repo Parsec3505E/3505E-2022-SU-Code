@@ -12,7 +12,7 @@ class IntakeRoller
     public:
 
         // IntakeRoller States
-        enum IntakeStates{OPERATOR_CONTROL, COLOUR_AUTO, COLOUR_MANUAL, BLANK};
+        enum IntakeStates{OPERATOR_CONTROL, COLOUR_AUTO, COLOUR_MANUAL, BLANK, ON, DEAD};
         // enum RollerStates{};
 
         PIDController* rollerPID;
@@ -39,6 +39,9 @@ class IntakeRoller
 
         //Hardcoded Methods
         void spinSec(int ms, int vel);
+        void setVel(int vel);
+
+
         //Optical Methods
         void rollToColourAUTO(int inches);
         void rollToColourDRIVE(bool alliance);

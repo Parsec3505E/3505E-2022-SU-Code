@@ -176,7 +176,7 @@ void Shooter::TBHController(int targetVel)
         }
         else
         {
-            TBHInputVolt = 0.5 * (TBHThresh + TBHInputVolt);
+            TBHInputVolt = 0.5* (TBHThresh + TBHInputVolt);
         }
         TBHThresh = TBHInputVolt;
     }
@@ -221,7 +221,12 @@ void Shooter::indexAll2()
     shooterInd->set_value(false);
     pros::delay(500);
     shooterInd->set_value(true);
-    pros::delay(800);
+    pros::delay(1000);
+
+    shooterInd->set_value(false);
+    pros::delay(500);
+    shooterInd->set_value(true);
+    pros::delay(1000);
 
     shooterInd->set_value(false);
     pros::delay(500);

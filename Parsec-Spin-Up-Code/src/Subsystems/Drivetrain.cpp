@@ -116,7 +116,7 @@ void Drivetrain::updateDrivetrain(pros::Controller &driver)
     {
 
         int fwd_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) : 0;
-        int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 30) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
+        int turn_val = (abs(driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X)) >= 15) ? driver.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X) : 0;
 
         // driver.print(2, 2,"%d   %d  ", fwd_val,turn_val);
         double fwdGrnCart = (pow(fwd_val / 127.0, 3.0)) * 200;
