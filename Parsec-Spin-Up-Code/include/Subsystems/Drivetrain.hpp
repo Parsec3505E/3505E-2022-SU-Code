@@ -33,20 +33,21 @@ class Drivetrain
         PIDController* driveTurnPID;
         bool justResetFlag;
 
-        const double DRIVE_P = 5.0;
+        const double DRIVE_P = 8.0;
         const double DRIVE_I = 0.0;
         const double DRIVE_D = 0.0;
 
+        // oiginally 0.5 for kP
         const double DRIVE_TURN_P = 0.1;
         const double DRIVE_TURN_I = 0.0;
         const double DRIVE_TURN_D = 0.0;
 
-        const double TURN_P = 2.5;
+        const double TURN_P = 2.0;
         const double TURN_I = 0.05;
         const double TURN_D = 2.0;  
 
-        const double DRIVE_EPSILON = 2.0;
-        const double TURN_EPSILON = 0.3;
+        const double DRIVE_EPSILON = 0.5;
+        const double TURN_EPSILON = 0.75;
         const double DRIVE_TURN_EPSILON = 5.0;
 
         const double VEL_TO_VOLT_RATIO = 12000/200;
