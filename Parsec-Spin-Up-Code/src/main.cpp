@@ -85,7 +85,8 @@ void autonomous()
 	// hardCodedAuton();
 	// HCRollerDisc();
 	// HCRollerTwoDisc();
-	odomAutonAWP();
+	// odomAutonAWP();
+	PIDAutonFarRollDisk();
 }
 
 /**

@@ -8,6 +8,7 @@ void odomAuton();
 void odomAutonAWP();
 void PIDAutonFarRoller();
 void PIDAutonTwoRoller();
+void PIDAutonFarRollDisk();
 
 void HCRoller();
 void HCRollerDisc();

@@ -197,28 +197,28 @@ void PIDAutonFarRollDisk(){
 
 
 
-	shooterObj->setTargetRPM(405.0);
+	shooterObj->setTargetRPM(500.0);
 	shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP_AUTO);
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 	
-	drivetrainObj->moveDistance(5.0, 0.0);
+	drivetrainObj->moveDistance(-45.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-		intakeObj->spinSec(3500,600);
+
 	while (!drivetrainObj->isSettledMove())
 	{
 	}
 
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
-	drivetrainObj->turnAngle(15.0);
+	drivetrainObj->turnAngle(23.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
 	while (!drivetrainObj->isSettledTurned())
 	{
 	}
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-
+	pros::delay(6000);
 	shooterObj->indexAll2();
 
 
