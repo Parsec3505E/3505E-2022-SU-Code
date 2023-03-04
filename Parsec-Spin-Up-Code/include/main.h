@@ -26,6 +26,7 @@
  */
 #include "pros/misc.h"
 #include "pros/misc.hpp"
+#include "pros/apix.h"
 #define PROS_USE_SIMPLE_NAMES
 
 /**
