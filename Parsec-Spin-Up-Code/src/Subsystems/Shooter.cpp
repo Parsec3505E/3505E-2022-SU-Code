@@ -221,17 +221,18 @@ void Shooter::indexAll2()
     shooterInd->set_value(false);
     pros::delay(500);
     shooterInd->set_value(true);
-    pros::delay(1000);
+    //was 1000 with third commented out
+    pros::delay(800);
 
     shooterInd->set_value(false);
     pros::delay(500);
     shooterInd->set_value(true);
-    pros::delay(1000);
+    pros::delay(800);
 
     shooterInd->set_value(false);
     pros::delay(500);
     shooterInd->set_value(true);
-    pros::delay(500);
+    pros::delay(300);
 }
 double Shooter::slewRPM(double request)
 {

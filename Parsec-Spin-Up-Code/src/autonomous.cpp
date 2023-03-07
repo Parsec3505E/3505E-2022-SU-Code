@@ -85,7 +85,67 @@ void odomAuton()
 
 	controlTask.remove();
 }
+void PIDRollerLow(){
+		std::uint32_t autoStartTime = pros::millis();
 
+	control_arg *control_task_arg = new control_arg;
+
+	Drivetrain *drivetrainObj = new Drivetrain();
+	control_task_arg->drive = drivetrainObj;
+
+	IntakeRoller *intakeObj = new IntakeRoller();
+	control_task_arg->intake = intakeObj;
+
+	Shooter *shooterObj = new Shooter();
+	control_task_arg->shooter = shooterObj;
+
+	while(drivetrainObj->gyro->is_calibrating()){}
+	shooterObj->setIndexerState(true);
+	
+
+	pros::Task controlTask(controlFunction, control_task_arg, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT);
+
+	//ROLLERS
+	drivetrainObj->setState(Drivetrain::DrivetrainStates::BLANK);
+	intakeObj->setVel(-300);
+	drivetrainObj->moveSeconds(750, 50);
+	intakeObj->setVel(0);
+	intakeObj->setIntakeState(IntakeRoller::IntakeStates::BLANK);
+	intakeObj->spinSec(500,-300);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+	drivetrainObj->moveSeconds(500, -100);
+	
+	// This can be changed back to 45 if needed
+	// drivetrainObj->turnAngle(90.0);
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
+	// while (!drivetrainObj->isSettledTurned())
+	// {
+	// }
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+
+	// drivetrainObj->moveDistance(-50.0, 0.0);
+	// drivetrainObj->resetEnc();
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
+	// while (!drivetrainObj->isSettledMove())
+	// {
+	// }
+	// drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
+
+	// shooterObj->setTargetRPM(200.0);
+	// shooterObj->setState(Shooter::ShooterStates::CLOSED_LOOP_AUTO);
+	// pros::delay(1500);
+	// shooterObj->indexAll2();
+
+
+	while(pros::millis() - autoStartTime < 14500)
+	{}
+	//drivetrainObj->~Drivetrain();
+	controlTask.remove();
+	delete(intakeObj);
+	delete(drivetrainObj);
+
+}
 void odomAutonAWP()
 {
 	std::uint32_t autoStartTime = pros::millis();
@@ -101,7 +161,7 @@ void odomAutonAWP()
 	Shooter *shooterObj = new Shooter();
 	control_task_arg->shooter = shooterObj;
 
-	drivetrainObj->resetGyro();
+	while(drivetrainObj->gyro->is_calibrating()){}
 	shooterObj->setIndexerState(true);
 	// pros::delay(250);
 
@@ -122,7 +182,7 @@ void odomAutonAWP()
 	//TURN DRIVE STRAIGHT
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::DEAD);
 
-	drivetrainObj->moveDistance(-4.5, 0.0);
+	drivetrainObj->moveDistance(-5.5, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
 	while (!drivetrainObj->isSettledMove())
@@ -144,8 +204,8 @@ void odomAutonAWP()
 	drivetrainObj->moveDistance(96.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-	intakeObj->spinSec(500, -300);
-	intakeObj->spinSec(500, 300);
+	intakeObj->spinSec(700, -300);
+	intakeObj->spinSec(300, 300);
 	while (!drivetrainObj->isSettledMove())
 	{
 	}
@@ -155,7 +215,7 @@ void odomAutonAWP()
 	// INTAKE AND SHOT
 	
 	
-	drivetrainObj->turnAngle(-40.0);
+	drivetrainObj->turnAngle(-45.0);
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::TURN_ANGLE);
 	
 	while (!drivetrainObj->isSettledTurned())
@@ -167,7 +227,7 @@ void odomAutonAWP()
 	drivetrainObj->moveDistance(-8.0, 0.0);
 	drivetrainObj->resetEnc();
 	drivetrainObj->setState(Drivetrain::DrivetrainStates::MOVE_DISTANCE);
-	while (!drivetrainObj->isSettledMove())
+	while (!drivetrainObj->isSettledMove() && pros::millis() - autoStartTime < 12000)
 	{
 	}
 	

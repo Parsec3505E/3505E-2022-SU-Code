@@ -143,7 +143,7 @@ void IntakeRoller::setVel(int vel)
 void IntakeRoller::rollToColourSEC(int ms)
 {
 
-    intakeMotor->move_velocity(-400);
+    intakeMotor->move_velocity(-200);
     pros::delay(ms);
     intakeMotor->move_velocity(0);
 }

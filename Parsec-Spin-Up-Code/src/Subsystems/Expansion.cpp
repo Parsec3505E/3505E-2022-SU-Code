@@ -17,10 +17,10 @@ void Expansion::updateExpansion(pros::Controller driver)
         {
             expansionPistonR->set_value(true);
         }
-        if (driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))
-        {
-            blockerPiston->set_value(true);
-        }
+        // if (driver.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT))
+        // {
+        //     blockerPiston->set_value(true);
+        // }
 
         break;
     }
@@ -34,8 +34,8 @@ Expansion::ExpansionStates Expansion::getState()
 
 void Expansion::expand()
 {
-
-    expansionPistonR->set_value(true);
+    blockerPiston->set_value(true);
+    // expansionPistonR->set_value(true);
 }
 
 void Expansion::setState(ExpansionStates state)

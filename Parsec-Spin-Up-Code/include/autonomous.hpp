@@ -6,6 +6,7 @@
 
 void odomAuton();
 void odomAutonAWP();
+void PIDRollerLow();
 void PIDAutonFarRoller();
 void PIDAutonTwoRoller();
 void PIDAutonFarRollDisk();

@@ -35,6 +35,9 @@
  */
 void initialize()
 {
+		Drivetrain drive;
+
+		drive.resetGyro();
 	// pros::lcd::initialize();
 	// pros::lcd::set_text(1, "Hello PROS User!");
 
@@ -88,6 +91,7 @@ void autonomous()
 	// HCRollerTwoDisc();
 	odomAutonAWP();
 	// PIDAutonFarRollDisk();
+	// PIDRollerLow();
 }
 
 /**
@@ -150,6 +154,7 @@ void opcontrol()
 		if ((pros::millis() - oppStartTime) > 95000)
 		{
 			expansion.updateExpansion(driver);
+			expansion.expand();
 		}
 
 		pros::delay(50);
