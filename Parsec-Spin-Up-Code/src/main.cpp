@@ -1,4 +1,15 @@
 #include "main.h"
+#include "Subsystems/Drivetrain.hpp"
+#include "Subsystems/IntakeRoller.hpp"
+#include "Subsystems/Shooter.hpp"
+#include "Subsystems/Expansion.hpp"
+#include "autonomous.hpp"
+#include "pros/rtos.h"
+#include "pros/rtos.hpp"
+
+
+
+
 
 /**
  * A callback function for LLEMU's center button.
@@ -15,7 +26,6 @@ void on_center_button() {
 		pros::lcd::clear_line(2);
 	}
 }
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -45,7 +55,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -58,7 +70,16 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+
+
+Pose persistPose = Pose(Vector(10.0, 10.0), 0.1);
+
+void autonomous() {
+	// farSideRollerAuton();
+	// auton1();
+	odomAuton();
+	// auton2();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -73,20 +94,49 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+
+
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
+	
+	//auton1();
+	// auton1();
 
+	//Uncomment below
+	pros::Controller driver(pros::E_CONTROLLER_MASTER);
+	Drivetrain drive;
+	IntakeRoller intake;
+	Shooter shooter;
+	Expansion expansion;
+
+	// drive.setRobotPose(persistPose);
+
+    //driver.print(2, 2, "%.1f, %.1f, %.4f", persistPose.getXComponent(), persistPose.getYComponent(), persistPose.getThetaComponent());
+	
+	//drive.resetGyro();
+	//driver.rumble("...");
+	drive.setState(Drivetrain::DrivetrainStates::OPEN_LOOP_OPERATOR);
+	intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	expansion.setState(Expansion::ExpansionStates::OPERATOR_CONTROL);
+	
+	//driver.rumble("...");
+	// intake.setIntakeState(IntakeRoller::IntakeStates::OPERATOR_CONTROL);
+	shooter.setState(Shooter::ShooterStates::OPERATOR_CONTROL);
+	
+	shooter.setTargetRPM(290);
+
+	std::uint32_t oppStartTime = pros::millis();
 	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
 
-		left_mtr = left;
-		right_mtr = right;
-		pros::delay(20);
+		drive.updateDrivetrain(driver);
+		intake.updateIntake(driver);
+		shooter.updateShooter(driver);
+		
+		//if((pros::millis() - oppStartTime) > 95000){
+			expansion.updateExpansion(driver);
+		//}
+		
+		
+		pros::delay(50);
 	}
 }
